@@ -844,14 +844,132 @@ function voiceIn(){
   r.start();
 }
 
-function handleFile(f){
-  if(!f)return;
-  const el=document.getElementById('f-status');el.style.display='block';
-  el.innerHTML=`<i class="ti ti-loader" style="animation:spin .8s linear infinite;display:inline-block;vertical-align:-3px"></i>&nbsp; Processing <strong>${f.name}</strong>...`;
-  setTimeout(()=>{
-    el.innerHTML=`<i class="ti ti-check" style="color:var(--ok)"></i>&nbsp; File received: <strong>${f.name}</strong>. For automatic ingredient extraction from PDFs and images, the Claude API OCR integration can be enabled on deployment. Please switch to the Input tab and enter your ingredients manually, or paste text extracted from the document.`;
-  },1200);
+async function handleFile(f){
+  if(!f) return;
+  const el=document.getElementById('f-status');
+  el.style.display='block';
+  el.innerHTML=`<div style="display:flex;align-items:center;gap:8px;padding:10px 12px;background:var(--green-light);border-radius:8px;font-size:13px;color:var(--ok)"><i class="ti ti-loader" style="animation:spin .8s linear infinite;display:inline-block"></i> Reading <strong>${f.name}</strong> — extracting ingredients with AI...</div>`;
+
+  const isPDF = f.type === 'application/pdf';
+  const isImage = f.type.startsWith('image/');
+
+  if(!isPDF && !isImage){
+    el.innerHTML=`<div style="padding:10px 12px;background:var(--fail-bg);border-radius:8px;font-size:13px;color:var(--fail)"><i class="ti ti-alert-circle"></i> Please upload a PDF or image file (JPG, PNG).</div>`;
+    return;
+  }
+
+  try {
+    const base64 = await fileToBase64(f);
+    const mediaType = f.type;
+
+    const messages = [{
+      role: 'user',
+      content: [
+        {
+          type: isPDF ? 'document' : 'image',
+          source: { type: 'base64', media_type: mediaType, data: base64 }
+        },
+        {
+          type: 'text',
+          text: `You are an expert at reading nutraceutical and health supplement product labels, formulation sheets, and Certificates of Analysis (CoA).
+
+Extract ALL ingredients/nutrients from this document. For each ingredient, identify:
+1. The ingredient name (including the salt form in brackets if shown, e.g. "Zinc (as Zinc Sulphate)")
+2. The strength/amount per serving (number + unit)
+
+Return ONLY a plain text list, one ingredient per line, in this exact format:
+Ingredient Name   Amount Unit
+
+Example output:
+Vitamin C (as Ascorbic Acid)   80 mg
+Zinc (as Zinc Sulphate)   10 mg
+Ashwagandha Root Extract   500 mg
+
+Rules:
+- Include every ingredient listed in the supplement facts / nutrition facts / formulation table
+- Use the exact ingredient name as shown on the label
+- If a serving size is shown, use per-serving values
+- Do not include any explanations, headers, or extra text — only the ingredient list
+- If you cannot find any ingredients, reply with: NO_INGREDIENTS_FOUND`
+        }
+      ]
+    }];
+
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        messages: messages
+      })
+    });
+
+    const data = await response.json();
+
+    if(data.error){
+      throw new Error(data.error.message || 'API error');
+    }
+
+    const extracted = data.content && data.content[0] && data.content[0].text;
+
+    if(!extracted || extracted.trim() === 'NO_INGREDIENTS_FOUND'){
+      el.innerHTML=`<div style="padding:10px 12px;background:var(--warn-bg);border-radius:8px;font-size:13px;color:var(--warn)"><i class="ti ti-alert-triangle"></i> No ingredients found in this file. Make sure it is a product label, formulation sheet, or supplement facts panel. You can also type ingredients manually in the Input tab.</div>`;
+      return;
+    }
+
+    document.getElementById('fml').value = extracted.trim();
+
+    el.innerHTML=`<div style="padding:10px 12px;background:var(--ok-bg);border-radius:8px;font-size:13px;color:var(--ok);margin-bottom:8px"><i class="ti ti-check"></i> <strong>${f.name}</strong> — ingredients extracted successfully! Switched to Input tab. Review the list and click <strong>Check Compliance</strong>.</div>`;
+
+    goTab(0);
+
+  } catch(err) {
+    if(err.message && err.message.includes('Failed to fetch')){
+      el.innerHTML=`<div style="padding:10px 12px;background:var(--warn-bg);border-radius:8px;font-size:13px;color:var(--warn)">
+        <strong><i class="ti ti-info-circle"></i> API key required for OCR</strong><br><br>
+        To enable automatic ingredient extraction, add your Anthropic API key.<br><br>
+        <strong>How to get a free API key:</strong><br>
+        1. Go to <a href="https://console.anthropic.com" target="_blank" style="color:var(--warn)">console.anthropic.com</a><br>
+        2. Sign up / log in → click <strong>API Keys</strong> → Create Key<br>
+        3. Copy the key and paste it below:<br><br>
+        <input type="password" id="api-key-inp" placeholder="sk-ant-api03-..." style="width:100%;padding:7px 10px;border:1px solid #FAC775;border-radius:6px;font-size:12px;margin-bottom:8px;font-family:inherit">
+        <button onclick="saveApiKey()" style="padding:6px 14px;background:var(--warn);color:#fff;border:none;border-radius:6px;font-size:12px;cursor:pointer;font-family:inherit">Save key &amp; retry upload</button>
+        <div style="margin-top:6px;font-size:11px;color:var(--warn)">Your key is stored only in this browser session — never sent anywhere except Anthropic's API.</div>
+      </div>`;
+    } else {
+      el.innerHTML=`<div style="padding:10px 12px;background:var(--fail-bg);border-radius:8px;font-size:13px;color:var(--fail)"><i class="ti ti-alert-circle"></i> Error reading file: ${err.message}. Please try again or enter ingredients manually.</div>`;
+    }
+  }
 }
+
+function saveApiKey(){
+  const key = document.getElementById('api-key-inp').value.trim();
+  if(!key.startsWith('sk-ant')){
+    alert('Please enter a valid Anthropic API key starting with sk-ant-');return;
+  }
+  window._apiKey = key;
+  document.getElementById('f-status').innerHTML=`<div style="padding:10px 12px;background:var(--green-light);border-radius:8px;font-size:13px;color:var(--ok)"><i class="ti ti-check"></i> API key saved. Now upload your file again.</div>`;
+}
+
+function fileToBase64(f){
+  return new Promise((resolve,reject)=>{
+    const reader=new FileReader();
+    reader.onload=()=>resolve(reader.result.split(',')[1]);
+    reader.onerror=reject;
+    reader.readAsDataURL(f);
+  });
+}
+
+const _origFetch = window.fetch;
+window.fetch = function(url, opts){
+  if(url && url.includes('anthropic.com') && window._apiKey){
+    opts = opts || {};
+    opts.headers = opts.headers || {};
+    if(typeof opts.headers === 'object') opts.headers['x-api-key'] = window._apiKey;
+  }
+  return _origFetch(url, opts);
+};
 
 const dz=document.getElementById('dz');
 dz.ondragover=(e)=>{e.preventDefault();dz.classList.add('dragover');};
