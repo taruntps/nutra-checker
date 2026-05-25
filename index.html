@@ -10,8 +10,6 @@
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/country-state-city@3.2.0/dist/index.min.js"></script>
-<script src="https://accounts.google.com/gsi/client" async defer></script>
-<script src="https://cdn.jsdelivr.net/npm/country-state-city@3.2.0/dist/index.min.js"></script>
 <style>
 :root{--blue:#1A56DB;--blue-mid:#2563EB;--blue-light:#EFF6FF;--blue-dark:#1e3a8a;--ok:#1e40af;--ok-bg:#DBEAFE;--warn:#BA7517;--warn-bg:#FAEEDA;--fail:#A32D2D;--fail-bg:#FCEBEB;--border:#bfdbfe;--border-light:#eff6ff;--text:#0f172a;--text-muted:#64748b;--text-faint:#94a3b8;--bg:#fff;--bg-surface:#f0f7ff;--radius:10px;--radius-sm:6px;--radius-lg:14px}
 html{scroll-padding-top:130px}
@@ -1299,22 +1297,18 @@ Approved DB ingredients list:
 ${dbList.slice(0,120).join('; ')}`;
 
   try {
-    const resp = await fetch('https://api.anthropic.com/v1/messages', {
+    // Proxy through backend — direct browser → api.anthropic.com is blocked
+    // by CORS and requires server-side API key. Backend handles auth + provider call.
+    const resp = await fetch(BACKEND + '/ai-suggest', {
       method:'POST',
       headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({
-        model:'claude-sonnet-4-20250514',
-        max_tokens:200,
-        system: systemPrompt,
-        messages:[{role:'user',content:userMsg}]
-      })
+      body: JSON.stringify({ ingredient: ingName, dbList: dbList.slice(0,120) })
     });
     if(!resp.ok){ aiSugCache[cacheKey]=null; return null; }
     const data = await resp.json();
-    const raw = (data.content||[]).map(b=>b.type==='text'?b.text:'').join('').trim();
-    const clean = raw.replace(/```json|```/g,'').trim();
-    const parsed = JSON.parse(clean);
-    aiSugCache[cacheKey] = parsed.found ? parsed : null;
+    // Backend should return the parsed JSON directly:
+    //   {found:true, match, schedule, relationship, explanation} | {found:false}
+    aiSugCache[cacheKey] = (data && data.found) ? data : null;
     return aiSugCache[cacheKey];
   } catch(e){
     aiSugCache[cacheKey] = null;
@@ -2057,8 +2051,8 @@ function addChip(wrapId,line,name,strength,unit,type,colorClass,synonymNote,salt
   chip.dataset.line=line;
   chip.dataset.type=type;
   if(saltOf) chip.dataset.saltof=saltOf;
-  const synHtml=synonymNote?` <span style="font-size:9px;opacity:.7">(${synonymNote})</span>`:'';
-  chip.innerHTML=`${name}${synHtml} <strong>${strength} ${unit}</strong><button class="chip-x" onmousedown="rmChipById(this)" title="Remove">&times;</button>`;
+  const synHtml=synonymNote?` <span style="font-size:9px;opacity:.7">(${escHtml(synonymNote)})</span>`:'';
+  chip.innerHTML=`${escHtml(name)}${synHtml} <strong>${escHtml(String(strength))} ${escHtml(String(unit))}</strong><button class="chip-x" onmousedown="rmChipById(this)" title="Remove">&times;</button>`;
   wrap.appendChild(chip);
   document.getElementById(type==='ing'?'ing-chips-section':'add-chips-section').style.display='block';
 }
@@ -2352,7 +2346,43 @@ function detectParentHint(line) {
   return ''; // No explicit notation — cation-first default applies
 }
 
-function lookupIng(name, parentHint) {
+// ── Salt phrasing normalizer ──────────────────────────────────
+// Converts "<Mineral> salt(s) of <Acid> acid" → "<Mineral> <Acid>-salt"
+// e.g. "Calcium salts of Citric acid" → "Calcium citrate"
+//      "Magnesium salt of Lactic acid" → "Magnesium lactate"
+const _ACID_TO_SALT = {
+  citric:'citrate', lactic:'lactate', gluconic:'gluconate',
+  ascorbic:'ascorbate', pantothenic:'pantothenate', orotic:'orotate',
+  aspartic:'aspartate', glutamic:'glutamate', malic:'malate',
+  fumaric:'fumarate', succinic:'succinate', tartaric:'tartrate',
+  carbonic:'carbonate', phosphoric:'phosphate',
+  sulphuric:'sulphate', sulfuric:'sulfate',
+  oleic:'oleate', stearic:'stearate', palmitic:'palmitate',
+  nicotinic:'nicotinate', folic:'folate', acetic:'acetate',
+  pyruvic:'pyruvate', butyric:'butyrate', propionic:'propionate'
+};
+function normalizeSaltPhrasing(s){
+  if(!s) return s;
+  return s.replace(/\b([A-Za-z]+)\s+salts?\s+of\s+([A-Za-z]+)\s+acid\b/gi,
+    (m, mineral, acidBase) => {
+      const salt = _ACID_TO_SALT[acidBase.toLowerCase()];
+      return salt ? `${mineral} ${salt}` : m;
+    });
+}
+
+function lookupIng(name, parentHint, _skipInner) {
+  // ── Step 0: Normalize salt phrasing ("calcium salts of citric acid" → "calcium citrate")
+  name = normalizeSaltPhrasing(name);
+  // ── Step 0b: If wrapped as "Mineral (as Inner Salt)" or "(from …)",
+  //   try the inner salt as a separate lookup first — many FSSAI/OCR labels
+  //   wrap a salt form in parens that the matcher can't resolve directly.
+  if (!_skipInner) {
+    const _inner = name.match(/^[^()]+\((?:as|from|providing)\s+([^()]+)\)/i);
+    if (_inner) {
+      const _r = lookupIng(_inner[1].trim(), parentHint, true);
+      if (_r && _r.st === 'ok') return _r;
+    }
+  }
   // ── Step 1: Resolve alias on full name ────────────────────────
   let resolvedName = name;
   let vitSynNote = '';
@@ -4019,12 +4049,15 @@ async function doCoupon2(){
 async function startRzp(){
   const btn=document.getElementById('rzp-pay-btn');const err=document.getElementById('rzp-err');
   err.textContent='';if(!selectedPlan||!currentUser){err.textContent='Select a plan and sign in first.';return;}
+  if(typeof Razorpay==='undefined'){err.textContent='Payment system not loaded. Please refresh and try again.';return;}
+  const planMeta=PLANS[selectedPlan];
+  if(!planMeta){err.textContent='Unknown plan. Please re-select a plan.';return;}
   btn.disabled=true;btn.innerHTML='<i class="ti ti-loader"></i> Creating order...';
   try{
     const or=await fetch(BACKEND+'/create-order',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({plan:selectedPlan,email:currentUser.email,name:currentUser.name})});
     const od=await or.json();if(od.error)throw new Error(od.error);
     btn.disabled=false;btn.innerHTML='<i class="ti ti-credit-card"></i> Pay Now with Razorpay';
-    new Razorpay({key:od.key_id,amount:od.amount,currency:od.currency,name:'TPS Xperts Group',description:PLANS[selectedPlan].lbl+' Plan',order_id:od.order_id,
+    new Razorpay({key:od.key_id,amount:od.amount,currency:od.currency,name:'TPS Xperts Group',description:planMeta.lbl+' Plan',order_id:od.order_id,
       prefill:{email:currentUser.email,name:currentUser.name},theme:{color:'#1A56DB'},
       handler:async(resp)=>{
         btn.disabled=true;btn.innerHTML='<i class="ti ti-loader"></i> Activating...';
@@ -4182,10 +4215,15 @@ async function doForgotPassword() {
 // ═══════════════════════════════════════════════════════════════════
 const GOOGLE_CLIENT_ID = '476922219989-5ko0dcvcurut4qhpgn73aajd3887nch1.apps.googleusercontent.com';
 
+let _gsiRetries = 0;
+let _gsiInited = false;
 function initGoogleAuth() {
+  if (_gsiInited) return;
   if (typeof google === 'undefined' || !google.accounts) {
+    if (++_gsiRetries > 30) { console.error('GSI failed to load after 15s'); return; }
     setTimeout(initGoogleAuth, 500); return;
   }
+  _gsiInited = true;
   google.accounts.id.initialize({
     client_id: GOOGLE_CLIENT_ID,
     callback: handleGoogleCredential,
@@ -4205,8 +4243,23 @@ function initGoogleAuth() {
 
 async function handleGoogleCredential(response) {
   try {
-    const payload = JSON.parse(atob(response.credential.split('.')[1]));
+    let payload;
+    try {
+      const parts = (response && response.credential || '').split('.');
+      if (parts.length < 3) throw new Error('Malformed credential');
+      payload = JSON.parse(atob(parts[1]));
+    } catch (jwtErr) {
+      console.error('JWT parse error:', jwtErr);
+      const el = document.getElementById('login-err');
+      if (el) el.textContent = 'Google sign-in failed: invalid token. Please try again.';
+      return;
+    }
     const email = payload.email;
+    if (!email) {
+      const el = document.getElementById('login-err');
+      if (el) el.textContent = 'Google account did not return an email. Please try email/password.';
+      return;
+    }
     const name = payload.name || email.split('@')[0];
     let user = null;
     let isNewUser = false;
@@ -4276,10 +4329,14 @@ async function handleGoogleCredential(response) {
 // ═══════════════════════════════════════════════════════════════════
 // COUNTRY / STATE / CITY DROPDOWNS
 // ═══════════════════════════════════════════════════════════════════
+let _cscRetries = 0;
 function initCountryDropdown() {
   // Try multiple global names - library may export as 'csc' or 'CountryStateCity'
   const lib = window.csc || window.CountryStateCity || (window.CSC && window.CSC);
-  if (!lib || !lib.getAllCountries) { setTimeout(initCountryDropdown, 600); return; }
+  if (!lib || !lib.getAllCountries) {
+    if (++_cscRetries > 25) { console.error('country-state-city library failed to load after 15s'); return; }
+    setTimeout(initCountryDropdown, 600); return;
+  }
   window._csc = lib;
   const sel = document.getElementById('su-country');
   if (!sel) return;
@@ -4297,9 +4354,11 @@ function initCountryDropdown() {
 
 function onCountryChange() {
   const lib = window._csc; if (!lib) return;
-  const countryCode = document.getElementById('su-country').value;
+  const countrySel = document.getElementById('su-country');
   const stateSel = document.getElementById('su-state');
   const citySel = document.getElementById('su-city');
+  if (!countrySel || !stateSel || !citySel) return;
+  const countryCode = countrySel.value;
   stateSel.innerHTML = '<option value="">Select State</option>';
   citySel.innerHTML = '<option value="">Select City</option>';
   if (!countryCode) return;
@@ -4314,9 +4373,12 @@ function onCountryChange() {
 
 function onStateChange() {
   const lib = window._csc; if (!lib) return;
-  const countryCode = document.getElementById('su-country').value;
-  const stateCode = document.getElementById('su-state').value;
+  const countrySel = document.getElementById('su-country');
+  const stateSel = document.getElementById('su-state');
   const citySel = document.getElementById('su-city');
+  if (!countrySel || !stateSel || !citySel) return;
+  const countryCode = countrySel.value;
+  const stateCode = stateSel.value;
   citySel.innerHTML = '<option value="">Select City</option>';
   if (!countryCode || !stateCode) return;
   const cities = lib.getCitiesOfState(countryCode, stateCode);
