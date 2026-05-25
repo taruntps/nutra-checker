@@ -2386,11 +2386,22 @@ function lookupIng(name, parentHint, _skipInner) {
   // ── Step 1: Resolve alias on full name ────────────────────────
   let resolvedName = name;
   let vitSynNote = '';
+  // Track when a multi-word salt name is aliased to a single-word mineral parent,
+  // so PASS 1 can verify the salt is actually in the mineral's Chemical_Sources.
+  // Without this, "magnesium threonate" → alias "magnesium" → exact match → false compliant.
+  let _aliasedSalt = '';
+  const _trackSaltAlias = (origK, aliased) => {
+    const a = (aliased||'').toLowerCase().trim();
+    if (origK.split(' ').length > 1 && (CATION_MINERALS.has(a) || ANION_MINERALS.has(a))) {
+      _aliasedSalt = origK;
+    }
+  };
   const kTest = nq(name);
 
   if (VITAMIN_ALIASES[kTest]) {
     resolvedName = VITAMIN_ALIASES[kTest];
     vitSynNote = `Matched as "${resolvedName}" per Schedule I nomenclature`;
+    _trackSaltAlias(kTest, resolvedName);
   } else {
     // ── Step 2: Strip concentration suffixes (e.g. "24%", "10%", "40%")
     //   and salt qualifiers in parentheses (e.g. "(as Zinc Sulphate)")
@@ -2404,6 +2415,7 @@ function lookupIng(name, parentHint, _skipInner) {
     if (VITAMIN_ALIASES[kStripped]) {
       resolvedName = VITAMIN_ALIASES[kStripped];
       vitSynNote = `Matched as "${resolvedName}" per Schedule I nomenclature`;
+      _trackSaltAlias(kStripped, resolvedName);
     } else {
       // ── Step 3: Try base name before first parenthesis
       //   "Folate (L-Methyl Folate Calcium)" → "Folate" → "folic acid"
@@ -2414,12 +2426,14 @@ function lookupIng(name, parentHint, _skipInner) {
         if (VITAMIN_ALIASES[kBase]) {
           resolvedName = VITAMIN_ALIASES[kBase];
           vitSynNote = `Matched as "${resolvedName}" per Schedule I nomenclature`;
+          _trackSaltAlias(kBase, resolvedName);
         } else {
           // Step 3b: also strip % from base name
           const kBaseStripped = nq(baseName.replace(/\s*\d+(\.\d+)?\s*%\s*/g,' ').trim());
           if (VITAMIN_ALIASES[kBaseStripped]) {
             resolvedName = VITAMIN_ALIASES[kBaseStripped];
             vitSynNote = `Matched as "${resolvedName}" per Schedule I nomenclature`;
+            _trackSaltAlias(kBaseStripped, resolvedName);
           }
         }
       }
@@ -2468,8 +2482,32 @@ function lookupIng(name, parentHint, _skipInner) {
   // Salt forms are handled in PASS 2 via wbSaltMatch with s1mOrdered (parentHint respected).
   for(const r of s1mOrdered){
     const n=nq(r.Mineral||'');
-    if(exactMatch(k,n))
+    if(exactMatch(k,n)){
+      // If we aliased a multi-word salt to this mineral, verify the salt
+      // is actually in the FSSAI-approved Chemical_Sources for this mineral.
+      // If not, the salt requires FA prior approval — fall through to 'ul'.
+      if (_aliasedSalt) {
+        const sources = (r.Chemical_Sources||'').split(';').map(s=>nq(s.trim())).filter(Boolean);
+        const inList = sources.some(s => s.length>3 && (
+          s === _aliasedSalt ||
+          wbSaltMatch(_aliasedSalt, s) ||
+          s.includes(_aliasedSalt) ||
+          _aliasedSalt.includes(s)
+        ));
+        if (!inList) {
+          const mineralLbl = r.Mineral || resolvedName;
+          return {
+            st: 'ul',
+            sched: 'Unlisted salt form',
+            d: r,
+            unlistedSalt: _aliasedSalt,
+            parentMineral: mineralLbl,
+            customNote: `"${_aliasedSalt}" is not in FSSAI Schedule I Chemical_Sources for ${mineralLbl}. Requires FA prior approval (Reg 6(1)(c)(i)) or HoSU documentation.`
+          };
+        }
+      }
       return {st:'ok',sched:'Schedule I',schedD:r.Schedule_Ref||`SCHEDULE - I PART A - XLIX PG (21) S.No.${r['S.No']||''}`,cat:'Mineral',sno:r['S.No']||'',rdaKey:r.RDA_Key||'',d:r,synonymNote:vitSynNote||''};
+    }
   }
   for(const r of REG.s1v){
     const n=nq(r.Nutrient||'');
@@ -3245,7 +3283,10 @@ function renderReport(results,addResults,catData,pop,popLbl,dosage,dosLbl,claim,
       ok++;
     } else {
       badge=`<span class="badge b-grey"><i class="ti ti-question-mark"></i> Not found</span>`;
-      notes=`<span style="color:var(--warn);font-size:10px">Not found in Schedules I\u2013IV, NSF list, or FSSR 2011. Requires FA prior approval or HoSU documentation (Reg 5(3)).</span><div id="ai-sug-${aiSlug(name)}"></div>`;
+      const _ulMsg = lu.customNote
+        ? lu.customNote
+        : 'Not found in Schedules I\u2013IV, NSF list, or FSSR 2011. Requires FA prior approval or HoSU documentation (Reg 5(3)).';
+      notes=`<span style="color:var(--warn);font-size:10px">${_ulMsg}</span><div id="ai-sug-${aiSlug(name)}"></div>`;
       rev++;
     }
 
