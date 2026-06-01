@@ -1791,13 +1791,25 @@ function buildIdx() {
   REG.s3a.forEach(r => {
     const n=r.Ingredient||''; const cn=r.Common_Name||'';
     add(n,'Schedule III-A','S-III-A',cn,{...r,_sc:'Schedule III Part A',_cat:'Nutraceutical'});
-    if(cn&&cn!=='—'&&cn.length>3) add(cn,'Schedule III-A','S-III-A',n,{...r,_sc:'Schedule III Part A',_cat:'Nutraceutical',_pn:n});
+    // Split common names by ';' and '/' — index each token as its own entry
+    if(cn&&cn!=='—') {
+      cn.split(/[;\/]/).forEach(tok=>{
+        const t=tok.trim(); if(t.length>2&&nq(t)!==nq(n))
+          add(t,'Schedule III-A','S-III-A',n,{...r,_sc:'Schedule III Part A',_cat:'Nutraceutical',_pn:n});
+      });
+    }
   });
 
   REG.s3b.forEach(r => {
     const n=r.Ingredient||''; const cn=r.Common_Name||'';
     add(n,'Schedule III-B','S-III-B',cn,{...r,_sc:'Schedule III Part B',_cat:'Nutraceutical'});
-    if(cn&&cn!=='—'&&cn.length>3) add(cn,'Schedule III-B','S-III-B',n,{...r,_sc:'Schedule III Part B',_cat:'Nutraceutical',_pn:n});
+    // Split common names by ';' and '/' — index each token as its own entry
+    if(cn&&cn!=='—') {
+      cn.split(/[;\/]/).forEach(tok=>{
+        const t=tok.trim(); if(t.length>2&&nq(t)!==nq(n))
+          add(t,'Schedule III-B','S-III-B',n,{...r,_sc:'Schedule III Part B',_cat:'Nutraceutical',_pn:n});
+      });
+    }
   });
 
   REG.s4pre.forEach(r => {
@@ -1880,6 +1892,27 @@ function searchDB(query, max=12, mode='active') {
   const qAlias = VITAMIN_ALIASES[origQraw];
   const effectiveQuery = qAlias || query;
   const q = nq(effectiveQuery);
+
+  // PRE-PASS: if alias changed the query, score the ORIGINAL typed term first
+  // so exact matches (e.g. "nicotinamide", "ashwagandha") rank at the very top
+  const preScored = [];
+  const preSeen = new Set();
+  if (qAlias && origQraw.length >= 3) {
+    const ACTIVE_SS  = new Set(['S-I','S-II','S-III-A','S-III-B','S-IV','NSF-OK','FSSR']);
+    const ADDITIVE_SS= new Set(['GMP','ANN3','FSSR']);
+    for (const e of IDX) {
+      if (mode==='active'   && !ACTIVE_SS.has(e.ss))   continue;
+      if (mode==='additive' && !ADDITIVE_SS.has(e.ss)) continue;
+      const en = e.data&&e.data._dn ? nq(e.data._dn) : nq(e.name);
+      const dk = e.data&&e.data._dn ? en+'|'+nq(e.data._saltOf||'') : e.name;
+      if (preSeen.has(dk)) continue;
+      let ps = 0;
+      if (en === origQraw)           ps = 105;
+      else if (en.startsWith(origQraw)) ps = 95;
+      else if (en.includes(origQraw))   ps = 78;
+      if (ps > 0) { preSeen.add(dk); preScored.push({...e, score: ps}); }
+    }
+  }
 
   // Fast path for 1-2 char queries: pure prefix/contains, no fuzzy scoring
   if (q.length <= 2 && q.length >= 1) {
@@ -1977,6 +2010,19 @@ function searchDB(query, max=12, mode='active') {
       scored.push({...e, score:82});
     }
   }
+  // Merge pre-pass (original query matches) at top, then alias results
+  if (preScored.length > 0) {
+    // Add alias results that aren't already in preScored
+    const preKeys = new Set(preScored.map(e => e.data&&e.data._dn ? nq(e.data._dn)+'|'+nq(e.data._saltOf||'') : e.name));
+    const aliasOnly = scored.filter(e => {
+      const dk = e.data&&e.data._dn ? nq(e.data._dn)+'|'+nq(e.data._saltOf||'') : e.name;
+      return !preKeys.has(dk);
+    });
+    return [
+      ...preScored.sort((a,b)=>b.score-a.score),
+      ...aliasOnly.sort((a,b)=>b.score-a.score)
+    ].slice(0, max);
+  }
   return scored.sort((a,b)=>b.score-a.score).slice(0,max);
 }
 
@@ -2070,10 +2116,21 @@ function onIngSrch(val) {
   if(!raw.length){drop.style.display='none';return;}
 
   // Deduplication: group synonym entries under their primary
+  // Key fix: if the typed query directly matches a common name entry,
+  // show THAT as the primary — not the botanical/parent name.
+  const typedNorm = nq(val);
   const groups=new Map();
   raw.forEach(r=>{
     const pn=r.data&&r.data._pn?r.data._pn:null;
     const sof=r.data&&r.data._saltOf?nq(r.data._saltOf):'';
+    // If user typed this common name exactly → show it as standalone, not grouped under parent
+    const isExactCommonMatch = pn && (nq(r.display)===typedNorm || nq(r.display).startsWith(typedNorm));
+    if (isExactCommonMatch) {
+      // Give it its own group key so it appears as a primary entry
+      const ownKey = nq(r.display)+'|'+r.ss+'|own';
+      if(!groups.has(ownKey)) groups.set(ownKey,{primary:r,synonyms:[pn]});
+      return;
+    }
     const primaryName=pn||r.display;
     // For dual-mineral salts: append saltOf so both variants (as Ca, as Cl) show separately
     const primaryKey=nq(primaryName)+'|'+(r.ss||'')+(sof?'|'+sof:'');
