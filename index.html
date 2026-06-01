@@ -2147,6 +2147,30 @@ function onIngSrch(val) {
     if(pn){const g=groups.get(primaryKey);if(!g.synonyms.includes(r.display))g.synonyms.push(r.display);}
   });
 
+  // Post-filter: if alias was resolved and a typed-word-matching group exists,
+  // suppress groups whose primary is purely the alias target (botanical/canonical name).
+  // Exception: never suppress if another group's salt form points to it (_saltOf).
+  const qAliasNorm = VITAMIN_ALIASES[typedNorm] ? nq(VITAMIN_ALIASES[typedNorm]) : '';
+  if (qAliasNorm && qAliasNorm !== typedNorm) {
+    const hasTypedWordGroup = [...groups.values()].some(({primary:r}) => {
+      const dn = nq(r.data&&r.data._dn ? r.data._dn : r.display);
+      return dn===typedNorm || dn.startsWith(typedNorm);
+    });
+    if (hasTypedWordGroup) {
+      const saltOfTargets = new Set(
+        [...groups.values()]
+          .filter(({primary:r}) => r.data && r.data._saltOf)
+          .map(({primary:r}) => nq(r.data._saltOf))
+      );
+      for (const [key, {primary:r}] of groups) {
+        const dn = nq(r.data&&r.data._dn ? r.data._dn : r.display);
+        if (dn.startsWith(qAliasNorm) && !saltOfTargets.has(dn)) {
+          groups.delete(key);
+        }
+      }
+    }
+  }
+
   const res=[...groups.values()].slice(0,30);
   const SLBL={'S-I':'Sch I','S-II':'Sch II','S-III-A':'Sch III-A','S-III-B':'Sch III-B','S-IV':'Sch IV','NSF-OK':'NSF ✓','FSSR':'FSSR'};
   drop.innerHTML=res.map(({primary:r,synonyms})=>{
