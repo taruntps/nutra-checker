@@ -70,7 +70,7 @@ select:focus{outline:none;border-color:#228B73}
 .sb{font-size:9px;font-weight:700;padding:2px 6px;border-radius:8px;flex-shrink:0}
 .sb-s1{background:#D0EDE8;color:#1A6B5E}.sb-s2{background:#DCFCE7;color:#166534}
 .sb-s3a{background:#EDE9FE;color:#5B21B6}.sb-s3b{background:#F3E8FF;color:#6D28D9}
-.sb-s4{background:#FEF3C7;color:#92400E}.sb-add{background:#E6F5F1;color:#1A6B5E}.sb-fssr{background:#EDE9FE;color:#4C1D95}
+.sb-s4{background:#FEF3C7;color:#92400E}.sb-add{background:#E6F5F1;color:#1A6B5E}.sb-fssr{background:#EDE9FE;color:#4C1D95}.sb-brand{background:#FEF3C7;color:#92400E;font-weight:700}
 .sb-nsf-ok{background:#E1F5EE;color:#085041}.sb-nsf-fail{background:#FCEBEB;color:#791F1F}
 .add-form{display:none;background:var(--bg-surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:9px 11px;margin-bottom:7px;flex-direction:column;gap:7px}
 .add-form.show{display:flex}
@@ -945,6 +945,7 @@ const REG = {
   nsf_approved:[],nsf_rejected:[],
   mineral_conv:{},  // salt → {factor, parentNutrient, rdaUnit, convType}
   vitamin_conv:{},  // salt → {factor, parentNutrient, rdaUnit, convType}
+  trade_mapper:[], not_permitted:[], not_permitted_map:new Map(),
   loaded:false,err:null
 };
 
@@ -1584,6 +1585,31 @@ async function loadDB() {
       REG.fssr_permitted = [];
     });
 
+    // ── Trade_Name_Mapper (non-blocking) — brand search (System 1) + detection (System 2)
+    fetchSheet('Trade_Name_Mapper').then(rows => {
+      REG.trade_mapper = rows || [];
+      REG.trade_mapper.forEach(r => {
+        const brand = (r.Trade_Brand_Name||'').trim();
+        const generic = (r.Generic_Name||'').trim();
+        if (!brand || !generic) return;
+        const schedRef = r.Schedule_Reference || 'Branded';
+        const baseData = {...r, _sc:'Branded Ingredient', _cat:'Brand', _generic:generic};
+        IDX.push({name:brand.toLowerCase(), display:brand, sched:schedRef, ss:'BRAND', sub:generic, data:baseData});
+        (r.Synonyms||'').split(';').forEach(s => {
+          const t=s.trim(); if(t.length>2)
+            IDX.push({name:t.toLowerCase(), display:t, sched:schedRef, ss:'BRAND', sub:generic, data:{...baseData,_pn:brand}});
+        });
+      });
+      console.log('TPS: Trade_Name_Mapper loaded —', REG.trade_mapper.length, 'entries');
+    }).catch(e => { console.warn('TPS: Trade_Name_Mapper not loaded:', e.message); REG.trade_mapper=[]; });
+
+    // ── Not_Permitted_Ingredients (non-blocking) — System 2 pre-check
+    fetchSheet('Not_Permitted_Ingredients').then(rows => {
+      REG.not_permitted = rows || [];
+      REG.not_permitted_map = new Map(REG.not_permitted.map(r=>[nq(r.Ingredient_Name||''),r]));
+      console.log('TPS: Not_Permitted_Ingredients loaded —', REG.not_permitted.length, 'entries');
+    }).catch(e => { console.warn('TPS: Not_Permitted_Ingredients not loaded:', e.message); REG.not_permitted=[]; });
+
     // Load conversion factor sheets — non-blocking
     fetchSheet('Mineral_Conversions').then(rows => {
       // Nested structure: mineral_conv[nq(salt)][nq(parent)] = {entry}
@@ -2005,7 +2031,7 @@ function onIngSrch(val) {
 
   const SLBL = {
     'S-I':'Sch I','S-II':'Sch II','S-III-A':'Sch III-A','S-III-B':'Sch III-B',
-    'S-IV':'Sch IV','NSF-OK':'NSF ✓','NSF-FAIL':'NSF ✗','FSSR':'FSSR'
+    'S-IV':'Sch IV','NSF-OK':'NSF ✓','NSF-FAIL':'NSF ✗','FSSR':'FSSR','BRAND':'Brand ™'
   };
 
   drop.innerHTML = raw.map(r => {
@@ -2015,10 +2041,10 @@ function onIngSrch(val) {
       : '';
     return `<div class="drop-item" onmousedown="selIng(${JSON.stringify(JSON.stringify({name:chipNm,ss:r.ss,sub:r.sub,rdaKey:r.data.RDA_Key||r.data.RDA_key||'',synonym:r.data._pn||r.data._synonym||'',saltOf:r.data._saltOf||'',luSnap:JSON.stringify({st:r.ss==='NSF-FAIL'?'nsf_fail':r.ss==='NSF-OK'?'nsf_ok':'ok',sched:r.sched==='Schedule III-A'?'Schedule III Part A':r.sched==='Schedule III-B'?'Schedule III Part B':r.sched,schedD:r.data.Schedule_Ref||r.sched||'',cat:r.data._cat||'',sno:r.data['S.No']||'',rdaKey:r.data.RDA_Key||r.data.RDA_key||'',d:r.data})})).replace(/"/g,'&quot;')})">
       <div style="flex:1;min-width:0">
-        <div class="drop-name">${hl(chipNm, val)}${saltOfLabel}</div>
+        <div class="drop-name">${hl(chipNm, val)}${saltOfLabel}${r.ss==='BRAND'?` <span style="font-size:9px;background:#FEF3C7;color:#92400E;padding:1px 5px;border-radius:3px;font-weight:600">→ ${escHtml(r.sub||'')}</span>`:''}</div>
         ${r.sub && r.sub !== '—' ? `<div class="drop-sub">${r.sub.slice(0,60)}${r.sub.length > 60 ? '…' : ''}</div>` : ''}
       </div>
-      <span class="sb ${r.ss==='NSF-OK'?'sb-nsf-ok':r.ss==='NSF-FAIL'?'sb-nsf-fail':SCLASS[r.ss]||'sb-s1'}" style="flex-shrink:0">${SLBL[r.ss]||r.ss}</span>
+      <span class="sb ${r.ss==='NSF-OK'?'sb-nsf-ok':r.ss==='NSF-FAIL'?'sb-nsf-fail':r.ss==='BRAND'?'sb-brand':SCLASS[r.ss]||'sb-s1'}" style="flex-shrink:0">${SLBL[r.ss]||r.ss}</span>
     </div>`;
   }).join('');
 
@@ -2154,9 +2180,35 @@ function rmChipById(btn){
 
 function escHtml(s){return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 
+// ─────────────────────────────────────────────────────────────────
+// SYSTEM 2 HELPERS — trade name detection (CE / image upload path)
+// Never called from search box (System 1).
+// ─────────────────────────────────────────────────────────────────
+function detectTradeName(name) {
+  if (!REG.trade_mapper || !REG.trade_mapper.length) return null;
+  const k = nq(name || '');
+  for (const r of REG.trade_mapper) {
+    const brand = nq(r.Trade_Brand_Name || '');
+    if (!brand) continue;
+    // Match if line starts with brand name (brand prefix before generic)
+    if (k === brand || k.startsWith(brand + ' ')) {
+      return {brand: r.Trade_Brand_Name, generic: r.Generic_Name, schedule: r.Schedule_Reference, row: r};
+    }
+    // Check synonyms
+    const syns = (r.Synonyms||'').split(';').map(s=>nq(s.trim())).filter(s=>s.length>2);
+    if (syns.some(s => k === s || k.startsWith(s + ' '))) {
+      return {brand: r.Trade_Brand_Name, generic: r.Generic_Name, schedule: r.Schedule_Reference, row: r};
+    }
+  }
+  return null;
+}
+
 function classifyLine(name) {
   if(!REG.loaded||!name) return 'fl-plain';
   const k=nq(name);
+
+  // PRIORITY 0 (System 2 only): Not_Permitted_Ingredients — checked before all schedules
+  if(REG.not_permitted_map && REG.not_permitted_map.size > 0 && REG.not_permitted_map.has(k)) return 'fl-notpermitted';
 
   // PRIORITY 1: Schedule I mineral/vitamin sources ALWAYS = active ingredient
   // These overlap with GMP additive list (e.g. Magnesium carbonate INS 504,
@@ -2387,6 +2439,13 @@ function getDualParents(name) {
       return parents.map(p => (entry[p] && entry[p].parentNutrient) || p);
     }
   }
+  // IDX-based fallback: check if same salt form (_dn) has 2+ different _saltOf parents
+  const idxParents = new Set();
+  for (const e of IDX) {
+    if (e.data && e.data._dn && e.data._saltOf && candidates.includes(nq(e.data._dn)))
+      idxParents.add(e.data._saltOf);
+  }
+  if (idxParents.size >= 2) return [...idxParents];
   return [];
 }
 
@@ -2452,8 +2511,34 @@ function rebuildChipsFromLines(lines,wrapId,type) {
     const m=line.match(/^(.+?)\s{2,}(\d+(?:\.\d+)?)\s*([a-zA-Z%]+(?:\s*(?:billion|million)?\s*cfu)?)?$/i);
     if(m){
       const name=m[1].trim(),str=m[2],unit=(m[3]||'mg').trim();
-      const cls=type==='ing'?chipClass(classifyLine(name)):'chip-add';
-      addChip(wrapId,line,name,str,unit,type,cls,''); // saltOf='' — from CE, no parent selection
+      if(type==='ing'){
+        const rawCls = classifyLine(name);
+        // System 2 path A: Not_Permitted_Ingredients — show chip with explicit fail + reason
+        if(rawCls === 'fl-notpermitted'){
+          const np = REG.not_permitted_map.get(nq(name));
+          const reason = np ? (np.Reason||'Not permitted') : 'Not permitted';
+          const altNote = np && np.Permitted_Alternatives && np.Permitted_Alternatives!=='—'
+            ? ' | Use: '+np.Permitted_Alternatives : '';
+          addChip(wrapId,line,name,str,unit,type,'chip-fail',reason+altNote,'','');
+        }
+        // System 2 path B: Unknown name — try Trade_Name_Mapper before marking warn
+        else if(rawCls === 'fl-warn'){
+          const tm = detectTradeName(name);
+          if(tm){
+            const cls2 = chipClass(classifyLine(tm.generic));
+            const note = 'Brand: '+tm.brand+' → '+tm.generic;
+            addChip(wrapId,line,tm.generic,str,unit,type,cls2,note,'','');
+          } else {
+            addChip(wrapId,line,name,str,unit,type,chipClass(rawCls),'','','');
+          }
+        }
+        // System 2 path C: normal match
+        else {
+          addChip(wrapId,line,name,str,unit,type,chipClass(rawCls),'','','');
+        }
+      } else {
+        addChip(wrapId,line,name,str,unit,type,'chip-add','','','');
+      }
     }
   });
   if(document.querySelector('#'+wrapId+' .chip')) document.getElementById(secId).style.display='block';
