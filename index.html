@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-  <!-- REGULYZE-BUILD-v2.7 -->
+  <!-- REGULYZE-BUILD-v2.8 -->
   <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
@@ -940,7 +940,7 @@ const SOLID_ORAL = ['tablet','capsule','softgel','veg_softgel','pills'];
 // ═══════════════════════════════════════════════════════════════════
 // LIVE REGULATION DATABASE
 // ═══════════════════════════════════════════════════════════════════
-console.log('%c✅ Regulyze v2.7 loaded', 'color:#1A6B5E;font-weight:bold;font-size:14px');
+console.log('%c✅ Regulyze v2.8 loaded', 'color:#1A6B5E;font-weight:bold;font-size:14px');
 const REG = {
   s1v:[],s1m:[],s1aa:[],s1n:[],overages:{},
   s2:[],s3a:[],s3b:[],s4pre:[],s4pro:[],
@@ -1975,7 +1975,7 @@ function searchDB(query, max=30, mode='active') {
 
   // Active: all ingredient schedules except GMP/Annexure-3 additives
   // Additive: only FSSR (GMP/ANN3 handled separately by searchAdditives)
-  const ACTIVE_SS   = new Set(['S-I','S-II','S-III-A','S-III-B','S-IV','NSF-OK','NSF-FAIL','FSSR']);
+  const ACTIVE_SS   = new Set(['S-I','S-II','S-III-A','S-III-B','S-IV','NSF-OK','NSF-FAIL','FSSR','BRAND']);
   const ADDITIVE_SS = new Set(['FSSR']);
 
   const starts   = [];   // display begins with query  → shown first
