@@ -442,6 +442,52 @@ tbody tr:hover td{background:#f8fbff}
 .app-header .h1{color:#1A6B5E}
 .app-header .h2{color:rgba(255,255,255,.78)}
 .app-header .hdr-badge{background:rgba(255,255,255,.18);color:#fff}
+/* ═══════════════ RDA CHECKER — pane4 (rdc- prefix, zero collision) ═══════════════ */
+.rdc-wrap{padding:14px 16px}
+.rdc-banner{background:#E6F5F1;border:1px solid #C4E8E2;border-radius:var(--radius-sm);padding:7px 12px;font-size:11px;color:#1A6B5E;display:inline-flex;align-items:center;gap:6px;margin-bottom:12px}
+.rdc-rows{display:flex;flex-direction:column;gap:8px;margin-bottom:12px}
+.rdc-row{display:grid;grid-template-columns:2.3fr 0.9fr 0.75fr auto;gap:7px;align-items:end}
+.rdc-field{display:flex;flex-direction:column;gap:3px}
+.rdc-field label{font-size:10px;color:var(--text-muted);font-weight:500}
+.rdc-inp{padding:7px 9px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:12px;color:var(--text);background:#fff;width:100%;outline:none;font-family:inherit;transition:border-color .15s}
+.rdc-inp:focus{border-color:#1A6B5E}
+.rdc-combo{position:relative}
+.rdc-cinp{padding-right:30px!important}
+.rdc-carr{position:absolute;right:0;top:0;height:100%;width:28px;background:none;border:none;border-left:1px solid var(--border-light);cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--text-faint);border-radius:0 var(--radius-sm) var(--radius-sm) 0;font-size:12px;transition:color .15s,background .15s}
+.rdc-carr:hover{background:var(--blue-light);color:#1A6B5E}
+.rdc-cdrop{position:absolute;top:calc(100% + 3px);left:0;right:0;background:#fff;border:1px solid var(--border);border-radius:var(--radius);max-height:220px;overflow-y:auto;z-index:300;box-shadow:0 4px 16px rgba(26,107,94,.12);display:none}
+.rdc-cgrp{padding:4px 0 2px}
+.rdc-cgrp-lbl{font-size:9.5px;font-weight:700;color:var(--text-faint);text-transform:uppercase;letter-spacing:.07em;padding:2px 10px 3px;background:var(--bg-surface);border-top:1px solid var(--border-light);border-bottom:1px solid var(--border-light);position:sticky;top:0}
+.rdc-citem{padding:6px 11px;font-size:12px;color:var(--text);cursor:pointer;transition:background .1s}
+.rdc-citem:hover,.rdc-citem.rdc-hi{background:var(--blue-light);color:#1A6B5E}
+.rdc-citem.rdc-hid{display:none}
+.rdc-cgrp.rdc-allhid{display:none}
+.rdc-nomatch{padding:12px;text-align:center;font-size:11px;color:var(--text-faint);display:none}
+.rdc-del{width:28px;height:28px;border:1px solid var(--border);border-radius:var(--radius-sm);background:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--text-faint);font-size:13px;flex-shrink:0;margin-top:18px;transition:background .15s}
+.rdc-del:hover{background:var(--fail-bg);border-color:#f7c1c1;color:var(--fail)}
+.rdc-add-btn{width:100%;border:1px dashed #C4E8E2;border-radius:var(--radius-sm);background:none;padding:7px;font-size:12px;color:var(--text-muted);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:5px;margin-bottom:10px;font-family:inherit;transition:background .15s}
+.rdc-add-btn:hover{background:var(--blue-light)}
+.rdc-calc-btn{background:#1A6B5E;color:#fff;border:none;border-radius:var(--radius-sm);padding:8px 20px;font-size:12px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:6px;font-family:inherit;transition:background .15s}
+.rdc-calc-btn:hover{background:#155a4f}
+.rdc-tbl-wrap{overflow-x:auto}
+.rdc-tbl{width:100%;border-collapse:collapse;font-size:11.5px;min-width:640px}
+.rdc-tbl thead th{padding:7px 9px;background:var(--bg-surface);border-bottom:1px solid var(--border);color:var(--text-muted);font-weight:600;font-size:10.5px;text-align:center;vertical-align:top;line-height:1.4}
+.rdc-tbl thead th.rdc-nc{text-align:left;min-width:175px;padding-left:12px}
+.rdc-pop-sel{display:block;margin-top:4px;font-size:9.5px;padding:2px 4px;border:1px solid var(--border);border-radius:4px;width:100%;background:#fff;color:var(--text);cursor:pointer;font-family:inherit}
+.rdc-tbl tbody td{padding:9px 9px;border-bottom:1px solid var(--border-light);text-align:center;vertical-align:middle}
+.rdc-tbl tbody td.rdc-nc{text-align:left;padding-left:12px}
+.rdc-tbl tbody tr:last-child td{border-bottom:none}
+.rdc-nname{font-weight:600;font-size:12px;color:var(--text)}
+.rdc-ndose{display:block;font-size:10px;color:var(--text-muted);margin-top:2px;font-weight:400;font-style:italic}
+.rdc-bdg{display:inline-block;padding:3px 9px;border-radius:var(--radius-sm);font-weight:600;font-size:11.5px;min-width:55px;text-align:center}
+.rdc-g{background:var(--ok-bg);color:var(--ok)}
+.rdc-r{background:var(--fail-bg);color:var(--fail)}
+.rdc-na{background:var(--bg-surface);color:var(--text-faint);font-size:10.5px;font-weight:400}
+.rdc-legend{display:flex;gap:14px;padding:9px 12px;border-top:1px solid var(--border-light);background:var(--bg-surface);flex-wrap:wrap}
+.rdc-leg{display:flex;align-items:center;gap:5px;font-size:10.5px;color:var(--text-muted)}
+.rdc-ld{width:9px;height:9px;border-radius:3px}
+.rdc-empty{text-align:center;padding:24px;color:var(--text-faint);font-size:12px}
+.rdc-empty i{font-size:24px;display:block;margin-bottom:6px;color:#C4E8E2}
 </style>
 </head>
 <body oncontextmenu="return false">
@@ -591,6 +637,7 @@ tbody tr:hover td{background:#f8fbff}
   <button class="tab" onclick="goTab(1)"><i class="ti ti-file-text"></i> Compliance Report</button>
   <button class="tab" onclick="goTab(2)"><i class="ti ti-checklist"></i> Label Checklist</button>
   <button class="tab" onclick="goTab(3);renderHistTab()"><i class="ti ti-history"></i> My History</button>
+  <button class="tab" onclick="goTab(4);rdcInit()"><i class="ti ti-chart-bar"></i> RDA Checker</button>
 </div>
 
 <!-- PANE 0: INPUT -->
@@ -859,6 +906,41 @@ tbody tr:hover td{background:#f8fbff}
       <div style="text-align:center;padding:26px;color:#64748b">
         <i class="ti ti-history" style="font-size:30px;display:block;margin-bottom:7px;color:#C4E8E2"></i>
         <p style="font-size:11px">Sign in to see your history</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     RDA CHECKER — PANE 4
+     Additive-only: zero changes to panes 0–3 or any existing logic
+═══════════════════════════════════════════════════════════════ -->
+<div class="pane" id="pane4">
+  <div class="rdc-wrap">
+    <span class="rdc-banner"><i class="ti ti-leaf"></i> ICMR 2020</span>
+    <div class="card">
+      <div class="card-title"><i class="ti ti-flask"></i> Ingredients</div>
+      <div class="rdc-rows" id="rdc-rows"></div>
+      <button class="rdc-add-btn" onclick="rdcAddRow()"><i class="ti ti-plus"></i> Add ingredient</button>
+      <button class="rdc-calc-btn" onclick="rdcCalc()"><i class="ti ti-calculator"></i> Calculate % RDA</button>
+    </div>
+    <div class="card" style="padding:0">
+      <div style="padding:12px 16px;border-bottom:1px solid var(--border-light);display:flex;align-items:center;gap:6px">
+        <i class="ti ti-table" style="color:#1A6B5E;font-size:14px"></i>
+        <span style="font-size:12px;font-weight:600;color:var(--text)">% RDA by target group</span>
+      </div>
+      <div class="rdc-tbl-wrap">
+        <table class="rdc-tbl">
+          <thead id="rdc-thead"></thead>
+          <tbody id="rdc-tbody">
+            <tr><td colspan="6" class="rdc-empty"><i class="ti ti-chart-bar"></i>Add ingredients above and click Calculate</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="rdc-legend">
+        <div class="rdc-leg"><div class="rdc-ld" style="background:#0F5C4A"></div> &le;100% &mdash; within RDA</div>
+        <div class="rdc-leg"><div class="rdc-ld" style="background:#A32D2D"></div> &gt;100% &mdash; exceeds RDA</div>
+        <div class="rdc-leg"><div class="rdc-ld" style="background:#e2e8f0;border:1px solid #cbd5e1"></div> N/A &mdash; no RDA data</div>
       </div>
     </div>
   </div>
@@ -5637,6 +5719,501 @@ const DEMO = (function(){
   },300);
   setTimeout(()=>{ DEMO.start(); }, 1200);
 })();
+
+// ═══════════════════════════════════════════════════════════════
+// RDA CHECKER — ALL vars/functions prefixed RDC_/rdc
+// Uses existing getRDA(), toMg(), convToRdaUnit() — zero collision
+// ═══════════════════════════════════════════════════════════════
+const RDC_ING = [
+// Vitamins
+{g:"Vitamins",       d:"Vitamin A",                      k:"vitamin_a",   u:"mcg",s:false},
+{g:"Vitamins",       d:"Vitamin C",                      k:"vitamin_c",   u:"mg", s:false},
+{g:"Vitamins",       d:"Vitamin D",                      k:"vitamin_d",   u:"IU", s:false},
+{g:"Vitamins",       d:"Vitamin E",                      k:"vitamin_e",   u:"mg", s:false},
+{g:"Vitamins",       d:"Vitamin K",                      k:"vitamin_k",   u:"mcg",s:false},
+{g:"Vitamins",       d:"Thiamine / Vitamin B1",          k:"vitamin_b1",  u:"mg", s:false},
+{g:"Vitamins",       d:"Riboflavin / Vitamin B2",        k:"vitamin_b2",  u:"mg", s:false},
+{g:"Vitamins",       d:"Niacin / Vitamin B3",            k:"niacin",      u:"mg", s:false},
+{g:"Vitamins",       d:"Pantothenic Acid / Vitamin B5",  k:"pantothenic", u:"mg", s:false},
+{g:"Vitamins",       d:"Pyridoxine / Vitamin B6",        k:"vitamin_b6",  u:"mg", s:false},
+{g:"Vitamins",       d:"Biotin / Vitamin B7",            k:"biotin",      u:"mcg",s:false},
+{g:"Vitamins",       d:"Folic Acid / Vitamin B9",        k:"folic_acid",  u:"mcg",s:false},
+{g:"Vitamins",       d:"Folate / Vitamin B9",            k:"folate",      u:"mcg",s:false},
+{g:"Vitamins",       d:"Cobalamin / Vitamin B12",        k:"vitamin_b12", u:"mcg",s:false},
+// Vitamin A forms
+{g:"Vitamin Forms",  d:"Retinyl Acetate",                k:"vitamin_a",   u:"mcg",s:true,f:0.872,p:"Vitamin A"},
+{g:"Vitamin Forms",  d:"Retinyl Palmitate",              k:"vitamin_a",   u:"mcg",s:true,f:0.546,p:"Vitamin A"},
+{g:"Vitamin Forms",  d:"Beta-Carotene",                  k:"vitamin_a",   u:"mg", s:true,f:0.083,p:"Vitamin A"},
+// Vitamin C forms
+{g:"Vitamin Forms",  d:"Ascorbic Acid",                  k:"vitamin_c",   u:"mg", s:true,f:1.000,p:"Vitamin C"},
+{g:"Vitamin Forms",  d:"Sodium Ascorbate",               k:"vitamin_c",   u:"mg", s:true,f:0.889,p:"Vitamin C"},
+{g:"Vitamin Forms",  d:"Calcium Ascorbate",              k:"vitamin_c",   u:"mg", s:true,f:0.890,p:"Vitamin C"},
+{g:"Vitamin Forms",  d:"Magnesium Ascorbate",            k:"vitamin_c",   u:"mg", s:true,f:0.941,p:"Vitamin C"},
+{g:"Vitamin Forms",  d:"Potassium Ascorbate",            k:"vitamin_c",   u:"mg", s:true,f:0.886,p:"Vitamin C"},
+{g:"Vitamin Forms",  d:"Zinc Ascorbate",                 k:"vitamin_c",   u:"mg", s:true,f:0.810,p:"Vitamin C"},
+{g:"Vitamin Forms",  d:"Ascorbyl Palmitate",             k:"vitamin_c",   u:"mg", s:true,f:0.425,p:"Vitamin C"},
+// Vitamin D forms
+{g:"Vitamin Forms",  d:"Cholecalciferol",                k:"vitamin_d",   u:"mcg",s:true,f:40,   p:"Vitamin D",ct:"mcg_to_IU"},
+{g:"Vitamin Forms",  d:"Ergocalciferol",                 k:"vitamin_d",   u:"mcg",s:true,f:40,   p:"Vitamin D",ct:"mcg_to_IU"},
+// Vitamin E forms
+{g:"Vitamin Forms",  d:"d-Alpha Tocopherol",             k:"vitamin_e",   u:"mg", s:true,f:1.000,p:"Vitamin E"},
+{g:"Vitamin Forms",  d:"dl-Alpha Tocopherol",            k:"vitamin_e",   u:"mg", s:true,f:1.000,p:"Vitamin E"},
+{g:"Vitamin Forms",  d:"d-Alpha Tocopheryl Acetate",     k:"vitamin_e",   u:"mg", s:true,f:0.671,p:"Vitamin E"},
+{g:"Vitamin Forms",  d:"dl-Alpha Tocopheryl Acetate",    k:"vitamin_e",   u:"mg", s:true,f:0.671,p:"Vitamin E"},
+{g:"Vitamin Forms",  d:"d-Alpha Tocopheryl Succinate",   k:"vitamin_e",   u:"mg", s:true,f:0.625,p:"Vitamin E"},
+{g:"Vitamin Forms",  d:"Mixed Tocopherols",              k:"vitamin_e",   u:"mg", s:true,f:1.000,p:"Vitamin E"},
+// Vitamin K forms
+{g:"Vitamin Forms",  d:"Phytonadione (Vitamin K1)",      k:"vitamin_k",   u:"mcg",s:true,f:1.000,p:"Vitamin K"},
+{g:"Vitamin Forms",  d:"Menaquinone-4 (MK-4, K2)",       k:"vitamin_k",   u:"mcg",s:true,f:1.000,p:"Vitamin K"},
+{g:"Vitamin Forms",  d:"Menaquinone-7 (MK-7, K2)",       k:"vitamin_k",   u:"mcg",s:true,f:1.000,p:"Vitamin K"},
+// B1 forms
+{g:"Vitamin Forms",  d:"Thiamine Hydrochloride",         k:"vitamin_b1",  u:"mg", s:true,f:0.892,p:"Vitamin B1"},
+{g:"Vitamin Forms",  d:"Thiamine Mononitrate",           k:"vitamin_b1",  u:"mg", s:true,f:0.818,p:"Vitamin B1"},
+// B2 forms
+{g:"Vitamin Forms",  d:"Riboflavin",                     k:"vitamin_b2",  u:"mg", s:true,f:1.000,p:"Vitamin B2"},
+{g:"Vitamin Forms",  d:"Riboflavin 5-Phosphate",         k:"vitamin_b2",  u:"mg", s:true,f:0.736,p:"Vitamin B2"},
+{g:"Vitamin Forms",  d:"Riboflavin Sodium Phosphate",    k:"vitamin_b2",  u:"mg", s:true,f:0.736,p:"Vitamin B2"},
+// B3 forms
+{g:"Vitamin Forms",  d:"Nicotinamide (Niacinamide)",     k:"niacin",      u:"mg", s:true,f:1.000,p:"Niacin"},
+{g:"Vitamin Forms",  d:"Nicotinic Acid",                 k:"niacin",      u:"mg", s:true,f:1.000,p:"Niacin"},
+{g:"Vitamin Forms",  d:"Inositol Hexanicotinate",        k:"niacin",      u:"mg", s:true,f:0.982,p:"Niacin"},
+// B5 forms
+{g:"Vitamin Forms",  d:"Calcium Pantothenate",           k:"pantothenic", u:"mg", s:true,f:0.920,p:"Pantothenic Acid"},
+{g:"Vitamin Forms",  d:"D-Panthenol",                    k:"pantothenic", u:"mg", s:true,f:1.000,p:"Pantothenic Acid"},
+{g:"Vitamin Forms",  d:"DL-Panthenol",                   k:"pantothenic", u:"mg", s:true,f:1.000,p:"Pantothenic Acid"},
+// B6 forms
+{g:"Vitamin Forms",  d:"Pyridoxine Hydrochloride",       k:"vitamin_b6",  u:"mg", s:true,f:0.824,p:"Vitamin B6"},
+{g:"Vitamin Forms",  d:"Pyridoxal 5-Phosphate",          k:"vitamin_b6",  u:"mg", s:true,f:0.740,p:"Vitamin B6"},
+// B7 forms
+{g:"Vitamin Forms",  d:"D-Biotin",                       k:"biotin",      u:"mcg",s:true,f:1.000,p:"Biotin"},
+// B9 forms
+{g:"Vitamin Forms",  d:"5-Methyltetrahydrofolate",       k:"folic_acid",  u:"mcg",s:true,f:1.000,p:"Folic Acid"},
+{g:"Vitamin Forms",  d:"Calcium L-5-MTHF",               k:"folic_acid",  u:"mcg",s:true,f:0.791,p:"Folic Acid"},
+{g:"Vitamin Forms",  d:"L-Methylfolate Calcium",         k:"folic_acid",  u:"mcg",s:true,f:0.791,p:"Folic Acid"},
+// B12 forms
+{g:"Vitamin Forms",  d:"Cyanocobalamin",                 k:"vitamin_b12", u:"mcg",s:true,f:1.000,p:"Vitamin B12"},
+{g:"Vitamin Forms",  d:"Methylcobalamin",                k:"vitamin_b12", u:"mcg",s:true,f:0.990,p:"Vitamin B12"},
+{g:"Vitamin Forms",  d:"Hydroxocobalamin",               k:"vitamin_b12", u:"mcg",s:true,f:0.990,p:"Vitamin B12"},
+{g:"Vitamin Forms",  d:"Adenosylcobalamin",              k:"vitamin_b12", u:"mcg",s:true,f:0.990,p:"Vitamin B12"},
+// Minerals
+{g:"Minerals",       d:"Calcium",                        k:"calcium",     u:"mg", s:false},
+{g:"Minerals",       d:"Magnesium",                      k:"magnesium",   u:"mg", s:false},
+{g:"Minerals",       d:"Iron",                           k:"iron",        u:"mg", s:false},
+{g:"Minerals",       d:"Zinc",                           k:"zinc",        u:"mg", s:false},
+{g:"Minerals",       d:"Iodine",                         k:"iodine",      u:"mcg",s:false},
+{g:"Minerals",       d:"Copper",                         k:"copper",      u:"mg", s:false},
+{g:"Minerals",       d:"Selenium",                       k:"selenium",    u:"mcg",s:false},
+{g:"Minerals",       d:"Chromium",                       k:"chromium",    u:"mcg",s:false},
+{g:"Minerals",       d:"Manganese",                      k:"manganese",   u:"mg", s:false},
+// Calcium salts
+{g:"Mineral Salts",  d:"Calcium Carbonate",              k:"calcium",     u:"mg", s:true,f:0.400,p:"Calcium"},
+{g:"Mineral Salts",  d:"Calcium Citrate",                k:"calcium",     u:"mg", s:true,f:0.211,p:"Calcium"},
+{g:"Mineral Salts",  d:"Calcium Gluconate",              k:"calcium",     u:"mg", s:true,f:0.090,p:"Calcium"},
+{g:"Mineral Salts",  d:"Calcium Chloride",               k:"calcium",     u:"mg", s:true,f:0.363,p:"Calcium"},
+{g:"Mineral Salts",  d:"Dibasic Calcium Phosphate",      k:"calcium",     u:"mg", s:true,f:0.233,p:"Calcium"},
+{g:"Mineral Salts",  d:"Tribasic Calcium Phosphate",     k:"calcium",     u:"mg", s:true,f:0.388,p:"Calcium"},
+{g:"Mineral Salts",  d:"Calcium Lactate",                k:"calcium",     u:"mg", s:true,f:0.130,p:"Calcium"},
+{g:"Mineral Salts",  d:"Calcium Hydrogen Phosphate",     k:"calcium",     u:"mg", s:true,f:0.293,p:"Calcium"},
+{g:"Mineral Salts",  d:"Calcium L-Threonate",            k:"calcium",     u:"mg", s:true,f:0.121,p:"Calcium"},
+{g:"Mineral Salts",  d:"Calcium Orotate",                k:"calcium",     u:"mg", s:true,f:0.219,p:"Calcium"},
+// Magnesium salts
+{g:"Mineral Salts",  d:"Magnesium Chloride",             k:"magnesium",   u:"mg", s:true,f:0.1197,p:"Magnesium"},
+{g:"Mineral Salts",  d:"Magnesium Oxide",                k:"magnesium",   u:"mg", s:true,f:0.604, p:"Magnesium"},
+{g:"Mineral Salts",  d:"Magnesium Sulphate",             k:"magnesium",   u:"mg", s:true,f:0.099, p:"Magnesium"},
+{g:"Mineral Salts",  d:"Magnesium Citrate",              k:"magnesium",   u:"mg", s:true,f:0.161, p:"Magnesium"},
+{g:"Mineral Salts",  d:"Magnesium Gluconate",            k:"magnesium",   u:"mg", s:true,f:0.054, p:"Magnesium"},
+{g:"Mineral Salts",  d:"Magnesium Hydroxide",            k:"magnesium",   u:"mg", s:true,f:0.417, p:"Magnesium"},
+{g:"Mineral Salts",  d:"Magnesium Lactate",              k:"magnesium",   u:"mg", s:true,f:0.120, p:"Magnesium"},
+{g:"Mineral Salts",  d:"Magnesium Orotate",              k:"magnesium",   u:"mg", s:true,f:0.069, p:"Magnesium"},
+{g:"Mineral Salts",  d:"Magnesium L-Threonate",          k:"magnesium",   u:"mg", s:true,f:0.075, p:"Magnesium"},
+{g:"Mineral Salts",  d:"Magnesium Malate",               k:"magnesium",   u:"mg", s:true,f:0.154, p:"Magnesium"},
+{g:"Mineral Salts",  d:"Magnesium Taurate",              k:"magnesium",   u:"mg", s:true,f:0.098, p:"Magnesium"},
+// Iron salts
+{g:"Mineral Salts",  d:"Ferrous Fumarate",               k:"iron",        u:"mg", s:true,f:0.329,p:"Iron"},
+{g:"Mineral Salts",  d:"Ferrous Sulphate",               k:"iron",        u:"mg", s:true,f:0.200,p:"Iron"},
+{g:"Mineral Salts",  d:"Ferrous Gluconate",              k:"iron",        u:"mg", s:true,f:0.120,p:"Iron"},
+{g:"Mineral Salts",  d:"Ferric Pyrophosphate",           k:"iron",        u:"mg", s:true,f:0.247,p:"Iron"},
+{g:"Mineral Salts",  d:"Ferrous Bisglycinate",           k:"iron",        u:"mg", s:true,f:0.200,p:"Iron"},
+{g:"Mineral Salts",  d:"Carbonyl Iron",                  k:"iron",        u:"mg", s:true,f:0.995,p:"Iron"},
+{g:"Mineral Salts",  d:"Ferric Ammonium Citrate",        k:"iron",        u:"mg", s:true,f:0.175,p:"Iron"},
+{g:"Mineral Salts",  d:"Ferrous Succinate",              k:"iron",        u:"mg", s:true,f:0.350,p:"Iron"},
+{g:"Mineral Salts",  d:"Ferric Orthophosphate",          k:"iron",        u:"mg", s:true,f:0.370,p:"Iron"},
+// Zinc salts
+{g:"Mineral Salts",  d:"Zinc Sulphate",                  k:"zinc",        u:"mg", s:true,f:0.228,p:"Zinc"},
+{g:"Mineral Salts",  d:"Zinc Gluconate",                 k:"zinc",        u:"mg", s:true,f:0.143,p:"Zinc"},
+{g:"Mineral Salts",  d:"Zinc Oxide",                     k:"zinc",        u:"mg", s:true,f:0.803,p:"Zinc"},
+{g:"Mineral Salts",  d:"Zinc Citrate",                   k:"zinc",        u:"mg", s:true,f:0.312,p:"Zinc"},
+{g:"Mineral Salts",  d:"Zinc Bisglycinate",              k:"zinc",        u:"mg", s:true,f:0.220,p:"Zinc"},
+{g:"Mineral Salts",  d:"Zinc Picolinate",                k:"zinc",        u:"mg", s:true,f:0.209,p:"Zinc"},
+{g:"Mineral Salts",  d:"Zinc Acetate",                   k:"zinc",        u:"mg", s:true,f:0.353,p:"Zinc"},
+{g:"Mineral Salts",  d:"Zinc Carbonate",                 k:"zinc",        u:"mg", s:true,f:0.521,p:"Zinc"},
+// Iodine
+{g:"Mineral Salts",  d:"Potassium Iodide",               k:"iodine",      u:"mcg",s:true,f:0.764,p:"Iodine"},
+{g:"Mineral Salts",  d:"Potassium Iodate",               k:"iodine",      u:"mcg",s:true,f:0.593,p:"Iodine"},
+{g:"Mineral Salts",  d:"Sodium Iodide",                  k:"iodine",      u:"mcg",s:true,f:0.846,p:"Iodine"},
+// Copper
+{g:"Mineral Salts",  d:"Copper Sulphate",                k:"copper",      u:"mg", s:true,f:0.254,p:"Copper"},
+{g:"Mineral Salts",  d:"Copper Gluconate",               k:"copper",      u:"mg", s:true,f:0.144,p:"Copper"},
+{g:"Mineral Salts",  d:"Cupric Oxide",                   k:"copper",      u:"mg", s:true,f:0.799,p:"Copper"},
+{g:"Mineral Salts",  d:"Copper Bisglycinate",            k:"copper",      u:"mg", s:true,f:0.220,p:"Copper"},
+// Selenium
+{g:"Mineral Salts",  d:"Sodium Selenate",                k:"selenium",    u:"mcg",s:true,f:0.417,p:"Selenium"},
+{g:"Mineral Salts",  d:"Sodium Selenite",                k:"selenium",    u:"mcg",s:true,f:0.457,p:"Selenium"},
+{g:"Mineral Salts",  d:"L-Selenomethionine",             k:"selenium",    u:"mcg",s:true,f:0.406,p:"Selenium"},
+// Chromium
+{g:"Mineral Salts",  d:"Chromic Chloride",               k:"chromium",    u:"mcg",s:true,f:0.197,p:"Chromium"},
+{g:"Mineral Salts",  d:"Chromium Picolinate",            k:"chromium",    u:"mcg",s:true,f:0.124,p:"Chromium"},
+{g:"Mineral Salts",  d:"Chromium Nicotinate",            k:"chromium",    u:"mcg",s:true,f:0.120,p:"Chromium"},
+// Manganese
+{g:"Mineral Salts",  d:"Manganese Sulphate",             k:"manganese",   u:"mg", s:true,f:0.325,p:"Manganese"},
+{g:"Mineral Salts",  d:"Manganese Gluconate",            k:"manganese",   u:"mg", s:true,f:0.220,p:"Manganese"},
+{g:"Mineral Salts",  d:"Manganese Bisglycinate",         k:"manganese",   u:"mg", s:true,f:0.220,p:"Manganese"},
+{g:"Mineral Salts",  d:"Manganese Citrate",              k:"manganese",   u:"mg", s:true,f:0.280,p:"Manganese"},
+// Amino Acids
+{g:"Amino Acids",    d:"L-Histidine",                    k:"histidine",   u:"mg", s:false},
+{g:"Amino Acids",    d:"L-Isoleucine",                   k:"isoleucine",  u:"mg", s:false},
+{g:"Amino Acids",    d:"L-Leucine",                      k:"leucine",     u:"mg", s:false},
+{g:"Amino Acids",    d:"L-Lysine",                       k:"lysine",      u:"mg", s:false},
+{g:"Amino Acids",    d:"L-Methionine",                   k:"methionine",  u:"mg", s:false},
+{g:"Amino Acids",    d:"L-Cysteine",                     k:"cysteine",    u:"mg", s:false},
+{g:"Amino Acids",    d:"L-Threonine",                    k:"threonine",   u:"mg", s:false},
+{g:"Amino Acids",    d:"L-Tryptophan",                   k:"tryptophan",  u:"mg", s:false},
+{g:"Amino Acids",    d:"L-Valine",                       k:"valine",      u:"mg", s:false},
+{g:"Amino Acids",    d:"L-Phenylalanine",                k:"phenylalanine",u:"mg",s:false},
+{g:"Amino Acids",    d:"L-Tyrosine",                     k:"tyrosine",    u:"mg", s:false},
+{g:"Amino Acids",    d:"L-Arginine",                     k:"arginine",    u:"mg", s:false},
+{g:"Amino Acids",    d:"L-Lysine Hydrochloride",         k:"lysine",      u:"mg", s:true,f:0.800,p:"L-Lysine"},
+{g:"Amino Acids",    d:"L-Histidine Hydrochloride",      k:"histidine",   u:"mg", s:true,f:0.850,p:"L-Histidine"},
+{g:"Amino Acids",    d:"L-Arginine Hydrochloride",       k:"arginine",    u:"mg", s:true,f:0.825,p:"L-Arginine"},
+];
+
+const RDC_ALL_POPS = [
+  {k:'sed_men',    l:'Sedentary Men (65 kg)'},
+  {k:'heavy_men',  l:'Heavy Men (65 kg)'},
+  {k:'sed_women',  l:'Sedentary Women (55 kg)'},
+  {k:'heavy_women',l:'Heavy Women (55 kg)'},
+  {k:'pregnant',   l:'Pregnant Women (65 kg)'},
+  {k:'mod_men',    l:'Moderate Men (65 kg)'},
+  {k:'mod_women',  l:'Moderate Women (55 kg)'},
+  {k:'lactating',  l:'Lactating Women (55 kg)'},
+  {k:'child_1_3',  l:'Children 1-3y (12.9 kg)'},
+  {k:'child_4_6',  l:'Children 4-6y (18.3 kg)'},
+  {k:'child_7_9',  l:'Children 7-9y (25.3 kg)'},
+  {k:'boys_10_12', l:'Boys 10-12y (34.9 kg)'},
+  {k:'girls_10_12',l:'Girls 10-12y (36.4 kg)'},
+  {k:'boys_13_15', l:'Boys 13-15y (50.5 kg)'},
+  {k:'girls_13_15',l:'Girls 13-15y (49.6 kg)'},
+  {k:'boys_16_18', l:'Boys 16-18y (64.4 kg)'},
+  {k:'girls_16_18',l:'Girls 16-18y (55.7 kg)'},
+];
+let RDC_COLS = ['sed_men','heavy_men','sed_women','heavy_women','pregnant'];
+let RDC_ROWS = [];
+let RDC__id   = 0;
+let RDC__inited = false;
+
+// ── Formatter ────────────────────────────────────────────────────────────────
+function rdcFmt(n) {
+  if (n === null || n === undefined || isNaN(n)) return '-';
+  if (n >= 10000) return Math.round(n).toLocaleString();
+  if (n >= 100)   return (+n.toFixed(1)).toString();
+  if (n >= 1)     return (+n.toFixed(2)).toString();
+  if (n >= 0.01)  return (+n.toFixed(3)).toString();
+  return (+n.toFixed(4)).toString();
+}
+
+// ── Elemental calculation ─────────────────────────────────────────────────────
+// Uses existing toMg() and convToRdaUnit() from main app
+function rdcElemental(ing, str, uom) {
+  if (!ing || !str || isNaN(str) || +str <= 0) return null;
+  const k = ing.k;
+  let v, note;
+
+  if (!ing.s) {
+    // Elemental: convert entered UOM to RDA unit via existing convToRdaUnit
+    try { v = convToRdaUnit(+str, uom, k); } catch(e) { v = toMg(+str, uom); }
+    note = rdcFmt(+str) + ' ' + uom;
+  } else if (ing.ct === 'mcg_to_IU') {
+    // Cholecalciferol / Ergocalciferol: entered unit → mcg → × factor → IU
+    const u = (uom || 'mcg').toLowerCase();
+    let mcg = +str;
+    if (u === 'mg')  mcg = +str * 1000;
+    else if (u === 'gm') mcg = +str * 1000000;
+    else if (u === 'iu') mcg = +str / ing.f; // reverse: IU / factor = mcg
+    v = mcg * ing.f;
+    note = ing.d + ' ' + rdcFmt(+str) + ' ' + uom + ' → ' + rdcFmt(+v.toFixed(0)) + ' IU ' + ing.p;
+  } else {
+    // Standard salt: toMg → × factor → elemental mg → convToRdaUnit
+    const sMg  = toMg(+str, uom);
+    const eMg  = sMg * ing.f;
+    let   eRda = eMg;
+    try { eRda = convToRdaUnit(eMg, 'mg', k); } catch(e) {}
+    const rdaR = REG.rda && REG.rda[k];
+    const rdaU = rdaR ? (rdaR.uom || rdaR.UOM || 'mg') : 'mg';
+    note = ing.d + ' ' + rdcFmt(+str) + ' ' + uom +
+           ' → ' + rdcFmt(+(eRda).toFixed(3)) + ' ' + rdaU + ' ' + (ing.p || 'elemental');
+    v = eRda;
+  }
+  return { v, k, note };
+}
+
+// ── Combobox ──────────────────────────────────────────────────────────────────
+function rdcDropHtml(id) {
+  const grps = [...new Set(RDC_ING.map(i => i.g))];
+  return grps.map(g => {
+    const items = RDC_ING.filter(i => i.g === g).map(i =>
+      '<div class="rdc-citem" data-v="' + i.d.replace(/"/g,'&quot;') +
+      '" data-id="' + id + '" onclick="rdcSelIng(this)">' + i.d + '</div>'
+    ).join('');
+    return '<div class="rdc-cgrp"><div class="rdc-cgrp-lbl">' + g + '</div>' + items + '</div>';
+  }).join('') + '<div class="rdc-nomatch" id="rdc-nm-' + id + '">No match found</div>';
+}
+
+function rdcOpenDrop(id) {
+  const el = document.getElementById('rdc-drop-' + id);
+  if (!el) return;
+  if (!el.innerHTML) el.innerHTML = rdcDropHtml(id);
+  el.style.display = 'block';
+}
+function rdcCloseDrop(id) {
+  const el = document.getElementById('rdc-drop-' + id);
+  if (el) el.style.display = 'none';
+}
+function rdcToggleDrop(id) {
+  const el = document.getElementById('rdc-drop-' + id);
+  if (!el) return;
+  if (!el.innerHTML) el.innerHTML = rdcDropHtml(id);
+  if (el.style.display === 'block') { rdcCloseDrop(id); }
+  else { rdcOpenDrop(id); rdcFilterDrop(id, (document.getElementById('rdc-cinp-' + id) || {}).value || ''); }
+}
+function rdcFilterDrop(id, q) {
+  const el = document.getElementById('rdc-drop-' + id);
+  if (!el) return;
+  if (!el.innerHTML) el.innerHTML = rdcDropHtml(id);
+  el.style.display = 'block';
+  const lq = (q || '').toLowerCase().trim();
+  let any = false;
+  el.querySelectorAll('.rdc-citem').forEach(it => {
+    const m = !lq || it.dataset.v.toLowerCase().includes(lq);
+    it.classList.toggle('rdc-hid', !m);
+    if (m) any = true;
+  });
+  el.querySelectorAll('.rdc-cgrp').forEach(g => {
+    const vis = [...g.querySelectorAll('.rdc-citem')].some(i => !i.classList.contains('rdc-hid'));
+    g.classList.toggle('rdc-allhid', !vis);
+  });
+  const nm = document.getElementById('rdc-nm-' + id);
+  if (nm) nm.style.display = any ? 'none' : 'block';
+}
+function rdcSelIng(el) {
+  const id   = +el.dataset.id;
+  const name = el.dataset.v;
+  const row  = RDC_ROWS.find(r => r.id === id); if (!row) return;
+  row.ing = name;
+  const ing = RDC_ING.find(i => i.d === name);
+  if (ing) row.uom = ing.u;
+  const inp = document.getElementById('rdc-cinp-' + id);
+  if (inp) inp.value = name;
+  rdcCloseDrop(id);
+  // Update UOM select for this row only (no full re-render)
+  const rowEl = document.getElementById('rdc-row-' + id);
+  if (rowEl && ing) {
+    const sel = rowEl.querySelector('.rdc-uom-sel');
+    if (sel) sel.innerHTML = rdcUomOpts(ing.u);
+  }
+}
+function rdcBlurCombo(id) {
+  setTimeout(function() {
+    rdcCloseDrop(id);
+    const inp = document.getElementById('rdc-cinp-' + id);
+    const row = RDC_ROWS.find(r => r.id === id);
+    if (inp && row) inp.value = row.ing || '';
+  }, 160);
+}
+function rdcKeyDrop(e, id) {
+  const drop = document.getElementById('rdc-drop-' + id);
+  if (!drop) return;
+  const vis = [...drop.querySelectorAll('.rdc-citem:not(.rdc-hid)')];
+  const cur = drop.querySelector('.rdc-citem.rdc-hi');
+  const ci  = cur ? vis.indexOf(cur) : -1;
+  if (e.key === 'ArrowDown') {
+    e.preventDefault();
+    if (drop.style.display !== 'block') rdcOpenDrop(id);
+    vis.forEach(i => i.classList.remove('rdc-hi'));
+    const nx = vis[ci + 1] || vis[0];
+    if (nx) { nx.classList.add('rdc-hi'); nx.scrollIntoView({ block: 'nearest' }); }
+  } else if (e.key === 'ArrowUp') {
+    e.preventDefault();
+    vis.forEach(i => i.classList.remove('rdc-hi'));
+    const pv = vis[ci - 1] || vis[vis.length - 1];
+    if (pv) { pv.classList.add('rdc-hi'); pv.scrollIntoView({ block: 'nearest' }); }
+  } else if (e.key === 'Enter') {
+    if (cur) cur.click(); else rdcCloseDrop(id);
+  } else if (e.key === 'Escape') {
+    rdcCloseDrop(id);
+  }
+}
+// Close dropdowns when clicking outside RDC combos
+document.addEventListener('mousedown', function(e) {
+  RDC_ROWS.forEach(function(r) {
+    const c = document.getElementById('rdc-cmb-' + r.id);
+    if (c && !c.contains(e.target)) rdcCloseDrop(r.id);
+  });
+});
+
+// ── Row management ────────────────────────────────────────────────────────────
+function rdcUomOpts(def) {
+  return ['mg','mcg','gm','IU'].map(function(u) {
+    return '<option' + (u === def ? ' selected' : '') + '>' + u + '</option>';
+  }).join('');
+}
+function rdcRowHtml(r) {
+  const ing = RDC_ING.find(i => i.d === r.ing);
+  const uom = r.uom || (ing ? ing.u : 'mg');
+  return '<div class="rdc-row" id="rdc-row-' + r.id + '">' +
+    '<div class="rdc-field"><label>Ingredient</label>' +
+    '<div class="rdc-combo" id="rdc-cmb-' + r.id + '">' +
+    '<input type="text" class="rdc-inp rdc-cinp" id="rdc-cinp-' + r.id + '"' +
+    ' value="' + (r.ing || '').replace(/"/g, '&quot;') + '"' +
+    ' placeholder="Type or select…" autocomplete="off"' +
+    ' oninput="rdcFilterDrop(' + r.id + ',this.value)"' +
+    ' onfocus="rdcOpenDrop(' + r.id + ')"' +
+    ' onblur="rdcBlurCombo(' + r.id + ')"' +
+    ' onkeydown="rdcKeyDrop(event,' + r.id + ')">' +
+    '<button class="rdc-carr" type="button"' +
+    ' onmousedown="event.preventDefault()"' +
+    ' onclick="rdcToggleDrop(' + r.id + ')">' +
+    '<i class="ti ti-chevron-down"></i></button>' +
+    '<div class="rdc-cdrop" id="rdc-drop-' + r.id + '"></div>' +
+    '</div></div>' +
+    '<div class="rdc-field"><label>Strength</label>' +
+    '<input type="number" class="rdc-inp" min="0" step="any" value="' + (r.str || '') + '"' +
+    ' placeholder="e.g. 500"' +
+    ' onchange="RDC_ROWS.find(function(x){return x.id==' + r.id + ';}).str=this.value"></div>' +
+    '<div class="rdc-field"><label>UOM</label>' +
+    '<select class="rdc-inp rdc-uom-sel"' +
+    ' onchange="RDC_ROWS.find(function(x){return x.id==' + r.id + ';}).uom=this.value">' +
+    rdcUomOpts(uom) + '</select></div>' +
+    '<button class="rdc-del" onclick="rdcRemoveRow(' + r.id + ')" title="Remove">' +
+    '<i class="ti ti-trash"></i></button>' +
+    '</div>';
+}
+function rdcRenderRows() {
+  const el = document.getElementById('rdc-rows');
+  if (el) el.innerHTML = RDC_ROWS.map(rdcRowHtml).join('');
+}
+function rdcAddRow(ing, str, uom) {
+  const id = ++RDC__id;
+  const defIng = RDC_ING.find(i => i.d === ing);
+  RDC_ROWS.push({ id, ing: ing || null, str: str || '', uom: uom || (defIng ? defIng.u : 'mg') });
+  rdcRenderRows();
+}
+function rdcRemoveRow(id) {
+  const i = RDC_ROWS.findIndex(r => r.id === id);
+  if (i >= 0) RDC_ROWS.splice(i, 1);
+  rdcRenderRows();
+}
+
+// ── Results table ─────────────────────────────────────────────────────────────
+function rdcColLabel(pk) {
+  return (RDC_ALL_POPS.find(p => p.k === pk) || { l: pk }).l.replace(/ \(\d+ kg\)/, '');
+}
+function rdcColOpts(cur) {
+  return RDC_ALL_POPS.map(p =>
+    '<option value="' + p.k + '"' + (p.k === cur ? ' selected' : '') + '>' + p.l + '</option>'
+  ).join('');
+}
+function rdcChangeCol(ci, nk) { RDC_COLS[ci] = nk; rdcRenderTable(); }
+
+function rdcBuildHead() {
+  return '<tr><th class="rdc-nc">Nutrient &middot; Dose</th>' +
+    RDC_COLS.map(function(pk, ci) {
+      return '<th>' + rdcColLabel(pk) +
+        '<select class="rdc-pop-sel" onchange="rdcChangeCol(' + ci + ',this.value)">' +
+        rdcColOpts(pk) + '</select></th>';
+    }).join('') + '</tr>';
+}
+
+function rdcRenderTable() {
+  const thead = document.getElementById('rdc-thead');
+  const tbody = document.getElementById('rdc-tbody');
+  if (!thead || !tbody) return;
+  thead.innerHTML = rdcBuildHead();
+  const valid = RDC_ROWS.filter(r => r.ing && r.str && +r.str > 0);
+  if (!valid.length) {
+    tbody.innerHTML = '<tr><td colspan="6" class="rdc-empty"><i class="ti ti-chart-bar"></i>No valid rows to calculate</td></tr>';
+    return;
+  }
+  let html = '';
+  valid.forEach(function(r) {
+    const ing = RDC_ING.find(i => i.d === r.ing); if (!ing) return;
+    const el  = rdcElemental(ing, +r.str, r.uom || 'mg'); if (!el) return;
+    const rdaR = REG.rda && REG.rda[el.k];
+    const nname = rdaR
+      ? (rdaR.uom ? rdaR : RDC_ING.find(i => !i.s && i.k === el.k) || {}).n || el.k
+      : (ing.s ? (ing.p || ing.d) : ing.d);
+    // Friendly display name from RDA row if available
+    const dispName = (function() {
+      if (rdaR && rdaR.nutrient_key) {
+        // Build from rdaKey nicely
+        const nice = {vitamin_a:'Vitamin A',vitamin_c:'Vitamin C',vitamin_d:'Vitamin D',
+          vitamin_e:'Vitamin E',vitamin_k:'Vitamin K',vitamin_b1:'Vitamin B1 (Thiamine)',
+          vitamin_b2:'Vitamin B2 (Riboflavin)',niacin:'Niacin (Vitamin B3)',
+          pantothenic:'Pantothenic Acid (B5)',vitamin_b6:'Vitamin B6 (Pyridoxine)',
+          biotin:'Biotin (Vitamin B7)',folic_acid:'Folic Acid (Vitamin B9)',
+          folate:'Folate (Vitamin B9)',vitamin_b12:'Vitamin B12 (Cobalamin)',
+          calcium:'Calcium',magnesium:'Magnesium',iron:'Iron',zinc:'Zinc',
+          iodine:'Iodine',copper:'Copper',selenium:'Selenium',chromium:'Chromium',
+          manganese:'Manganese',histidine:'L-Histidine',isoleucine:'L-Isoleucine',
+          leucine:'L-Leucine',lysine:'L-Lysine',methionine:'L-Methionine',
+          cysteine:'L-Cysteine',threonine:'L-Threonine',tryptophan:'L-Tryptophan',
+          valine:'L-Valine',phenylalanine:'L-Phenylalanine',tyrosine:'L-Tyrosine'};
+        return nice[el.k] || el.k;
+      }
+      return ing.s ? (ing.p || ing.d) : ing.d;
+    })();
+
+    const cells = RDC_COLS.map(function(pk) {
+      const rdaInfo = (typeof getRDA === 'function') ? getRDA(el.k, pk) : null;
+      if (!rdaInfo) return '<td><span class="rdc-bdg rdc-na">N/A</span></td>';
+      const pct = (el.v / rdaInfo.rda) * 100;
+      const cls = pct <= 100 ? 'rdc-g' : 'rdc-r';
+      return '<td><span class="rdc-bdg ' + cls + '">' + pct.toFixed(1) + '%</span></td>';
+    }).join('');
+
+    html += '<tr>' +
+      '<td class="rdc-nc"><span class="rdc-nname">' + dispName + '</span>' +
+      '<span class="rdc-ndose">' + el.note + '</span></td>' +
+      cells + '</tr>';
+  });
+  tbody.innerHTML = html || '<tr><td colspan="6" class="rdc-empty">No RDA data available for selected ingredients</td></tr>';
+}
+
+function rdcCalc() {
+  // Sync strength values from DOM before calculating
+  RDC_ROWS.forEach(function(r) {
+    const rowEl = document.getElementById('rdc-row-' + r.id);
+    if (rowEl) {
+      const n = rowEl.querySelector('input[type=number]');
+      if (n) r.str = n.value;
+    }
+  });
+  rdcRenderTable();
+}
+
+// ── Init (called once on first tab click) ─────────────────────────────────────
+function rdcInit() {
+  if (RDC__inited) return;
+  RDC__inited = true;
+  rdcAddRow('Vitamin C', '40', 'mg');
+  rdcAddRow('Magnesium Chloride', '200', 'mg');
+  rdcAddRow('Ferrous Fumarate', '60', 'mg');
+  rdcAddRow('Cholecalciferol', '5', 'mcg');
+  document.getElementById('rdc-thead').innerHTML = rdcBuildHead();
+  rdcCalc();
+}
+// ═══════════════════════════════════════════════════════════════
+// END RDA CHECKER
+// ═══════════════════════════════════════════════════════════════
 
 </script>
 
