@@ -469,6 +469,8 @@ tbody tr:hover td{background:#f8fbff}
 .rdc-add-btn:hover{background:var(--blue-light)}
 .rdc-calc-btn{background:#1A6B5E;color:#fff;border:none;border-radius:var(--radius-sm);padding:8px 20px;font-size:12px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:6px;font-family:inherit;transition:background .15s}
 .rdc-calc-btn:hover{background:#155a4f}
+.rdc-clear-btn{background:none;color:var(--text-muted);border:1px solid var(--border);border-radius:var(--radius-sm);padding:8px 16px;font-size:12px;font-weight:500;cursor:pointer;display:inline-flex;align-items:center;gap:6px;font-family:inherit;transition:background .15s,border-color .15s}
+.rdc-clear-btn:hover{background:var(--fail-bg);border-color:#f7c1c1;color:var(--fail)}
 .rdc-tbl-wrap{overflow-x:auto}
 .rdc-tbl{width:100%;border-collapse:collapse;font-size:11.5px;min-width:640px}
 .rdc-tbl thead th{padding:7px 9px;background:var(--bg-surface);border-bottom:1px solid var(--border);color:var(--text-muted);font-weight:600;font-size:10.5px;text-align:center;vertical-align:top;line-height:1.4}
@@ -922,12 +924,16 @@ tbody tr:hover td{background:#f8fbff}
       <div class="card-title"><i class="ti ti-flask"></i> Ingredients</div>
       <div class="rdc-rows" id="rdc-rows"></div>
       <button class="rdc-add-btn" onclick="rdcAddRow()"><i class="ti ti-plus"></i> Add ingredient</button>
-      <button class="rdc-calc-btn" onclick="rdcCalc()"><i class="ti ti-calculator"></i> Calculate % RDA</button>
+      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+        <button class="rdc-calc-btn" onclick="rdcCalc()"><i class="ti ti-calculator"></i> Calculate % RDA</button>
+        <button class="rdc-clear-btn" onclick="rdcClear()"><i class="ti ti-trash"></i> Clear</button>
+      </div>
     </div>
     <div class="card" style="padding:0">
       <div style="padding:12px 16px;border-bottom:1px solid var(--border-light);display:flex;align-items:center;gap:6px">
         <i class="ti ti-table" style="color:#1A6B5E;font-size:14px"></i>
         <span style="font-size:12px;font-weight:600;color:var(--text)">% RDA by target group</span>
+        <button onclick="rdcPrint()" style="margin-left:auto;padding:4px 10px;font-size:11px;background:none;border:1px solid var(--border);border-radius:var(--radius-sm);cursor:pointer;color:var(--text-muted);font-family:inherit;display:flex;align-items:center;gap:4px;transition:background .15s" onmouseover="this.style.background='var(--blue-light)'" onmouseout="this.style.background='none'"><i class="ti ti-printer" style="font-size:12px"></i> Print / PDF</button>
       </div>
       <div class="rdc-tbl-wrap">
         <table class="rdc-tbl">
@@ -6177,7 +6183,7 @@ function rdcRenderTable() {
       if (!rdaInfo) return '<td><span class="rdc-bdg rdc-na">N/A</span></td>';
       const pct = (el.v / rdaInfo.rda) * 100;
       const cls = pct <= 100 ? 'rdc-g' : 'rdc-r';
-      return '<td><span class="rdc-bdg ' + cls + '">' + pct.toFixed(1) + '%</span></td>';
+      return '<td><span class="rdc-bdg ' + cls + '">' + pct.toFixed(2) + '%</span></td>';
     }).join('');
 
     html += '<tr>' +
@@ -6200,14 +6206,62 @@ function rdcCalc() {
   rdcRenderTable();
 }
 
+function rdcClear() {
+  RDC_ROWS = [];
+  RDC__id = 0;
+  RDC__inited = false;
+  rdcInit();
+}
+
+function rdcPrint() {
+  const thead = document.getElementById('rdc-thead');
+  const tbody = document.getElementById('rdc-tbody');
+  if (!thead || !tbody) return;
+  const w = window.open('', '_blank', 'width=960,height=700');
+  if (!w) return;
+  w.document.write('<!DOCTYPE html><html><head><title>% RDA by Target Group \u2014 Regulyze</title><style>' +
+    'body{font-family:system-ui,-apple-system,sans-serif;padding:28px 32px;font-size:12px;color:#1e293b;margin:0}' +
+    'h2{color:#1A6B5E;margin:0 0 3px;font-size:15px}' +
+    'p{color:#64748b;font-size:10.5px;margin:0 0 16px}' +
+    'table{width:100%;border-collapse:collapse}' +
+    'thead th{padding:7px 10px;background:#f8fafc;border-bottom:2px solid #C4E8E2;color:#64748b;font-weight:600;font-size:10.5px;text-align:center;vertical-align:top;line-height:1.4}' +
+    'thead th:first-child{text-align:left;min-width:160px}' +
+    'tbody td{padding:8px 10px;border-bottom:1px solid #f1f5f9;text-align:center;vertical-align:middle}' +
+    'tbody td:first-child{text-align:left}' +
+    '.rdc-nname{font-weight:600;font-size:12px;color:#1e293b;display:block}' +
+    '.rdc-ndose{display:block;font-size:10px;color:#64748b;margin-top:2px;font-style:italic}' +
+    '.rdc-bdg{display:inline-block;padding:3px 9px;border-radius:5px;font-weight:600;font-size:11.5px;min-width:55px;text-align:center}' +
+    '.rdc-g{background:#dcfce7;color:#166534}' +
+    '.rdc-r{background:#fee2e2;color:#991b1b}' +
+    '.rdc-na{background:#f1f5f9;color:#94a3b8;font-size:10.5px;font-weight:400}' +
+    'select,.rdc-pop-sel{display:none}' +
+    '.legend{display:flex;gap:16px;margin-top:12px;flex-wrap:wrap;font-size:10.5px;color:#64748b;align-items:center}' +
+    '.leg{display:flex;align-items:center;gap:5px}' +
+    '.ld{width:9px;height:9px;border-radius:3px;flex-shrink:0}' +
+    'footer{margin-top:16px;font-size:9px;color:#94a3b8;border-top:1px solid #e2e8f0;padding-top:8px}' +
+    '@media print{body{padding:16px}footer{position:fixed;bottom:0;left:0;right:0;padding:6px 16px;background:#fff}}' +
+    '</style></head><body>' +
+    '<h2>% RDA by Target Group</h2>' +
+    '<p>Source: ICMR-NIN Recommended Dietary Allowances (2020) &nbsp;&middot;&nbsp; FSS (Nutra) Regulations 2022 &nbsp;&middot;&nbsp; Generated by Regulyze</p>' +
+    '<table><thead>' + thead.innerHTML + '</thead><tbody>' + tbody.innerHTML + '</tbody></table>' +
+    '<div class="legend">' +
+    '<div class="leg"><div class="ld" style="background:#166534"></div>&le;100% &mdash; within RDA</div>' +
+    '<div class="leg"><div class="ld" style="background:#991b1b"></div>&gt;100% &mdash; exceeds RDA</div>' +
+    '<div class="leg"><div class="ld" style="background:#e2e8f0;border:1px solid #cbd5e1"></div>N/A &mdash; no RDA data</div>' +
+    '</div>' +
+    '<footer>Indicative only. Based on ICMR-NIN RDA 2020 &amp; FSS (Nutra) Regulations 2022. Not a substitute for legal/regulatory advice. &mdash; <strong>Regulyze by TPS Xperts Group &nbsp;&middot;&nbsp; compliance.tpsxperts.com</strong></footer>' +
+    '</body></html>');
+  w.document.close();
+  w.focus();
+  setTimeout(function() { w.print(); }, 400);
+}
+
 // ── Init (called once on first tab click) ─────────────────────────────────────
 function rdcInit() {
   if (RDC__inited) return;
   RDC__inited = true;
   rdcAddRow('Vitamin C', '40', 'mg');
-  rdcAddRow('Magnesium Chloride', '200', 'mg');
-  rdcAddRow('Ferrous Fumarate', '60', 'mg');
-  rdcAddRow('Cholecalciferol', '5', 'mcg');
+  rdcAddRow();
   document.getElementById('rdc-thead').innerHTML = rdcBuildHead();
   rdcCalc();
 }
