@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Edit Formulation · Regulyze</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.1.0/dist/tabler-icons.min.css">
+<link rel="stylesheet" href="assets/regulyze-ds.css">
+<style>
+  .edit-grid{display:grid;grid-template-columns:1fr 320px;gap:var(--s-5)}
+  @media(max-width:900px){.edit-grid{grid-template-columns:1fr}}
+  .ing-edit{display:grid;grid-template-columns:1fr 110px 90px auto auto;gap:var(--s-2);align-items:center;padding:10px var(--s-3);border:1px solid var(--border);border-radius:var(--r-md);margin-bottom:8px;background:#fff}
+  .ing-edit .drag{color:var(--text-faint);cursor:grab}
+  @media(max-width:560px){.ing-edit{grid-template-columns:1fr 1fr;gap:8px}}
+  .stat-chip{display:flex;align-items:center;gap:8px;padding:10px var(--s-3);border-radius:var(--r-md);font-size:var(--fs-sm);font-weight:600}
+</style>
+</head>
+<body>
+<div class="app">
+  <input type="checkbox" id="mt" class="mob-toggle" hidden>
+  <label for="mt" class="scrim"></label>
+  <aside class="sidebar">
+    <div class="brand"><svg width="34" height="34" viewBox="0 0 36 36" fill="none" aria-hidden="true" style="flex-shrink:0"><path d="M18 3L31 10.5L31 25.5L18 33L5 25.5L5 10.5Z" fill="rgba(255,255,255,.92)"/><path d="M12 18L16.5 22.5L24.5 13.5" stroke="var(--brand-700)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg><b>Regulyze</b></div>
+    <a class="nav-item" href="dashboard.html"><i class="ti ti-layout-dashboard"></i> Dashboard</a>
+    <a class="nav-item" href="tracker.html"><i class="ti ti-list-check"></i> Compliance Tracker</a>
+    <a class="nav-item active" href="product-detail.html"><i class="ti ti-flask"></i> Formulations</a>
+    <a class="nav-item" href="report.html"><i class="ti ti-file-text"></i> Reports</a>
+    <a class="nav-item" href="#"><i class="ti ti-checklist"></i> Label Checklist</a>
+    <a class="nav-item" href="#"><i class="ti ti-gauge"></i> RDA Checker</a>
+    <div class="nav-sep"></div>
+    <a class="nav-item" href="account.html"><i class="ti ti-user-cog"></i> Account</a>
+    <div class="foot">v2.8 · FSS (Nutra) 2022<br>© TPS Xperts Group</div>
+  </aside>
+  <div class="main">
+    <header class="topbar">
+      <label for="mt" class="burger"><i class="ti ti-menu-2"></i></label>
+      <div class="row gap-2 hide-mob"><a href="dashboard.html" class="muted">Formulations</a><i class="ti ti-chevron-right faint"></i><strong>Immunity Gummies v3</strong></div>
+      <div style="margin-left:auto" class="row gap-3">
+        <button class="btn btn-ghost btn-sm hide-mob">Discard</button>
+        <button class="btn btn-outline btn-sm"><i class="ti ti-device-floppy"></i> Save draft</button>
+        <button class="btn btn-primary btn-sm"><i class="ti ti-shield-check"></i> Save &amp; re-check</button>
+      </div>
+    </header>
+    <main class="content">
+      <div class="page-head"><div><h1 class="h2">Edit formulation</h1><p class="muted">Changes are validated live. Last checked Jun 6 · 78% compliant.</p></div><span class="badge badge-warn"><span class="dot"></span> Unsaved changes</span></div>
+      <div class="edit-grid">
+        <div class="col gap-6">
+          <div class="card">
+            <div class="card-title mb-4"><i class="ti ti-info-circle"></i> Product details</div>
+            <div class="grid-2">
+              <div class="field"><label class="label">Product name</label><input class="input" value="Immunity Gummies v3"></div>
+              <div class="field"><label class="label">SKU / batch ref</label><input class="input" value="IMG-2026-03"></div>
+              <div class="field"><label class="label">Category</label><select class="select"><option>Nutraceutical</option></select></div>
+              <div class="field"><label class="label">Target group</label><select class="select"><option>Adult</option></select></div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-head"><div class="card-title"><i class="ti ti-flask"></i> Ingredients <span class="badge badge-neutral">5</span></div><button class="btn btn-secondary btn-sm"><i class="ti ti-plus"></i> Add ingredient</button></div>
+            <div class="ing-edit"><i class="ti ti-grip-vertical drag hide-mob"></i><input class="input" value="Vitamin C (Ascorbic acid)"><input class="input" type="number" value="80"><select class="select"><option>mg</option></select><span class="badge badge-ok">OK</span><button class="icon-btn" style="width:36px;height:36px"><i class="ti ti-trash"></i></button></div>
+            <div class="ing-edit"><i class="ti ti-grip-vertical drag hide-mob"></i><input class="input" value="Ashwagandha extract"><input class="input" type="number" value="300"><select class="select"><option>mg</option></select><span class="badge badge-ok">OK</span><button class="icon-btn" style="width:36px;height:36px"><i class="ti ti-trash"></i></button></div>
+            <div class="ing-edit" style="border-color:var(--warn-100);background:var(--warn-50)"><i class="ti ti-grip-vertical drag hide-mob"></i><input class="input" style="border-color:var(--warn-600)" value="Zinc (as Zinc oxide)"><input class="input" type="number" value="28" style="border-color:var(--warn-600)"><select class="select"><option>mg</option></select><span class="badge badge-warn">RDA</span><button class="icon-btn" style="width:36px;height:36px"><i class="ti ti-trash"></i></button></div>
+            <div class="ing-edit" style="border-color:var(--fail-100);background:var(--fail-50)"><i class="ti ti-grip-vertical drag hide-mob"></i><input class="input is-error" value="Synephrine HCl"><input class="input" type="number" value="20"><select class="select"><option>mg</option></select><span class="badge badge-fail">Block</span><button class="icon-btn" style="width:36px;height:36px;color:var(--fail-600)"><i class="ti ti-trash"></i></button></div>
+            <div class="ing-edit"><i class="ti ti-grip-vertical drag hide-mob"></i><input class="input" value="Pectin (gelling agent)"><input class="input" value="q.s."><select class="select"><option>—</option></select><span class="badge badge-ok">OK</span><button class="icon-btn" style="width:36px;height:36px"><i class="ti ti-trash"></i></button></div>
+            <div class="hint mt-2"><i class="ti ti-bulb"></i> Tip: start typing to search the 1,400+ ingredient database.</div>
+          </div>
+        </div>
+        <div class="col gap-6">
+          <div class="card">
+            <div class="card-title mb-4"><i class="ti ti-activity"></i> Live compliance</div>
+            <div class="row between mb-2"><span class="muted">Score</span><strong style="color:var(--warn-700)">78%</strong></div>
+            <div class="meter warn mb-4"><span style="width:78%"></span></div>
+            <div class="col gap-2">
+              <div class="stat-chip" style="background:var(--ok-50);color:var(--ok-700)"><i class="ti ti-circle-check"></i> 3 passing</div>
+              <div class="stat-chip" style="background:var(--warn-50);color:var(--warn-700)"><i class="ti ti-alert-triangle"></i> 1 over RDA</div>
+              <div class="stat-chip" style="background:var(--fail-50);color:var(--fail-700)"><i class="ti ti-ban"></i> 1 not permitted</div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-title mb-4"><i class="ti ti-wand"></i> Auto-fix suggestions</div>
+            <div class="alert alert-warn mb-2" style="font-size:var(--fs-sm)"><i class="ti ti-arrow-down"></i><div>Set Zinc to <strong>12 mg</strong> <button class="btn btn-ghost btn-sm" style="padding:2px 8px;min-height:auto">Apply</button></div></div>
+            <div class="alert alert-fail" style="font-size:var(--fs-sm)"><i class="ti ti-trash"></i><div>Remove Synephrine HCl <button class="btn btn-ghost btn-sm" style="padding:2px 8px;min-height:auto">Apply</button></div></div>
+          </div>
+          <a href="report.html" class="btn btn-primary btn-block"><i class="ti ti-file-text"></i> View full report</a>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+<nav class="mobile-nav">
+  <a href="dashboard.html"><i class="ti ti-layout-dashboard"></i>Home</a>
+  <a href="tracker.html"><i class="ti ti-list-check"></i>Tracker</a>
+  <a href="tracker.html"><i class="ti ti-circle-plus" style="font-size:30px;color:var(--brand-700)"></i></a>
+  <a href="report.html"><i class="ti ti-file-text"></i>Reports</a>
+  <a href="account.html"><i class="ti ti-user"></i>Account</a>
+</nav>
+</body>
+</html>

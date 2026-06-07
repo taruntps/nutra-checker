@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Account · Regulyze</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.1.0/dist/tabler-icons.min.css">
+<link rel="stylesheet" href="assets/regulyze-ds.css">
+<style>
+  .acct-grid{display:grid;grid-template-columns:240px 1fr;gap:var(--s-6)}
+  @media(max-width:760px){.acct-grid{grid-template-columns:1fr}}
+  .side-tabs{display:flex;flex-direction:column;gap:4px}
+  .side-tabs a{padding:11px var(--s-3);border-radius:var(--r-md);font-weight:500;color:var(--ink-600);display:flex;gap:10px;align-items:center}
+  .side-tabs a.active{background:var(--brand-100);color:var(--brand-700);font-weight:600}
+  @media(max-width:760px){.side-tabs{flex-direction:row;overflow-x:auto}}
+  .plan-card{background:linear-gradient(120deg,var(--brand-800),var(--brand-600));color:#fff;border-radius:var(--r-lg);padding:var(--s-5)}
+</style>
+</head>
+<body>
+<div class="app">
+  <input type="checkbox" id="mt" class="mob-toggle" hidden>
+  <label for="mt" class="scrim"></label>
+  <aside class="sidebar">
+    <div class="brand"><svg width="34" height="34" viewBox="0 0 36 36" fill="none" aria-hidden="true" style="flex-shrink:0"><path d="M18 3L31 10.5L31 25.5L18 33L5 25.5L5 10.5Z" fill="rgba(255,255,255,.92)"/><path d="M12 18L16.5 22.5L24.5 13.5" stroke="var(--brand-700)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg><b>Regulyze</b></div>
+    <a class="nav-item" href="dashboard.html"><i class="ti ti-layout-dashboard"></i> Dashboard</a>
+    <a class="nav-item" href="tracker.html"><i class="ti ti-list-check"></i> Compliance Tracker</a>
+    <a class="nav-item" href="product-detail.html"><i class="ti ti-flask"></i> Formulations</a>
+    <a class="nav-item" href="report.html"><i class="ti ti-file-text"></i> Reports</a>
+    <a class="nav-item" href="#"><i class="ti ti-checklist"></i> Label Checklist</a>
+    <a class="nav-item" href="#"><i class="ti ti-gauge"></i> RDA Checker</a>
+    <div class="nav-sep"></div>
+    <a class="nav-item active" href="account.html"><i class="ti ti-user-cog"></i> Account</a>
+    <div class="foot">v2.8 · FSS (Nutra) 2022<br>© TPS Xperts Group</div>
+  </aside>
+  <div class="main">
+    <header class="topbar">
+      <label for="mt" class="burger"><i class="ti ti-menu-2"></i></label>
+      <strong class="hide-mob">Account &amp; settings</strong>
+      <div style="margin-left:auto" class="row gap-3"><button class="icon-btn"><i class="ti ti-bell"></i></button><div class="avatar">TS</div></div>
+    </header>
+    <main class="content">
+      <div class="page-head"><div><h1 class="h2">Account</h1><p class="muted">Manage your profile, plan and team.</p></div></div>
+      <div class="acct-grid">
+        <nav class="side-tabs">
+          <a class="active"><i class="ti ti-user"></i> Profile</a>
+          <a><i class="ti ti-credit-card"></i> Billing &amp; plan</a>
+          <a><i class="ti ti-users"></i> Team</a>
+          <a><i class="ti ti-bell"></i> Notifications</a>
+          <a><i class="ti ti-shield-lock"></i> Security</a>
+        </nav>
+        <div class="col gap-6">
+          <div class="card">
+            <div class="card-title mb-4"><i class="ti ti-user"></i> Profile</div>
+            <div class="row gap-6 wrap mb-4">
+              <div class="avatar" style="width:72px;height:72px;font-size:var(--fs-2xl)">TS</div>
+              <div><button class="btn btn-outline btn-sm"><i class="ti ti-camera"></i> Change photo</button><div class="hint mt-2">JPG or PNG, max 2MB</div></div>
+            </div>
+            <div class="grid-2">
+              <div class="field"><label class="label">Full name</label><input class="input" value="Tarun"></div>
+              <div class="field"><label class="label">Organisation</label><input class="input" value="TPS Xperts Group"></div>
+              <div class="field"><label class="label">Email</label><input class="input" value="tarun@tpsxpert.com"></div>
+              <div class="field"><label class="label">Role</label><select class="select"><option>Regulatory lead</option><option>Formulator</option></select></div>
+            </div>
+            <div class="row gap-3 mt-4"><button class="btn btn-primary">Save changes</button><button class="btn btn-ghost">Cancel</button></div>
+          </div>
+          <div class="plan-card">
+            <div class="row between wrap gap-3">
+              <div><span class="badge" style="background:rgba(255,255,255,.18);color:#fff">Current plan</span><h3 class="h3" style="color:#fff;margin:8px 0 4px">Professional</h3><p style="color:rgba(255,255,255,.85)">₹2,499/month · renews Jul 1, 2026</p></div>
+              <button class="btn" style="background:#fff;color:var(--brand-800);border-color:#fff">Upgrade plan</button>
+            </div>
+            <div class="row between mt-6" style="color:rgba(255,255,255,.9);font-size:var(--fs-sm)"><span>Checks used this month</span><strong>34 / 100</strong></div>
+            <div class="meter mt-2" style="background:rgba(255,255,255,.25)"><span style="width:34%;background:#fff"></span></div>
+          </div>
+          <div class="card">
+            <div class="card-head"><div class="card-title"><i class="ti ti-receipt"></i> Billing history</div><button class="btn btn-ghost btn-sm">Download all</button></div>
+            <table class="table">
+              <thead><tr><th>Invoice</th><th class="hide-mob">Date</th><th>Amount</th><th>Status</th></tr></thead>
+              <tbody>
+                <tr><td class="mono">RG-INV-0042</td><td class="hide-mob muted">Jun 1, 2026</td><td>₹2,499</td><td><span class="badge badge-ok">Paid</span></td></tr>
+                <tr><td class="mono">RG-INV-0038</td><td class="hide-mob muted">May 1, 2026</td><td>₹2,499</td><td><span class="badge badge-ok">Paid</span></td></tr>
+                <tr><td class="mono">RG-INV-0031</td><td class="hide-mob muted">Apr 1, 2026</td><td>₹2,499</td><td><span class="badge badge-ok">Paid</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+<nav class="mobile-nav">
+  <a href="dashboard.html"><i class="ti ti-layout-dashboard"></i>Home</a>
+  <a href="tracker.html"><i class="ti ti-list-check"></i>Tracker</a>
+  <a href="tracker.html"><i class="ti ti-circle-plus" style="font-size:30px;color:var(--brand-700)"></i></a>
+  <a href="report.html"><i class="ti ti-file-text"></i>Reports</a>
+  <a href="account.html" class="active"><i class="ti ti-user"></i>Account</a>
+</nav>
+</body>
+</html>
