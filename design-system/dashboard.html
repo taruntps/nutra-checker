@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Dashboard · Regulyze</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.1.0/dist/tabler-icons.min.css">
+<link rel="stylesheet" href="assets/regulyze-ds.css">
+</head>
+<body>
+<div class="app">
+  <input type="checkbox" id="mt" class="mob-toggle" hidden>
+  <label for="mt" class="scrim"></label>
+  <aside class="sidebar">
+    <div class="brand"><svg width="34" height="34" viewBox="0 0 36 36" fill="none" aria-hidden="true" style="flex-shrink:0"><path d="M18 3L31 10.5L31 25.5L18 33L5 25.5L5 10.5Z" fill="rgba(255,255,255,.92)"/><path d="M12 18L16.5 22.5L24.5 13.5" stroke="var(--brand-700)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg><b>Regulyze</b></div>
+    <a class="nav-item active" href="dashboard.html"><i class="ti ti-layout-dashboard"></i> Dashboard</a>
+    <a class="nav-item" href="tracker.html"><i class="ti ti-list-check"></i> Compliance Tracker</a>
+    <a class="nav-item" href="product-detail.html"><i class="ti ti-flask"></i> Formulations</a>
+    <a class="nav-item" href="report.html"><i class="ti ti-file-text"></i> Reports</a>
+    <a class="nav-item" href="#"><i class="ti ti-checklist"></i> Label Checklist</a>
+    <a class="nav-item" href="#"><i class="ti ti-gauge"></i> RDA Checker</a>
+    <div class="nav-sep"></div>
+    <a class="nav-item" href="account.html"><i class="ti ti-user-cog"></i> Account</a>
+    <a class="nav-item" href="#"><i class="ti ti-help"></i> Help &amp; docs</a>
+    <div class="foot">v2.8 · FSS (Nutra) 2022<br>© TPS Xperts Group</div>
+  </aside>
+  <div class="main">
+    <header class="topbar">
+      <label for="mt" class="burger"><i class="ti ti-menu-2"></i></label>
+      <div class="search hide-mob"><i class="ti ti-search"></i><input class="input" placeholder="Search formulations, ingredients, reports…"></div>
+      <div style="margin-left:auto" class="row gap-3">
+        <a href="tracker.html" class="btn btn-primary btn-sm hide-mob"><i class="ti ti-plus"></i> New check</a>
+        <button class="icon-btn"><i class="ti ti-bell"></i><span class="ping"></span></button>
+        <div class="avatar">TS</div>
+      </div>
+    </header>
+    <main class="content">
+      <div class="page-head">
+        <div><h1 class="h2">Good morning, Tarun</h1><p class="muted">Here's your compliance overview for TPS Xperts Group.</p></div>
+        <div class="row gap-3">
+          <span class="badge badge-ok hide-mob"><i class="ti ti-circle-check"></i> Database synced · 2h ago</span>
+          <a href="tracker.html" class="btn btn-primary"><i class="ti ti-plus"></i> New check</a>
+        </div>
+      </div>
+      <div class="kpi-grid mb-4">
+        <div class="kpi"><div class="ic" style="background:var(--brand-100);color:var(--brand-700)"><i class="ti ti-flask"></i></div><div class="val">24</div><div class="lbl">Active formulations</div><div class="trend up"><i class="ti ti-trending-up"></i> +3 this week</div></div>
+        <div class="kpi"><div class="ic" style="background:var(--ok-100);color:var(--ok-700)"><i class="ti ti-circle-check"></i></div><div class="val">18</div><div class="lbl">Fully compliant</div><div class="trend up"><i class="ti ti-trending-up"></i> 75% of total</div></div>
+        <div class="kpi"><div class="ic" style="background:var(--warn-100);color:var(--warn-700)"><i class="ti ti-alert-triangle"></i></div><div class="val">5</div><div class="lbl">Need review</div><div class="trend down"><i class="ti ti-point"></i> 11 open flags</div></div>
+        <div class="kpi"><div class="ic" style="background:var(--fail-100);color:var(--fail-700)"><i class="ti ti-ban"></i></div><div class="val">1</div><div class="lbl">Non-compliant</div><div class="trend down"><i class="ti ti-trending-down"></i> blocked</div></div>
+      </div>
+      <div class="grid-2" style="grid-template-columns:1.6fr 1fr">
+        <div class="card">
+          <div class="card-head"><div class="card-title"><i class="ti ti-history"></i> Recent formulations</div><a href="tracker.html" class="btn btn-ghost btn-sm">View all <i class="ti ti-arrow-right"></i></a></div>
+          <table class="table">
+            <thead><tr><th>Product</th><th class="hide-mob">Last checked</th><th>Compliance</th><th>Status</th></tr></thead>
+            <tbody>
+              <tr><td><strong>Immunity Gummies v3</strong><div class="muted" style="font-size:var(--fs-xs)">8 ingredients</div></td><td class="hide-mob muted">Jun 6</td><td><div class="row gap-2"><div class="meter warn grow" style="min-width:60px"><span style="width:78%"></span></div><span class="mono" style="font-size:var(--fs-xs)">78%</span></div></td><td><span class="badge badge-warn"><span class="dot"></span> Review</span></td></tr>
+              <tr><td><strong>Daily Multivit</strong><div class="muted" style="font-size:var(--fs-xs)">21 ingredients</div></td><td class="hide-mob muted">Jun 5</td><td><div class="row gap-2"><div class="meter ok grow" style="min-width:60px"><span style="width:100%"></span></div><span class="mono" style="font-size:var(--fs-xs)">100%</span></div></td><td><span class="badge badge-ok"><span class="dot"></span> Compliant</span></td></tr>
+              <tr><td><strong>Pre-Workout X</strong><div class="muted" style="font-size:var(--fs-xs)">12 ingredients</div></td><td class="hide-mob muted">Jun 4</td><td><div class="row gap-2"><div class="meter fail grow" style="min-width:60px"><span style="width:42%"></span></div><span class="mono" style="font-size:var(--fs-xs)">42%</span></div></td><td><span class="badge badge-fail"><span class="dot"></span> Blocked</span></td></tr>
+              <tr><td><strong>Collagen Builder</strong><div class="muted" style="font-size:var(--fs-xs)">6 ingredients</div></td><td class="hide-mob muted">Jun 3</td><td><div class="row gap-2"><div class="meter ok grow" style="min-width:60px"><span style="width:100%"></span></div><span class="mono" style="font-size:var(--fs-xs)">100%</span></div></td><td><span class="badge badge-ok"><span class="dot"></span> Compliant</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="col gap-6">
+          <div class="card">
+            <div class="card-title mb-4"><i class="ti ti-bolt"></i> Plan usage</div>
+            <div class="row between"><span class="muted">Checks this month</span><strong>34 / 100</strong></div>
+            <div class="meter mt-2"><span style="width:34%"></span></div>
+            <div class="hint mt-2">Professional plan · renews Jul 1</div>
+            <a href="account.html" class="btn btn-secondary btn-block mt-4"><i class="ti ti-arrow-up-circle"></i> Manage plan</a>
+          </div>
+          <div class="card">
+            <div class="card-title mb-4"><i class="ti ti-alert-triangle" style="color:var(--warn-600)"></i> Needs your attention</div>
+            <div class="alert alert-fail mb-2"><i class="ti ti-ban"></i><div><strong>Pre-Workout X</strong> contains Synephrine HCl — not permitted.</div></div>
+            <div class="alert alert-warn"><i class="ti ti-alert-circle"></i><div><strong>Immunity Gummies v3</strong> — Zinc 28mg exceeds RDA.</div></div>
+            <a href="report.html" class="btn btn-ghost btn-sm mt-4">Open reports <i class="ti ti-arrow-right"></i></a>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+<nav class="mobile-nav">
+  <a href="dashboard.html" class="active"><i class="ti ti-layout-dashboard"></i>Home</a>
+  <a href="tracker.html"><i class="ti ti-list-check"></i>Tracker</a>
+  <a href="tracker.html"><i class="ti ti-circle-plus" style="font-size:30px;color:var(--brand-700)"></i></a>
+  <a href="report.html"><i class="ti ti-file-text"></i>Reports</a>
+  <a href="account.html"><i class="ti ti-user"></i>Account</a>
+</nav>
+</body>
+</html>
