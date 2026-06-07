@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Regulyze Design System</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.1.0/dist/tabler-icons.min.css">
+<link rel="stylesheet" href="assets/regulyze-ds.css">
+<style>
+  .wrap{max-width:1080px;margin:0 auto;padding:var(--s-10) var(--s-6) var(--s-24)}
+  .gs-head{text-align:center;margin-bottom:var(--s-12)}
+  section.blk{margin-top:var(--s-12)}
+  section.blk > h2{font-size:var(--fs-2xl);margin-bottom:var(--s-2)}
+  section.blk > p.muted{margin-bottom:var(--s-5)}
+  .swatches{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:var(--s-3)}
+  .sw{border:1px solid var(--border);border-radius:var(--r-md);overflow:hidden;background:#fff}
+  .sw .c{height:64px} .sw .t{padding:8px 10px;font-size:var(--fs-xs)} .sw .t b{display:block}
+  .sw .t code{font-family:var(--font-mono);color:var(--text-muted)}
+  .screens{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:var(--s-4)}
+  .screen{display:block;border:1px solid var(--border);border-radius:var(--r-lg);overflow:hidden;background:#fff;transition:all var(--dur)}
+  .screen:hover{transform:translateY(-3px);box-shadow:var(--sh-md)}
+  .screen .thumb{height:120px;display:grid;place-items:center;font-size:34px;color:var(--brand-700);background:var(--brand-50)}
+  .screen .t{padding:var(--s-3)} .screen .t b{display:block;color:var(--ink-900)} .screen .t span{font-size:var(--fs-sm);color:var(--text-muted)}
+  .type-row{display:flex;align-items:baseline;gap:var(--s-4);padding:11px 0;border-bottom:1px solid var(--border-soft)}
+  .type-row code{font-family:var(--font-mono);font-size:var(--fs-xs);color:var(--text-muted);margin-left:auto}
+  .demo{display:flex;flex-wrap:wrap;gap:var(--s-3);align-items:center}
+  .scale-row{display:flex;align-items:center;gap:var(--s-3);margin-bottom:8px}
+  .scale-row .bar{height:18px;background:var(--brand-300);border-radius:4px}
+  .scale-row code{font-family:var(--font-mono);font-size:var(--fs-xs);width:90px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="gs-head">
+    <svg width="56" height="56" viewBox="0 0 56 56" fill="none" style="display:inline-block;margin-bottom:var(--s-4)" aria-hidden="true"><path d="M28 4L50 16.5V39.5L28 52L6 39.5V16.5Z" fill="var(--brand-700)"/><path d="M19 28L26 35L38 22" stroke="white" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <h1 class="h1">Regulyze Design System</h1>
+    <p class="lead">A refined, accessible UI foundation for the FSSAI nutraceutical compliance platform — built to scale from web to native iOS &amp; Android. <strong>v1.0</strong></p>
+  </div>
+  <section class="blk">
+    <h2>Screens &amp; prototypes</h2>
+    <p class="muted">Click any screen to open the live, responsive mockup. Resize to 375px / 768px / 1920px to see breakpoints.</p>
+    <div class="screens">
+      <a class="screen" href="landing.html"><div class="thumb"><i class="ti ti-world"></i></div><div class="t"><b>Landing page</b><span>Hero · problem/solution · features · pricing</span></div></a>
+      <a class="screen" href="dashboard.html"><div class="thumb"><i class="ti ti-layout-dashboard"></i></div><div class="t"><b>Dashboard</b><span>KPIs · recent formulations · alerts</span></div></a>
+      <a class="screen" href="tracker.html"><div class="thumb"><i class="ti ti-list-check"></i></div><div class="t"><b>Compliance Tracker</b><span>Core tool · live per-ingredient verdict</span></div></a>
+      <a class="screen" href="product-detail.html"><div class="thumb"><i class="ti ti-flask"></i></div><div class="t"><b>Formulation editor</b><span>Edit ingredients · auto-fix · live score</span></div></a>
+      <a class="screen" href="report.html"><div class="thumb"><i class="ti ti-file-text"></i></div><div class="t"><b>Compliance report</b><span>Score ring · findings · cited breakdown</span></div></a>
+      <a class="screen" href="account.html"><div class="thumb"><i class="ti ti-user-cog"></i></div><div class="t"><b>Account &amp; billing</b><span>Profile · plan · invoices</span></div></a>
+    </div>
+  </section>
+  <section class="blk">
+    <h2>Color palette</h2>
+    <p class="muted">Evolved from the existing brand teal (#1A6B5E). Status colors map to compliance language.</p>
+    <h4 class="h4 mt-6 mb-2">Brand · Regulatory Teal</h4>
+    <div class="swatches">
+      <div class="sw"><div class="c" style="background:#0E4B40"></div><div class="t"><b>brand-900</b><code>#0E4B40</code></div></div>
+      <div class="sw"><div class="c" style="background:#14594C"></div><div class="t"><b>brand-800</b><code>#14594C</code></div></div>
+      <div class="sw"><div class="c" style="background:#1A6B5E"></div><div class="t"><b>brand-700 ●</b><code>#1A6B5E</code></div></div>
+      <div class="sw"><div class="c" style="background:#228B73"></div><div class="t"><b>brand-500</b><code>#228B73</code></div></div>
+      <div class="sw"><div class="c" style="background:#C4E8E2"></div><div class="t"><b>brand-200</b><code>#C4E8E2</code></div></div>
+      <div class="sw"><div class="c" style="background:#E6F5F1"></div><div class="t"><b>brand-100</b><code>#E6F5F1</code></div></div>
+      <div class="sw"><div class="c" style="background:#F4FBF8;border-bottom:1px solid #eee"></div><div class="t"><b>brand-50</b><code>#F4FBF8</code></div></div>
+    </div>
+    <h4 class="h4 mt-6 mb-2">Status · compliance language</h4>
+    <div class="swatches">
+      <div class="sw"><div class="c" style="background:#15803D"></div><div class="t"><b>Compliant</b><code>ok-600</code></div></div>
+      <div class="sw"><div class="c" style="background:#BA7517"></div><div class="t"><b>Review</b><code>warn-600</code></div></div>
+      <div class="sw"><div class="c" style="background:#A32D2D"></div><div class="t"><b>Blocked</b><code>fail-600</code></div></div>
+      <div class="sw"><div class="c" style="background:#4F46E5"></div><div class="t"><b>Accent</b><code>accent-600</code></div></div>
+    </div>
+  </section>
+  <section class="blk">
+    <h2>Typography</h2>
+    <p class="muted">DM Sans for UI, DM Mono for dosages and citations.</p>
+    <div class="card">
+      <div class="type-row"><span class="h1">Heading 1</span><code>38 / 700</code></div>
+      <div class="type-row"><span class="h2">Heading 2</span><code>30 / 700</code></div>
+      <div class="type-row"><span class="h3">Heading 3</span><code>24 / 600</code></div>
+      <div class="type-row"><span class="lead">Lead paragraph — readable, calm.</span><code>17 / 400</code></div>
+      <div class="type-row"><span>Body base — default reading size.</span><code>15 / 400</code></div>
+      <div class="type-row"><span class="mono">80 mg · INS 440 · #RG-10293</span><code>mono</code></div>
+    </div>
+  </section>
+  <section class="blk">
+    <h2>Spacing scale</h2>
+    <p class="muted">4px base grid — portable across web and native.</p>
+    <div class="card">
+      <div class="scale-row"><code>s-1 · 4px</code><div class="bar" style="width:4px"></div></div>
+      <div class="scale-row"><code>s-2 · 8px</code><div class="bar" style="width:8px"></div></div>
+      <div class="scale-row"><code>s-4 · 16px</code><div class="bar" style="width:16px"></div></div>
+      <div class="scale-row"><code>s-6 · 24px</code><div class="bar" style="width:24px"></div></div>
+      <div class="scale-row"><code>s-8 · 32px</code><div class="bar" style="width:32px"></div></div>
+      <div class="scale-row"><code>s-12 · 48px</code><div class="bar" style="width:48px"></div></div>
+      <div class="scale-row"><code>s-16 · 64px</code><div class="bar" style="width:64px"></div></div>
+    </div>
+  </section>
+  <section class="blk">
+    <h2>Buttons</h2>
+    <p class="muted">44px minimum touch target. All states shown.</p>
+    <div class="card">
+      <div class="demo mb-4">
+        <button class="btn btn-primary">Primary</button>
+        <button class="btn btn-secondary">Secondary</button>
+        <button class="btn btn-outline">Outline</button>
+        <button class="btn btn-ghost">Ghost</button>
+        <button class="btn btn-danger">Danger</button>
+      </div>
+      <div class="demo">
+        <button class="btn btn-primary btn-lg">Large</button>
+        <button class="btn btn-primary btn-sm">Small</button>
+        <button class="btn btn-primary is-loading"><span class="spinner"></span> Checking…</button>
+        <button class="btn btn-primary" disabled>Disabled</button>
+      </div>
+    </div>
+  </section>
+  <section class="blk">
+    <h2>Status &amp; feedback</h2>
+    <div class="grid-2">
+      <div class="card"><h4 class="h4 mb-4">Badges</h4><div class="demo">
+        <span class="badge badge-ok"><span class="dot"></span> Compliant</span>
+        <span class="badge badge-warn"><span class="dot"></span> Review</span>
+        <span class="badge badge-fail"><span class="dot"></span> Blocked</span>
+        <span class="badge sb-s1">Schedule I</span>
+        <span class="badge sb-s4">Schedule IV</span>
+      </div></div>
+      <div class="card"><h4 class="h4 mb-4">Alerts</h4>
+        <div class="alert alert-ok mb-2"><i class="ti ti-circle-check"></i> Formulation is fully compliant.</div>
+        <div class="alert alert-warn mb-2"><i class="ti ti-alert-triangle"></i> Zinc exceeds RDA upper limit.</div>
+        <div class="alert alert-fail"><i class="ti ti-ban"></i> Synephrine HCl is not permitted.</div>
+      </div>
+    </div>
+  </section>
+  <section class="blk">
+    <h2>Forms &amp; states</h2>
+    <div class="grid-2">
+      <div class="card">
+        <div class="field"><label class="label">Default</label><input class="input" placeholder="Vitamin C"></div>
+        <div class="field"><label class="label">Error</label><input class="input is-error" value="Synephrine HCl"><span class="hint error"><i class="ti ti-alert-circle"></i> Not permitted</span></div>
+        <div class="field"><label class="label">Select</label><select class="select"><option>Schedule I</option></select></div>
+      </div>
+      <div class="card"><h4 class="h4 mb-4">Loading &amp; empty</h4>
+        <div class="skel" style="height:14px;width:70%;margin-bottom:10px"></div>
+        <div class="skel" style="height:14px;width:90%;margin-bottom:10px"></div>
+        <div class="skel" style="height:14px;width:55%"></div>
+        <div class="empty"><i class="ti ti-folder-open"></i><div>No formulations yet</div><div class="hint">Run your first compliance check.</div></div>
+      </div>
+    </div>
+  </section>
+  <section class="blk center" style="color:var(--text-muted);font-size:var(--fs-sm);margin-top:var(--s-16)">
+    Regulyze Design System v1.0 · TPS Xperts Group
+  </section>
+</div>
+</body>
+</html>

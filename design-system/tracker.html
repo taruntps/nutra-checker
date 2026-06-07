@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Compliance Tracker · Regulyze</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.1.0/dist/tabler-icons.min.css">
+<link rel="stylesheet" href="assets/regulyze-ds.css">
+<style>
+  .work{display:grid;grid-template-columns:1fr 1.15fr;gap:var(--s-5)}
+  @media(max-width:900px){.work{grid-template-columns:1fr}}
+  .ing-row{display:flex;align-items:center;gap:var(--s-3);padding:13px var(--s-3);border:1px solid var(--border);border-radius:var(--r-md);background:#fff;margin-bottom:8px}
+  .ing-row .ico{width:34px;height:34px;border-radius:9px;display:grid;place-items:center;font-size:16px;flex-shrink:0}
+  .ing-row .nm{font-weight:600}
+  .ing-row .meta{font-size:var(--fs-xs);color:var(--text-muted)}
+  .ing-row .dose{font-family:var(--font-mono);font-size:var(--fs-sm);color:var(--ink-700)}
+</style>
+</head>
+<body>
+<div class="app">
+  <input type="checkbox" id="mt" class="mob-toggle" hidden>
+  <label for="mt" class="scrim"></label>
+  <aside class="sidebar">
+    <div class="brand"><svg width="34" height="34" viewBox="0 0 36 36" fill="none" aria-hidden="true" style="flex-shrink:0"><path d="M18 3L31 10.5L31 25.5L18 33L5 25.5L5 10.5Z" fill="rgba(255,255,255,.92)"/><path d="M12 18L16.5 22.5L24.5 13.5" stroke="var(--brand-700)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg><b>Regulyze</b></div>
+    <a class="nav-item" href="dashboard.html"><i class="ti ti-layout-dashboard"></i> Dashboard</a>
+    <a class="nav-item active" href="tracker.html"><i class="ti ti-list-check"></i> Compliance Tracker</a>
+    <a class="nav-item" href="product-detail.html"><i class="ti ti-flask"></i> Formulations</a>
+    <a class="nav-item" href="report.html"><i class="ti ti-file-text"></i> Reports</a>
+    <a class="nav-item" href="#"><i class="ti ti-checklist"></i> Label Checklist</a>
+    <a class="nav-item" href="#"><i class="ti ti-gauge"></i> RDA Checker</a>
+    <div class="nav-sep"></div>
+    <a class="nav-item" href="account.html"><i class="ti ti-user-cog"></i> Account</a>
+    <a class="nav-item" href="#"><i class="ti ti-help"></i> Help &amp; docs</a>
+    <div class="foot">v2.8 · FSS (Nutra) 2022<br>© TPS Xperts Group</div>
+  </aside>
+  <div class="main">
+    <header class="topbar">
+      <label for="mt" class="burger"><i class="ti ti-menu-2"></i></label>
+      <div class="search hide-mob"><i class="ti ti-search"></i><input class="input" placeholder="Search ingredients…"></div>
+      <div style="margin-left:auto" class="row gap-3"><button class="icon-btn"><i class="ti ti-bell"></i><span class="ping"></span></button><div class="avatar">TS</div></div>
+    </header>
+    <main class="content">
+      <div class="page-head">
+        <div><h1 class="h2">Compliance Tracker</h1><p class="muted">Enter a formulation to validate it against FSSR Schedules I–IV, additives, NSF &amp; RDA.</p></div>
+        <span class="badge badge-ok hide-mob"><i class="ti ti-database"></i> DB ready · 1,432 ingredients</span>
+      </div>
+      <div class="work">
+        <div class="col gap-6">
+          <div class="card">
+            <div class="field"><label class="label">Product name</label><input class="input" value="Immunity Gummies v3"></div>
+            <div class="grid-2">
+              <div class="field"><label class="label">Product category</label><select class="select"><option>Nutraceutical</option><option>Health supplement</option></select></div>
+              <div class="field"><label class="label">Target group</label><select class="select"><option>Adult</option><option>Children 1–9y</option></select></div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-head"><div class="card-title"><i class="ti ti-clipboard-list"></i> Formulation</div><button class="btn btn-secondary btn-sm"><i class="ti ti-sparkles"></i> AI extract</button></div>
+            <label class="label mb-2">Paste ingredients &amp; dosages</label>
+            <textarea class="textarea" rows="5">Vitamin C (Ascorbic acid) — 80 mg
+Ashwagandha extract — 300 mg
+Zinc (as Zinc oxide) — 28 mg
+Synephrine HCl — 20 mg
+Pectin (gelling agent) — q.s.</textarea>
+            <div class="hint mt-2"><i class="ti ti-info-circle"></i> One ingredient per line. AI resolves trade names automatically.</div>
+            <div class="field mt-4">
+              <label class="label">Or add manually</label>
+              <div class="row gap-2 wrap">
+                <input class="input grow" placeholder="Ingredient name" style="min-width:150px">
+                <input class="input" type="number" placeholder="Dose" style="width:90px">
+                <select class="select" style="width:80px"><option>mg</option><option>mcg</option><option>g</option><option>IU</option></select>
+                <button class="btn btn-outline"><i class="ti ti-plus"></i></button>
+              </div>
+            </div>
+            <button class="btn btn-primary btn-lg btn-block mt-6"><i class="ti ti-shield-check"></i> Run compliance check</button>
+          </div>
+        </div>
+        <div class="col gap-6">
+          <div class="card">
+            <div class="row between wrap gap-3">
+              <div><span class="eyebrow">Live result</span><div class="row gap-2 mt-2"><span class="h3">78%</span><span class="badge badge-warn"><span class="dot"></span> Needs review</span></div><div class="muted" style="font-size:var(--fs-sm)">3 OK · 1 review · 1 blocked</div></div>
+              <div class="row gap-2"><a href="report.html" class="btn btn-outline btn-sm"><i class="ti ti-file-text"></i> Report</a><button class="btn btn-secondary btn-sm"><i class="ti ti-download"></i> PDF</button></div>
+            </div>
+            <div class="meter warn mt-4"><span style="width:78%"></span></div>
+          </div>
+          <div class="card">
+            <div class="card-title mb-4"><i class="ti ti-list-search"></i> Per-ingredient verdict</div>
+            <div class="ing-row"><span class="ico sb-s1"><i class="ti ti-pill"></i></span><div class="grow"><div class="nm">Vitamin C (Ascorbic acid)</div><div class="meta">Schedule I · Vitamins · RDA 80mg</div></div><span class="dose">80 mg</span><span class="badge badge-ok">OK</span></div>
+            <div class="ing-row"><span class="ico sb-s4"><i class="ti ti-leaf"></i></span><div class="grow"><div class="nm">Ashwagandha extract</div><div class="meta">Schedule IV · Botanicals · within limit</div></div><span class="dose">300 mg</span><span class="badge badge-ok">OK</span></div>
+            <div class="ing-row" style="border-color:var(--warn-100);background:var(--warn-50)"><span class="ico sb-s3"><i class="ti ti-flask"></i></span><div class="grow"><div class="nm">Zinc (as Zinc oxide)</div><div class="meta">Schedule I · Minerals · RDA upper 12mg</div></div><span class="dose">28 mg</span><span class="badge badge-warn">Over RDA</span></div>
+            <div class="ing-row" style="border-color:var(--fail-100);background:var(--fail-50)"><span class="ico" style="background:var(--fail-100);color:var(--fail-600)"><i class="ti ti-ban"></i></span><div class="grow"><div class="nm">Synephrine HCl</div><div class="meta">Not permitted · Restricted stimulant</div></div><span class="dose">20 mg</span><span class="badge badge-fail">Blocked</span></div>
+            <div class="ing-row"><span class="ico sb-s2"><i class="ti ti-test-pipe"></i></span><div class="grow"><div class="nm">Pectin (gelling agent)</div><div class="meta">GMP additive · INS 440 · permitted</div></div><span class="dose">q.s.</span><span class="badge badge-ok">OK</span></div>
+            <div class="alert alert-warn mt-4"><i class="ti ti-bulb"></i><div><strong>Suggested fix:</strong> Reduce Zinc to ≤12 mg and remove Synephrine HCl to reach full compliance.</div></div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+<nav class="mobile-nav">
+  <a href="dashboard.html"><i class="ti ti-layout-dashboard"></i>Home</a>
+  <a href="tracker.html" class="active"><i class="ti ti-list-check"></i>Tracker</a>
+  <a href="tracker.html"><i class="ti ti-circle-plus" style="font-size:30px;color:var(--brand-700)"></i></a>
+  <a href="report.html"><i class="ti ti-file-text"></i>Reports</a>
+  <a href="account.html"><i class="ti ti-user"></i>Account</a>
+</nav>
+</body>
+</html>

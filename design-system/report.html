@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Compliance Report · Regulyze</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.1.0/dist/tabler-icons.min.css">
+<link rel="stylesheet" href="assets/regulyze-ds.css">
+<style>
+  .scorewrap{display:grid;grid-template-columns:auto 1fr;gap:var(--s-6);align-items:center}
+  .ring{position:relative}
+  @media(max-width:560px){.scorewrap{grid-template-columns:1fr;justify-items:center;text-align:center}}
+  .legend{display:flex;flex-wrap:wrap;gap:var(--s-4)}
+  .legend span{display:flex;align-items:center;gap:6px;font-size:var(--fs-sm);color:var(--text-muted)}
+  .legend .sw{width:11px;height:11px;border-radius:3px}
+  .cite{font-family:var(--font-mono);font-size:var(--fs-xs);color:var(--text-muted)}
+</style>
+</head>
+<body>
+<div class="app">
+  <input type="checkbox" id="mt" class="mob-toggle" hidden>
+  <label for="mt" class="scrim"></label>
+  <aside class="sidebar">
+    <div class="brand"><svg width="34" height="34" viewBox="0 0 36 36" fill="none" aria-hidden="true" style="flex-shrink:0"><path d="M18 3L31 10.5L31 25.5L18 33L5 25.5L5 10.5Z" fill="rgba(255,255,255,.92)"/><path d="M12 18L16.5 22.5L24.5 13.5" stroke="var(--brand-700)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg><b>Regulyze</b></div>
+    <a class="nav-item" href="dashboard.html"><i class="ti ti-layout-dashboard"></i> Dashboard</a>
+    <a class="nav-item" href="tracker.html"><i class="ti ti-list-check"></i> Compliance Tracker</a>
+    <a class="nav-item" href="product-detail.html"><i class="ti ti-flask"></i> Formulations</a>
+    <a class="nav-item active" href="report.html"><i class="ti ti-file-text"></i> Reports</a>
+    <a class="nav-item" href="#"><i class="ti ti-checklist"></i> Label Checklist</a>
+    <a class="nav-item" href="#"><i class="ti ti-gauge"></i> RDA Checker</a>
+    <div class="nav-sep"></div>
+    <a class="nav-item" href="account.html"><i class="ti ti-user-cog"></i> Account</a>
+    <div class="foot">v2.8 · FSS (Nutra) 2022<br>© TPS Xperts Group</div>
+  </aside>
+  <div class="main">
+    <header class="topbar">
+      <label for="mt" class="burger"><i class="ti ti-menu-2"></i></label>
+      <div class="row gap-2 hide-mob"><a href="dashboard.html" class="muted">Reports</a><i class="ti ti-chevron-right faint"></i><strong>Immunity Gummies v3</strong></div>
+      <div style="margin-left:auto" class="row gap-3">
+        <button class="btn btn-outline btn-sm"><i class="ti ti-printer"></i> Print</button>
+        <button class="btn btn-primary btn-sm"><i class="ti ti-download"></i> Export PDF</button>
+        <div class="avatar">TS</div>
+      </div>
+    </header>
+    <main class="content">
+      <div class="page-head"><div><h1 class="h2">Compliance Report</h1><p class="muted">Immunity Gummies v3 · checked Jun 6, 2026 · ref #RG-10293</p></div><span class="badge badge-warn"><span class="dot"></span> Needs review</span></div>
+      <div class="grid-2 mb-4" style="grid-template-columns:1fr 1.4fr">
+        <div class="card">
+          <div class="scorewrap">
+            <div class="ring" style="--p:78;--c:var(--warn-600)"><div><div class="num">78%</div><div class="cap">compliant</div></div></div>
+            <div><h3 class="h4 mb-2">Overall verdict</h3><p class="muted mb-4">Resolvable with two changes. One non-permitted ingredient blocks approval.</p>
+              <div class="legend"><span><i class="sw" style="background:var(--ok-600)"></i> 3 OK</span><span><i class="sw" style="background:var(--warn-600)"></i> 1 review</span><span><i class="sw" style="background:var(--fail-600)"></i> 1 blocked</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title mb-4"><i class="ti ti-chart-bar"></i> Checks by category</div>
+          <div class="col gap-3">
+            <div><div class="row between mb-2"><span>Schedule I — Vitamins &amp; Minerals</span><span class="badge badge-warn">1 over RDA</span></div><div class="meter warn"><span style="width:66%"></span></div></div>
+            <div><div class="row between mb-2"><span>Schedule IV — Botanicals</span><span class="badge badge-ok">Pass</span></div><div class="meter ok"><span style="width:100%"></span></div></div>
+            <div><div class="row between mb-2"><span>GMP / Codex additives</span><span class="badge badge-ok">Pass</span></div><div class="meter ok"><span style="width:100%"></span></div></div>
+            <div><div class="row between mb-2"><span>Permitted ingredient list</span><span class="badge badge-fail">1 not permitted</span></div><div class="meter fail"><span style="width:50%"></span></div></div>
+          </div>
+        </div>
+      </div>
+      <div class="card mb-4">
+        <div class="card-title mb-4"><i class="ti ti-alert-triangle" style="color:var(--fail-600)"></i> Findings &amp; required actions</div>
+        <div class="alert alert-fail mb-2"><i class="ti ti-ban"></i><div><strong>Synephrine HCl is not permitted</strong> in nutraceuticals under FSSR. <span class="cite">Ref: Not_Permitted_Ingredients · FSS (Nutra) 2022</span><br><em>Action: remove this ingredient before submission.</em></div></div>
+        <div class="alert alert-warn"><i class="ti ti-alert-circle"></i><div><strong>Zinc 28 mg exceeds the tolerable upper limit</strong> for adults (12 mg). <span class="cite">Ref: ICMR-NIN RDA 2020 · Schedule I Minerals</span><br><em>Action: reduce dosage to ≤12 mg.</em></div></div>
+      </div>
+      <div class="card">
+        <div class="card-head"><div class="card-title"><i class="ti ti-table"></i> Full ingredient breakdown</div><div class="pill-tabs hide-mob"><button class="active">All</button><button>Flagged</button><button>Passed</button></div></div>
+        <table class="table">
+          <thead><tr><th>Ingredient</th><th class="hide-mob">Dose</th><th class="hide-mob">Classification</th><th>Regulation</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Vitamin C (Ascorbic acid)</strong></td><td class="hide-mob mono">80 mg</td><td class="hide-mob"><span class="badge sb-s1">Schedule I</span></td><td class="cite">FSSR Sch I · Vitamins</td><td><span class="badge badge-ok">OK</span></td></tr>
+            <tr><td><strong>Ashwagandha extract</strong></td><td class="hide-mob mono">300 mg</td><td class="hide-mob"><span class="badge sb-s4">Schedule IV</span></td><td class="cite">FSSR Sch IV · Botanicals</td><td><span class="badge badge-ok">OK</span></td></tr>
+            <tr><td><strong>Zinc (as Zinc oxide)</strong></td><td class="hide-mob mono">28 mg</td><td class="hide-mob"><span class="badge sb-s1">Schedule I</span></td><td class="cite">RDA 2020 · upper 12mg</td><td><span class="badge badge-warn">Over RDA</span></td></tr>
+            <tr><td><strong>Synephrine HCl</strong></td><td class="hide-mob mono">20 mg</td><td class="hide-mob"><span class="badge badge-fail">Restricted</span></td><td class="cite">Not_Permitted list</td><td><span class="badge badge-fail">Blocked</span></td></tr>
+            <tr><td><strong>Pectin (gelling agent)</strong></td><td class="hide-mob mono">q.s.</td><td class="hide-mob"><span class="badge sb-s2">Additive</span></td><td class="cite">GMP · INS 440</td><td><span class="badge badge-ok">OK</span></td></tr>
+          </tbody>
+        </table>
+        <div class="hint mt-4"><i class="ti ti-info-circle"></i> Indicative only. Based on FSS (Nutra) Regulations 2022 &amp; ICMR RDA 2020. Not a substitute for legal/regulatory advice.</div>
+      </div>
+    </main>
+  </div>
+</div>
+<nav class="mobile-nav">
+  <a href="dashboard.html"><i class="ti ti-layout-dashboard"></i>Home</a>
+  <a href="tracker.html"><i class="ti ti-list-check"></i>Tracker</a>
+  <a href="tracker.html"><i class="ti ti-circle-plus" style="font-size:30px;color:var(--brand-700)"></i></a>
+  <a href="report.html" class="active"><i class="ti ti-file-text"></i>Reports</a>
+  <a href="account.html"><i class="ti ti-user"></i>Account</a>
+</nav>
+</body>
+</html>
