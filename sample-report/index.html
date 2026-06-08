@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sample Compliance Report — Regulyze</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Mono&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css">
+<style>
+:root{
+  --brand-900:#0E4B40;--brand-800:#14594C;--brand-700:#1A6B5E;--brand-600:#1F8473;
+  --brand-400:#56B3A1;--brand-200:#C4E8E2;--brand-100:#E6F5F1;--brand-50:#F4FBF8;
+  --ok-700:#0F5C4A;--ok-100:#D0EDE8;--ok-50:#ECFDF5;
+  --warn-700:#92400E;--warn-100:#FAEEDA;--warn-50:#FFFBEB;
+  --fail-700:#791F1F;--fail-600:#A32D2D;--fail-100:#FCEBEB;--fail-50:#FEF2F2;
+  --info-700:#1E40AF;--info-100:#DBEAFE;
+  --ink-900:#0F172A;--ink-700:#334155;--ink-500:#64748B;--ink-400:#94A3B8;
+  --ink-200:#E2E8F0;--ink-100:#F1F5F9;
+  --r-sm:6px;--r-md:10px;--r-lg:14px;
+  --fs-xs:11px;--fs-sm:12px;--fs-md:14px;--fs-lg:17px;--fs-xl:20px;--fs-2xl:24px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',system-ui,sans-serif;font-size:14px;line-height:1.6;color:var(--ink-900);background:#f8fafc;-webkit-font-smoothing:antialiased}
+a{color:var(--brand-700);text-decoration:none}
+
+/* Top bar */
+.topbar{background:var(--brand-800);color:#fff;padding:12px 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,.15)}
+.topbar-brand{display:flex;align-items:center;gap:10px;font-weight:700;font-size:17px}
+.topbar-actions{display:flex;align-items:center;gap:10px}
+.badge-demo{background:rgba(255,255,255,.15);color:#fff;padding:3px 10px;border-radius:999px;font-size:11px;font-weight:600;border:1px solid rgba(255,255,255,.25)}
+.btn-cta{background:#fff;color:var(--brand-700);padding:7px 18px;border-radius:8px;font-size:13px;font-weight:600;border:none;cursor:pointer;transition:all .15s;font-family:inherit}
+.btn-cta:hover{background:var(--brand-100)}
+
+/* Main layout */
+.main{max-width:1000px;margin:0 auto;padding:32px 24px 64px}
+
+/* Report header */
+.report-header{background:#fff;border-radius:var(--r-lg);padding:24px 28px;margin-bottom:20px;border:1px solid var(--brand-200);box-shadow:0 2px 8px rgba(26,107,94,.07)}
+.report-product{font-size:var(--fs-2xl);font-weight:700;color:var(--ink-900);margin-bottom:6px}
+.report-meta{display:flex;flex-wrap:wrap;gap:16px;font-size:var(--fs-xs);color:var(--ink-500);margin-bottom:16px}
+.report-meta span{display:flex;align-items:center;gap:5px}
+.report-meta i{color:var(--brand-400)}
+.overall-badge{display:inline-flex;align-items:center;gap:8px;padding:8px 16px;border-radius:8px;font-size:13px;font-weight:600}
+.overall-ok{background:var(--ok-100);color:var(--ok-700);border:1px solid #A7D9CF}
+.overall-review{background:var(--warn-100);color:var(--warn-700);border:1px solid #F0D68A}
+
+/* Summary cards */
+.sum-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
+.sum-card{background:#fff;border-radius:var(--r-md);padding:16px;border:1px solid var(--brand-100);text-align:center;box-shadow:0 1px 4px rgba(26,107,94,.06)}
+.sum-card .num{font-size:var(--fs-2xl);font-weight:700}
+.sum-card .lbl{font-size:var(--fs-xs);color:var(--ink-500);margin-top:3px}
+.num-ok{color:var(--ok-700)} .num-warn{color:var(--warn-700)} .num-fail{color:var(--fail-600)} .num-na{color:var(--ink-400)}
+
+/* Section card */
+.card{background:#fff;border-radius:var(--r-lg);padding:20px 24px;margin-bottom:16px;border:1px solid var(--brand-100);box-shadow:0 1px 4px rgba(26,107,94,.06)}
+.card-title{font-size:13px;font-weight:700;color:var(--ink-900);margin-bottom:14px;display:flex;align-items:center;gap:8px;padding-bottom:10px;border-bottom:1px solid var(--brand-100)}
+.card-title i{color:var(--brand-600);font-size:15px}
+
+/* Results table */
+.res-tbl{width:100%;border-collapse:collapse;font-size:var(--fs-xs)}
+.res-tbl th{padding:7px 10px;text-align:left;background:var(--brand-50);color:var(--ink-700);font-weight:600;border-bottom:2px solid var(--brand-200);font-size:10px;text-transform:uppercase;letter-spacing:.05em}
+.res-tbl td{padding:9px 10px;border-bottom:1px solid var(--brand-50);vertical-align:middle}
+.res-tbl tr:hover td{background:var(--brand-50)}
+.res-tbl tr:last-child td{border-bottom:none}
+.status-pill{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:999px;font-size:10px;font-weight:600;white-space:nowrap}
+.pill-ok{background:var(--ok-100);color:var(--ok-700)} .pill-warn{background:var(--warn-100);color:var(--warn-700)}
+.pill-fail{background:var(--fail-100);color:var(--fail-600)} .pill-na{background:var(--ink-100);color:var(--ink-500)}
+.pill-review{background:#FEF9C3;color:#713F12}
+
+/* Ingredient row note */
+.ing-note{font-size:10px;color:var(--ink-500);margin-top:3px;display:flex;align-items:flex-start;gap:4px}
+.ing-note i{color:var(--brand-400);flex-shrink:0;margin-top:1px}
+
+/* Alert / info boxes */
+.info-box{border-radius:var(--r-md);padding:12px 14px;font-size:var(--fs-xs);display:flex;gap:10px;margin-bottom:12px}
+.info-box i{font-size:16px;flex-shrink:0;margin-top:1px}
+.box-ok{background:var(--ok-50);color:var(--ok-700);border:1px solid #A7D9CF}
+.box-warn{background:var(--warn-50);color:var(--warn-700);border:1px solid #F0D68A}
+.box-fail{background:var(--fail-50);color:var(--fail-700);border:1px solid #F5BFBF}
+.box-info{background:var(--info-100);color:var(--info-700);border:1px solid #BFDBFE}
+
+/* Schedule check rows */
+.sched-row{display:flex;align-items:flex-start;gap:12px;padding:10px 0;border-bottom:1px solid var(--brand-50)}
+.sched-row:last-child{border-bottom:none}
+.sched-icon{width:32px;height:32px;border-radius:8px;display:grid;place-items:center;font-size:15px;flex-shrink:0}
+.sched-icon-ok{background:var(--ok-100);color:var(--ok-700)}
+.sched-icon-warn{background:var(--warn-100);color:var(--warn-700)}
+.sched-icon-fail{background:var(--fail-100);color:var(--fail-600)}
+.sched-title{font-size:12px;font-weight:600;color:var(--ink-900)}
+.sched-desc{font-size:11px;color:var(--ink-500);margin-top:2px}
+
+/* Label checklist */
+.lbl-row{display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-bottom:1px solid var(--brand-50)}
+.lbl-row:last-child{border-bottom:none}
+.lbl-check{width:20px;height:20px;border-radius:5px;display:grid;place-items:center;flex-shrink:0;font-size:11px;margin-top:1px}
+.lbl-check-ok{background:var(--ok-100);color:var(--ok-700)}
+.lbl-check-req{background:var(--warn-100);color:var(--warn-700)}
+.lbl-text{font-size:12px;color:var(--ink-700)}
+.lbl-req-note{font-size:10px;color:var(--warn-700);margin-top:2px}
+
+/* Disclaimer */
+.disclaimer{background:var(--brand-50);border:1px solid var(--brand-200);border-radius:var(--r-md);padding:12px 16px;font-size:10px;color:var(--ink-500);margin-top:24px;line-height:1.6}
+
+/* CTA Banner */
+.cta-banner{background:linear-gradient(135deg,var(--brand-800),var(--brand-600));border-radius:var(--r-lg);padding:28px 32px;color:#fff;text-align:center;margin-bottom:32px}
+.cta-banner h2{font-size:22px;font-weight:700;margin-bottom:8px}
+.cta-banner p{opacity:.85;font-size:13px;margin-bottom:20px}
+.btn-white{background:#fff;color:var(--brand-700);padding:10px 24px;border-radius:8px;font-size:14px;font-weight:600;border:none;cursor:pointer;font-family:inherit;transition:all .15s;display:inline-flex;align-items:center;gap:7px}
+.btn-white:hover{background:var(--brand-100)}
+
+/* Demo label overlay */
+.demo-overlay{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:rgba(14,75,64,.95);color:#fff;padding:10px 20px;border-radius:999px;font-size:12px;font-weight:500;z-index:500;box-shadow:0 4px 20px rgba(0,0,0,.2);display:flex;align-items:center;gap:8px}
+
+@media(max-width:680px){
+  .sum-grid{grid-template-columns:repeat(2,1fr)}
+  .main{padding:20px 16px 48px}
+  .topbar{padding:10px 16px}
+}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-brand">
+    <svg width="28" height="28" viewBox="0 0 36 36" fill="none" aria-hidden="true">
+      <path d="M18 2.5L31.5 10.25V25.75L18 33.5L4.5 25.75V10.25Z" fill="#56B3A1"/>
+      <path d="M11.5 18L16.5 23L24.5 13" stroke="#ffffff" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    Regulyze
+    <span class="badge-demo">Sample Report</span>
+  </div>
+  <div class="topbar-actions">
+    <a href="../app/" class="btn-cta"><i class="ti ti-bolt" style="font-size:13px"></i> Try it free</a>
+  </div>
+</div>
+
+<div class="main">
+
+  <!-- CTA Banner -->
+  <div class="cta-banner">
+    <h2>This is what your compliance report looks like</h2>
+    <p>Instantly check any nutraceutical formulation against FSSAI Schedules I–IV, GMP additives, RDA limits and more.</p>
+    <a href="../app/" class="btn-white"><i class="ti ti-bolt"></i> Check your formulation free</a>
+  </div>
+
+  <!-- Report Header -->
+  <div class="report-header">
+    <div class="report-product">Immune Support Capsule — Sample Product</div>
+    <div class="report-meta">
+      <span><i class="ti ti-calendar"></i> 08 Jun 2026, 14:32</span>
+      <span><i class="ti ti-user"></i> Demo User</span>
+      <span><i class="ti ti-category"></i> Category: Health Supplement (Schedule III-A)</span>
+      <span><i class="ti ti-building"></i> Regulyze v3.2 · FSSAI FSS (Nutra) 2022</span>
+    </div>
+    <div>
+      <span class="overall-badge overall-ok"><i class="ti ti-circle-check"></i> Overall: Conditionally Compliant — 3 items need attention</span>
+    </div>
+  </div>
+
+  <!-- Summary Cards -->
+  <div class="sum-grid">
+    <div class="sum-card"><div class="num num-ok">6</div><div class="lbl">Compliant</div></div>
+    <div class="sum-card"><div class="num num-warn">3</div><div class="lbl">Review Needed</div></div>
+    <div class="sum-card"><div class="num num-fail">1</div><div class="lbl">Non-Compliant</div></div>
+    <div class="sum-card"><div class="num num-na">2</div><div class="lbl">Not Applicable</div></div>
+  </div>
+
+  <!-- Ingredient Analysis -->
+  <div class="card">
+    <div class="card-title"><i class="ti ti-flask"></i> Ingredient-by-Ingredient Analysis</div>
+
+    <div class="info-box box-ok">
+      <i class="ti ti-circle-check"></i>
+      <div><strong>6 of 10 ingredients</strong> fully compliant with FSSAI Schedule III-A permitted list and dosage limits.</div>
+    </div>
+    <div class="info-box box-warn">
+      <i class="ti ti-alert-triangle"></i>
+      <div><strong>Vitamin C at 200 mg</strong> exceeds the Schedule III-A maximum single-dose limit of 160 mg. Consider splitting into two servings or reformulating.</div>
+    </div>
+
+    <table class="res-tbl">
+      <thead>
+        <tr>
+          <th>Ingredient</th>
+          <th>Declared Dose</th>
+          <th>Permitted Limit</th>
+          <th>Schedule / Source</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>
+            <strong>Ashwagandha Root Extract</strong>
+            <div class="ing-note"><i class="ti ti-info-circle"></i> Standardised to 5% Withanolides (KSM-66)</div>
+          </td>
+          <td>500 mg</td>
+          <td>500 mg/day</td>
+          <td>Schedule III-A · Botanicals</td>
+          <td><span class="status-pill pill-ok"><i class="ti ti-check"></i> Compliant</span></td>
+        </tr>
+        <tr>
+          <td>
+            <strong>Vitamin C (Ascorbic Acid)</strong>
+            <div class="ing-note"><i class="ti ti-alert-triangle" style="color:var(--warn-700)"></i> Dosage 25% above maximum permitted single dose</div>
+          </td>
+          <td>200 mg</td>
+          <td>160 mg/dose</td>
+          <td>Schedule III-A · Vitamins</td>
+          <td><span class="status-pill pill-warn"><i class="ti ti-alert-triangle"></i> Review Needed</span></td>
+        </tr>
+        <tr>
+          <td>
+            <strong>Zinc (as Zinc Bisglycinate)</strong>
+            <div class="ing-note"><i class="ti ti-info-circle"></i> Elemental zinc verified via conversion factor</div>
+          </td>
+          <td>10 mg elemental</td>
+          <td>15 mg/day</td>
+          <td>Schedule III-A · Minerals</td>
+          <td><span class="status-pill pill-ok"><i class="ti ti-check"></i> Compliant</span></td>
+        </tr>
+        <tr>
+          <td>
+            <strong>Vitamin D3 (Cholecalciferol)</strong>
+            <div class="ing-note"><i class="ti ti-info-circle"></i> 600 IU = 15 mcg; within Schedule III-A range</div>
+          </td>
+          <td>600 IU</td>
+          <td>1000 IU/day</td>
+          <td>Schedule III-A · Vitamins</td>
+          <td><span class="status-pill pill-ok"><i class="ti ti-check"></i> Compliant</span></td>
+        </tr>
+        <tr>
+          <td>
+            <strong>Elderberry Extract</strong>
+            <div class="ing-note"><i class="ti ti-help-circle" style="color:var(--ink-400)"></i> Not listed in Schedule III-A botanical approved list</div>
+          </td>
+          <td>150 mg</td>
+          <td>Not specified</td>
+          <td>Novel Ingredient / Schedule II check needed</td>
+          <td><span class="status-pill pill-review"><i class="ti ti-question-mark"></i> Verify Listing</span></td>
+        </tr>
+        <tr>
+          <td>
+            <strong>Turmeric Extract (95% Curcuminoids)</strong>
+          </td>
+          <td>250 mg</td>
+          <td>400 mg/day</td>
+          <td>Schedule III-A · Botanicals</td>
+          <td><span class="status-pill pill-ok"><i class="ti ti-check"></i> Compliant</span></td>
+        </tr>
+        <tr>
+          <td>
+            <strong>Piperine</strong>
+            <div class="ing-note"><i class="ti ti-info-circle"></i> Used as absorption enhancer</div>
+          </td>
+          <td>5 mg</td>
+          <td>10 mg/day</td>
+          <td>Schedule III-A · Botanicals</td>
+          <td><span class="status-pill pill-ok"><i class="ti ti-check"></i> Compliant</span></td>
+        </tr>
+        <tr>
+          <td>
+            <strong>Selenium (as Sodium Selenate)</strong>
+            <div class="ing-note"><i class="ti ti-alert-triangle" style="color:var(--warn-700)"></i> Conversion: Sodium Selenate → elemental Se factor 0.415</div>
+          </td>
+          <td>55 mcg elemental</td>
+          <td>55 mcg/day</td>
+          <td>Schedule III-A · Minerals</td>
+          <td><span class="status-pill pill-ok"><i class="ti ti-check"></i> Compliant</span></td>
+        </tr>
+        <tr>
+          <td>
+            <strong>Colloidal Silicon Dioxide</strong>
+            <div class="ing-note"><i class="ti ti-info-circle"></i> Processing aid / anti-caking agent</div>
+          </td>
+          <td>3 mg</td>
+          <td>GMP as required</td>
+          <td>GMP Additive — Codex List</td>
+          <td><span class="status-pill pill-ok"><i class="ti ti-check"></i> Compliant</span></td>
+        </tr>
+        <tr>
+          <td>
+            <strong>Magnesium Stearate</strong>
+            <div class="ing-note"><i class="ti ti-info-circle"></i> Lubricant; GMP permitted in capsule formulations</div>
+          </td>
+          <td>10 mg</td>
+          <td>GMP as required</td>
+          <td>GMP Additive — FSSR List</td>
+          <td><span class="status-pill pill-ok"><i class="ti ti-check"></i> Compliant</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Schedule Compliance -->
+  <div class="card">
+    <div class="card-title"><i class="ti ti-clipboard-check"></i> Schedule &amp; Regulatory Cross-Check</div>
+
+    <div class="sched-row">
+      <div class="sched-icon sched-icon-ok"><i class="ti ti-check"></i></div>
+      <div>
+        <div class="sched-title">Schedule I — General Requirements for Nutraceuticals</div>
+        <div class="sched-desc">Product category classified as Health Supplement. Manufacturing in a GMP-certified facility required. Shelf life and stability testing mandatory. ✓ All general requirements met.</div>
+      </div>
+    </div>
+    <div class="sched-row">
+      <div class="sched-icon sched-icon-ok"><i class="ti ti-check"></i></div>
+      <div>
+        <div class="sched-title">Schedule III-A — Vitamins &amp; Minerals (Permitted)</div>
+        <div class="sched-desc">Vitamin C, D3, Zinc, and Selenium all appear in the Schedule III-A approved vitamins and minerals list. Forms used (Ascorbic Acid, Cholecalciferol, Zinc Bisglycinate, Sodium Selenate) are permitted salt forms.</div>
+      </div>
+    </div>
+    <div class="sched-row">
+      <div class="sched-icon sched-icon-warn"><i class="ti ti-alert-triangle"></i></div>
+      <div>
+        <div class="sched-title">Schedule III-A — Dose Limit Verification</div>
+        <div class="sched-desc">Vitamin C (200 mg) exceeds the single-dose maximum of 160 mg permitted under Schedule III-A. The daily intake limit is 500 mg. Reformulate to ≤160 mg/serving or document multi-serving label claim.</div>
+      </div>
+    </div>
+    <div class="sched-row">
+      <div class="sched-icon sched-icon-warn"><i class="ti ti-question-mark"></i></div>
+      <div>
+        <div class="sched-title">Schedule III-A — Botanical Ingredients</div>
+        <div class="sched-desc">Ashwagandha, Turmeric Extract, and Piperine are confirmed in Schedule III-A botanical list. Elderberry Extract is not listed — requires verification with latest FSSAI notifications for botanical inclusion or separate Novel Food approval under Schedule II.</div>
+      </div>
+    </div>
+    <div class="sched-row">
+      <div class="sched-icon sched-icon-ok"><i class="ti ti-check"></i></div>
+      <div>
+        <div class="sched-title">GMP Additives — Codex &amp; FSSR Permitted List</div>
+        <div class="sched-desc">Colloidal Silicon Dioxide (anti-caking agent) and Magnesium Stearate (lubricant) both appear in the GMP-permitted additives list. Usage at declared quantities is within GMP compliance.</div>
+      </div>
+    </div>
+    <div class="sched-row">
+      <div class="sched-icon sched-icon-ok"><i class="ti ti-check"></i></div>
+      <div>
+        <div class="sched-title">NSF Closure List — No Prohibited Substances</div>
+        <div class="sched-desc">None of the 10 declared ingredients appear in the NSF Rejected / FSSAI Prohibited Substances list. All ingredients cleared for nutraceutical use.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RDA Analysis -->
+  <div class="card">
+    <div class="card-title"><i class="ti ti-chart-bar"></i> % RDA Analysis (ICMR 2020 Reference)</div>
+    <table class="res-tbl">
+      <thead>
+        <tr>
+          <th>Nutrient</th>
+          <th>Dose</th>
+          <th>RDA (Adult Male)</th>
+          <th>RDA (Adult Female)</th>
+          <th>% RDA (M)</th>
+          <th>% RDA (F)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Vitamin C</strong></td>
+          <td>200 mg</td>
+          <td>65 mg</td>
+          <td>65 mg</td>
+          <td><span style="background:#D0EDE8;color:#0F5C4A;padding:2px 8px;border-radius:999px;font-size:10px;font-weight:600">308%</span></td>
+          <td><span style="background:#D0EDE8;color:#0F5C4A;padding:2px 8px;border-radius:999px;font-size:10px;font-weight:600">308%</span></td>
+        </tr>
+        <tr>
+          <td><strong>Vitamin D3</strong></td>
+          <td>600 IU (15 mcg)</td>
+          <td>15 mcg</td>
+          <td>15 mcg</td>
+          <td><span style="background:#D0EDE8;color:#0F5C4A;padding:2px 8px;border-radius:999px;font-size:10px;font-weight:600">100%</span></td>
+          <td><span style="background:#D0EDE8;color:#0F5C4A;padding:2px 8px;border-radius:999px;font-size:10px;font-weight:600">100%</span></td>
+        </tr>
+        <tr>
+          <td><strong>Zinc</strong></td>
+          <td>10 mg</td>
+          <td>17 mg</td>
+          <td>10 mg</td>
+          <td><span style="background:#E2E8F0;color:#475569;padding:2px 8px;border-radius:999px;font-size:10px;font-weight:600">59%</span></td>
+          <td><span style="background:#D0EDE8;color:#0F5C4A;padding:2px 8px;border-radius:999px;font-size:10px;font-weight:600">100%</span></td>
+        </tr>
+        <tr>
+          <td><strong>Selenium</strong></td>
+          <td>55 mcg</td>
+          <td>40 mcg</td>
+          <td>40 mcg</td>
+          <td><span style="background:#D0EDE8;color:#0F5C4A;padding:2px 8px;border-radius:999px;font-size:10px;font-weight:600">138%</span></td>
+          <td><span style="background:#D0EDE8;color:#0F5C4A;padding:2px 8px;border-radius:999px;font-size:10px;font-weight:600">138%</span></td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="info-box box-info" style="margin-top:14px;margin-bottom:0">
+      <i class="ti ti-info-circle"></i>
+      <div>RDA values sourced from ICMR-NIN Recommended Dietary Allowances for Indians (2020). Vitamin C at 308% RDA is above the 1× RDA threshold; this is permitted for supplements but must be declared on label.</div>
+    </div>
+  </div>
+
+  <!-- Label Checklist -->
+  <div class="card">
+    <div class="card-title"><i class="ti ti-checklist"></i> Mandatory Label Checklist — Health Supplement</div>
+    <div class="info-box box-info" style="margin-bottom:14px">
+      <i class="ti ti-info-circle"></i>
+      <div>Per FSS (Labelling and Display) Regulations 2020 and FSSAI Nutraceuticals Order. All items below are mandatory for Health Supplements sold in India.</div>
+    </div>
+
+    <div class="lbl-row">
+      <div class="lbl-check lbl-check-ok"><i class="ti ti-check" style="font-size:10px"></i></div>
+      <div class="lbl-text"><strong>Product name and nature of food</strong><div style="font-size:10px;color:var(--ink-500);margin-top:2px">e.g. "Immune Support Capsule — Health Supplement"</div></div>
+    </div>
+    <div class="lbl-row">
+      <div class="lbl-check lbl-check-ok"><i class="ti ti-check" style="font-size:10px"></i></div>
+      <div class="lbl-text"><strong>Complete list of ingredients with quantities</strong><div style="font-size:10px;color:var(--ink-500);margin-top:2px">All 10 declared ingredients must be listed in descending order by weight</div></div>
+    </div>
+    <div class="lbl-row">
+      <div class="lbl-check lbl-check-ok"><i class="ti ti-check" style="font-size:10px"></i></div>
+      <div class="lbl-text"><strong>Net quantity per serving and per pack</strong></div>
+    </div>
+    <div class="lbl-row">
+      <div class="lbl-check lbl-check-req"><i class="ti ti-alert-triangle" style="font-size:10px"></i></div>
+      <div class="lbl-text"><strong>Nutrition information panel</strong>
+        <div class="lbl-req-note"><i class="ti ti-alert-triangle" style="font-size:10px"></i> Must declare % RDA for all vitamins/minerals. Vitamin C at 308% RDA must be explicitly declared.</div>
+      </div>
+    </div>
+    <div class="lbl-row">
+      <div class="lbl-check lbl-check-ok"><i class="ti ti-check" style="font-size:10px"></i></div>
+      <div class="lbl-text"><strong>FSSAI license number of manufacturer</strong></div>
+    </div>
+    <div class="lbl-row">
+      <div class="lbl-check lbl-check-ok"><i class="ti ti-check" style="font-size:10px"></i></div>
+      <div class="lbl-text"><strong>Batch number, manufacturing date, best before date</strong></div>
+    </div>
+    <div class="lbl-row">
+      <div class="lbl-check lbl-check-ok"><i class="ti ti-check" style="font-size:10px"></i></div>
+      <div class="lbl-text"><strong>Directions for use</strong><div style="font-size:10px;color:var(--ink-500);margin-top:2px">Recommended serving size and frequency</div></div>
+    </div>
+    <div class="lbl-row">
+      <div class="lbl-check lbl-check-req"><i class="ti ti-alert-triangle" style="font-size:10px"></i></div>
+      <div class="lbl-text"><strong>Advisory / warning statements</strong>
+        <div class="lbl-req-note">Must include: "Not a substitute for a varied diet." "Keep out of reach of children." "Consult a physician before use if pregnant/lactating."</div>
+      </div>
+    </div>
+    <div class="lbl-row">
+      <div class="lbl-check lbl-check-ok"><i class="ti ti-check" style="font-size:10px"></i></div>
+      <div class="lbl-text"><strong>"Food Safety Statement" — for health supplements</strong><div style="font-size:10px;color:var(--ink-500);margin-top:2px">"This product is not intended to diagnose, treat, cure or prevent any disease."</div></div>
+    </div>
+    <div class="lbl-row">
+      <div class="lbl-check lbl-check-req"><i class="ti ti-alert-triangle" style="font-size:10px"></i></div>
+      <div class="lbl-text"><strong>Allergen declaration</strong>
+        <div class="lbl-req-note">Piperine (black pepper) must be declared as potential allergen for sensitive individuals. Gelatin capsule shell (if bovine) must be declared.</div>
+      </div>
+    </div>
+    <div class="lbl-row">
+      <div class="lbl-check lbl-check-ok"><i class="ti ti-check" style="font-size:10px"></i></div>
+      <div class="lbl-text"><strong>Storage instructions</strong><div style="font-size:10px;color:var(--ink-500);margin-top:2px">e.g. "Store in a cool, dry place below 30°C. Protect from light."</div></div>
+    </div>
+    <div class="lbl-row">
+      <div class="lbl-check lbl-check-ok"><i class="ti ti-check" style="font-size:10px"></i></div>
+      <div class="lbl-text"><strong>Country of origin</strong></div>
+    </div>
+  </div>
+
+  <!-- Regulatory References -->
+  <div class="card">
+    <div class="card-title"><i class="ti ti-book"></i> Regulatory References Used</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:11px;color:var(--ink-700)">
+      <div style="padding:8px 10px;background:var(--brand-50);border-radius:6px;border:1px solid var(--brand-100)"><strong>FSSR 2011</strong> — Food Safety and Standards (Food Products Standards and Food Additives) Regulations</div>
+      <div style="padding:8px 10px;background:var(--brand-50);border-radius:6px;border:1px solid var(--brand-100)"><strong>FSS (Nutraceuticals) Rules 2022</strong> — Schedule I through IV permitted ingredients and dosage limits</div>
+      <div style="padding:8px 10px;background:var(--brand-50);border-radius:6px;border:1px solid var(--brand-100)"><strong>ICMR-NIN RDA 2020</strong> — Recommended Dietary Allowances for Indians, National Institute of Nutrition</div>
+      <div style="padding:8px 10px;background:var(--brand-50);border-radius:6px;border:1px solid var(--brand-100)"><strong>GMP Codex / FSSR Additives</strong> — Permitted processing aids, excipients and additives list</div>
+      <div style="padding:8px 10px;background:var(--brand-50);border-radius:6px;border:1px solid var(--brand-100)"><strong>NSF / FSSAI Closure List</strong> — Prohibited and restricted substances in nutraceuticals</div>
+      <div style="padding:8px 10px;background:var(--brand-50);border-radius:6px;border:1px solid var(--brand-100)"><strong>FSS (Labelling &amp; Display) Regs 2020</strong> — Mandatory label declarations for health supplements</div>
+    </div>
+  </div>
+
+  <!-- Final CTA -->
+  <div class="cta-banner">
+    <h2>Ready to check your formulation?</h2>
+    <p>Sign up for free and get 5 compliance checks. No credit card required.</p>
+    <a href="../app/" class="btn-white"><i class="ti ti-bolt"></i> Start free — 5 checks included</a>
+  </div>
+
+  <div class="disclaimer">
+    <strong>Disclaimer:</strong> This is a sample report for demonstration purposes only. The formulation, ingredient names, dosages, and compliance outcomes shown here are illustrative and do not constitute actual regulatory advice. Regulyze is an automated compliance screening tool — results are indicative and should be verified by a qualified FSSAI regulatory consultant before use in product development, manufacturing, or labelling decisions. TPS Xperts Group accepts no liability for reliance on automated report outputs. Always refer to the current official FSSAI notifications and applicable regulations.
+  </div>
+</div>
+
+<!-- Demo floating indicator -->
+<div class="demo-overlay">
+  <i class="ti ti-eye"></i> Sample report — <a href="../app/" style="color:#A7D9CF;text-decoration:underline;font-weight:600">try it with your own formulation →</a>
+</div>
+
+</body>
+</html>
