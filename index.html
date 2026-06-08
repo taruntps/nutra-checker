@@ -6578,6 +6578,9 @@ document.addEventListener('keydown',function(e){
     origGoTab2(n);
     document.querySelectorAll('.sidebar .nav-item').forEach(function(el,i){el.classList.toggle('active',i===n)});
     document.querySelectorAll('.mobile-nav a').forEach(function(el,i){el.classList.toggle('active',i===n)});
+    // Preserve the per-tab init calls the old tab buttons used to make
+    try{ if(n===3 && typeof renderHistTab==='function') renderHistTab(); }catch(e){}
+    try{ if(n===4 && typeof rdcInit==='function') rdcInit(); }catch(e){}
   };
 })();
 </script>
