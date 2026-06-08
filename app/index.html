@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-  <!-- REGULYZE-BUILD-v3.2 -->
+  <!-- REGULYZE-BUILD-v3.3 -->
   <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
@@ -738,8 +738,8 @@ select:focus{outline:none;border-color:var(--brand-500)}
     <a class="nav-item" href="#" data-tab="3" onclick="goTab(3);renderHistTab();return false"><i class="ti ti-history"></i> My History</a>
     <a class="nav-item" href="#" data-tab="4" onclick="goTab(4);rdcInit();return false"><i class="ti ti-gauge"></i> RDA Checker</a>
     <div class="nav-sep"></div>
-    <a class="nav-item" href="#" onclick="showAuth();return false" id="nav-account-btn" style="display:none"><i class="ti ti-user-cog"></i> Account</a>
-    <div class="foot" id="sidebar-foot">v3.0 · FSS (Nutra) 2022<br>© TPS Xperts Group</div>
+    <a class="nav-item" href="#" onclick="showProfile();return false" id="nav-account-btn" style="display:none"><i class="ti ti-user-cog"></i> Account</a>
+    <div class="foot" id="sidebar-foot">v3.3 · FSS (Nutra) 2022<br>© TPS Xperts Group</div>
   </aside>
   <div class="main">
     <div class="ticker-wrap"><div class="ticker-move"><span>Regulyze &nbsp;&middot;&nbsp; FSSAI Nutraceutical Compliance Engine &nbsp;&middot;&nbsp; Analyze smarter. Comply faster. &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span>Regulyze &nbsp;&nbsp;&middot;&nbsp; FSSAI Nutraceutical Compliance Engine &nbsp;&middot;&nbsp; Analyze smarter. Comply faster. &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></div></div>
@@ -819,6 +819,26 @@ select:focus{outline:none;border-color:var(--brand-500)}
     </div>
   </div>
 </div>
+
+<!-- PROFILE / ACCOUNT MODAL -->
+<div class="overlay" id="profile-overlay" style="display:none">
+  <div class="auth-card" style="max-width:440px;max-height:90vh;overflow-y:auto">
+    <div class="auth-logo"><svg width="48" height="48" viewBox="0 0 52 52" fill="none" aria-hidden="true"><path d="M26 4L46 15.5V36.5L26 48L6 36.5V15.5Z" fill="var(--brand-700)"/><path d="M17 26L23 32L35 19" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    <div class="auth-title" style="margin-bottom:2px">My Account</div>
+    <div class="auth-sub" id="pf-plan" style="margin-bottom:18px">Free Plan</div>
+    <div class="auth-fld"><label>Full Name</label><input type="text" id="pf-name" placeholder="Your full name"></div>
+    <div class="auth-fld"><label>Email <span style="color:#94a3b8;font-weight:400;font-size:9px">(cannot be changed)</span></label><input type="email" id="pf-email" disabled style="background:#f1f5f9;color:#64748b;cursor:not-allowed"></div>
+    <div class="auth-fld"><label>Mobile Number</label><input type="tel" id="pf-mobile" placeholder="+91 9XXXXXXXXX"></div>
+    <div class="auth-fld"><label>Company / Organisation</label><input type="text" id="pf-company" placeholder="Company or organisation name"></div>
+    <button class="auth-btn" id="pf-save-btn" onclick="saveProfile()"><i class="ti ti-device-floppy"></i> Save Changes</button>
+    <div id="pf-msg" style="text-align:center;font-size:11px;font-weight:600;margin-top:8px;min-height:14px"></div>
+    <div style="display:flex;gap:8px;margin-top:10px">
+      <button onclick="hideProfile()" class="btn btn-ghost btn-sm" style="flex:1;justify-content:center"><i class="ti ti-x"></i> Close</button>
+      <button onclick="hideProfile();logout()" class="btn btn-ghost btn-sm" style="flex:1;justify-content:center;color:var(--fail-600)"><i class="ti ti-logout"></i> Sign Out</button>
+    </div>
+  </div>
+</div>
+
 <div class="plan-gate" id="plan-gate">
   <div class="plan-card-wrap">
     <div class="plan-hdr"><h2>Upgrade Your Plan</h2><p style="opacity:.8;font-size:11px">All free checks used. Choose a plan to continue.</p></div>
@@ -5221,6 +5241,14 @@ function updWB(){
   const g=document.getElementById('user-greeting');const l=document.getElementById('logout-btn');
   if(g){g.textContent=currentUser.name;g.style.display='block';}
   if(l)l.style.display='block';
+  // Logged-in: hide the "Sign up free" CTA + signup icon, show avatar
+  const cta=document.getElementById('topbar-cta-btn');if(cta)cta.style.display='none';
+  const sib=document.getElementById('topbar-signup-btn');if(sib)sib.style.display='none';
+  const av=document.getElementById('user-avatar');
+  if(av){av.style.display='grid';av.textContent=(currentUser.name||'?').trim().charAt(0).toUpperCase();av.style.cursor='pointer';av.title='Account';av.onclick=showProfile;}
+  // Reveal Dashboard + Account in sidebar
+  const dbBtn=document.getElementById('nav-dashboard-btn');if(dbBtn)dbBtn.style.display='';
+  const accBtn=document.getElementById('nav-account-btn');if(accBtn)accBtn.style.display='';
 }
 
 function swPayTab(tab,el){
@@ -5732,8 +5760,54 @@ window.logout=function(){
   localStorage.removeItem(SK);currentUser=null;
   const g=document.getElementById('user-greeting');const l=document.getElementById('logout-btn');const wb=document.getElementById('wb');
   if(g)g.style.display='none';if(l)l.style.display='none';if(wb)wb.style.display='none';
+  // Restore signed-out topbar state
+  const cta=document.getElementById('topbar-cta-btn');if(cta)cta.style.display='';
+  const av=document.getElementById('user-avatar');if(av)av.style.display='none';
+  const dbBtn=document.getElementById('nav-dashboard-btn');if(dbBtn)dbBtn.style.display='none';
+  const accBtn=document.getElementById('nav-account-btn');if(accBtn)accBtn.style.display='none';
+  goTab(0);
   showAuth();
 };
+
+// ═══════════════════════════════════════════════════════════════════
+// PROFILE / ACCOUNT — view & edit name, mobile, company (email locked)
+// ═══════════════════════════════════════════════════════════════════
+function showProfile(){
+  if(!currentUser){showAuth();return;}
+  const d=getUD(currentUser.email);
+  const ov=document.getElementById('profile-overlay');
+  document.getElementById('pf-name').value=currentUser.name||'';
+  document.getElementById('pf-email').value=currentUser.email||'';
+  document.getElementById('pf-mobile').value=d.mobile||'';
+  document.getElementById('pf-company').value=d.company||'';
+  const plan=d.plan||'free';
+  document.getElementById('pf-plan').textContent=(PLANS[plan]?PLANS[plan].lbl:'Free')+' Plan';
+  document.getElementById('pf-msg').textContent='';
+  if(ov)ov.style.display='flex';
+}
+function hideProfile(){const ov=document.getElementById('profile-overlay');if(ov)ov.style.display='none';}
+async function saveProfile(){
+  if(!currentUser)return;
+  const name=(document.getElementById('pf-name').value||'').trim();
+  const mobile=(document.getElementById('pf-mobile').value||'').trim();
+  const company=(document.getElementById('pf-company').value||'').trim();
+  const msg=document.getElementById('pf-msg');
+  const btn=document.getElementById('pf-save-btn');
+  if(!name){msg.style.color='var(--fail-600)';msg.textContent='Name cannot be empty.';return;}
+  // Update local session + user data
+  currentUser.name=name;
+  localStorage.setItem(SK,JSON.stringify(currentUser));
+  const d=getUD(currentUser.email);d.mobile=mobile;d.company=company;d.name=name;setUD(currentUser.email,d);
+  // Refresh UI
+  updWB();
+  const g=document.getElementById('user-greeting');if(g)g.textContent=name;
+  const av=document.getElementById('user-avatar');if(av)av.textContent=name.charAt(0).toUpperCase();
+  msg.style.color='var(--ok-700)';msg.textContent='Saved ✓';
+  if(btn){btn.disabled=true;btn.innerHTML='<i class="ti ti-check"></i> Saved';}
+  // Best-effort sync to backend (non-blocking)
+  try{fetch(BACKEND+'/register',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,email:currentUser.email,mobile,company,update:true}),signal:AbortSignal.timeout(5000)});}catch(e){}
+  setTimeout(()=>{if(btn){btn.disabled=false;btn.innerHTML='<i class="ti ti-device-floppy"></i> Save Changes';}msg.textContent='';},1800);
+}
 
 // ═══════════════════════════════════════════════════════════════════
 // DEMO CONTROLLER — animated walkthrough for unauthenticated users
@@ -6182,16 +6256,18 @@ const DEMO = (function(){
     }
   }catch(e){localStorage.removeItem(SK);}
 
-  // ── No session: show preview mode + start demo ──────────────
-  // Auth overlay stays hidden — user can see the app
-  // Demo starts after a short delay to let the page render
+  // ── No session ──────────────────────────────────────────────
   initGoogleAuth();
-  // initCountryDropdown(); // removed: no CSC dropdowns in form
   setTimeout(()=>{
     const ce=document.getElementById('fml-ce');
     if(ce){ ce.addEventListener('blur',onCEBlur); ce.addEventListener('paste',onCEPaste); ce.addEventListener('input',onCEInput); updCEHint(); _showConfirmIfDirty(); }
   },300);
-  // Demo auto-start removed
+  // If arriving from a landing-page CTA (?auth=signin / ?auth=signup), open the modal
+  try{
+    const p=new URLSearchParams(window.location.search).get('auth');
+    if(p==='signup'){ setTimeout(()=>{swAuthTab('signup',document.getElementById('tab-signup'));showAuth();},200); }
+    else if(p==='signin'){ setTimeout(()=>{swAuthTab('signin',document.getElementById('tab-signin'));showAuth();},200); }
+  }catch(e){}
 })();
 
 // ═══════════════════════════════════════════════════════════════
@@ -6866,7 +6942,11 @@ document.addEventListener('keydown',function(e){
   var origGoTab2 = goTab;
   goTab = function(n){
     origGoTab2(n);
-    document.querySelectorAll('.sidebar .nav-item').forEach(function(el,i){el.classList.toggle('active',i===n)});
+    // Highlight sidebar items by their data-tab (not DOM index — Dashboard is prepended)
+    document.querySelectorAll('.sidebar .nav-item[data-tab]').forEach(function(el){
+      el.classList.toggle('active', parseInt(el.dataset.tab,10)===n);
+    });
+    // Mobile nav maps 0–4 by index (no Dashboard entry there)
     document.querySelectorAll('.mobile-nav a').forEach(function(el,i){el.classList.toggle('active',i===n)});
     // Preserve the per-tab init calls the old tab buttons used to make
     try{ if(n===3 && typeof renderHistTab==='function') renderHistTab(); }catch(e){}
