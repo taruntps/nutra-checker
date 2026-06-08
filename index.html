@@ -4,274 +4,265 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Regulyze — FSSAI Nutraceutical Compliance, Automated</title>
+<meta name="description" content="Enter your formulation and Regulyze validates every ingredient against FSSR Schedules I–IV, GMP additive lists, NSF closures and RDA limits — then generates an audit-ready report, label checklist and PDF.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&family=Fraunces:ital,opsz,wght@0,9..144,600;0,9..144,700;0,9..144,800;1,9..144,400&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Manrope:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.1.0/dist/tabler-icons.min.css">
-<link rel="stylesheet" href="design-system/assets/regulyze-ds.css">
+<link rel="stylesheet" href="design-system/assets/regulyze-v2.css">
 <style>
-  .site-head{position:sticky;top:0;z-index:100;background:rgba(255,255,255,.85);backdrop-filter:blur(10px);border-bottom:1px solid var(--border)}
-  .site-head .container{display:flex;align-items:center;gap:var(--s-6);height:var(--header-h)}
-  .logo{display:flex;align-items:center;gap:10px;font-weight:700;font-size:var(--fs-lg)}
-  .site-nav{display:flex;gap:var(--s-6);margin-left:var(--s-4)}
-  .site-nav a{color:var(--ink-600);font-weight:500;font-size:var(--fs-md)}
-  .site-nav a:hover{color:var(--brand-700)}
-  .head-cta{margin-left:auto;display:flex;gap:var(--s-3);align-items:center}
-  .hero{position:relative;overflow:hidden;background:radial-gradient(1200px 500px at 80% -10%,var(--brand-100),transparent),linear-gradient(180deg,var(--brand-50),#fff)}
-  .hero .container{display:grid;grid-template-columns:1.05fr .95fr;gap:var(--s-12);align-items:center;padding-top:var(--s-16);padding-bottom:var(--s-16)}
-  .hero h1{margin:var(--s-4) 0}
-  .hero h1 .hl{color:var(--brand-700)}
-  .hero .actions{display:flex;gap:var(--s-3);margin:var(--s-6) 0;flex-wrap:wrap}
-  .trust-row{display:flex;gap:var(--s-6);flex-wrap:wrap;color:var(--text-muted);font-size:var(--fs-sm);font-weight:500}
-  .trust-row span{display:flex;align-items:center;gap:7px}
-  .trust-row i{color:var(--ok-600)}
-  .glass{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-xl);box-shadow:var(--sh-lg);padding:var(--s-5)}
-  .mock-row{display:flex;align-items:center;justify-content:space-between;padding:11px 0;border-bottom:1px solid var(--border-soft)}
-  .mock-row:last-child{border:0}
-  .mock-ing{display:flex;align-items:center;gap:10px;font-size:var(--fs-md);font-weight:500}
-  .mock-ing .ico{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;font-size:15px}
-  .section{padding:var(--s-20) 0}
-  .section.tint{background:var(--brand-50)}
-  .sec-head{max-width:700px;margin:0 auto var(--s-12);text-align:center}
-  .sec-head h2{margin:var(--s-3) 0}
-  .prob-grid{display:grid;grid-template-columns:1fr 1fr;gap:var(--s-6);align-items:center}
-  .prob-list{display:flex;flex-direction:column;gap:var(--s-4)}
-  .prob-item{display:flex;gap:var(--s-4);padding:var(--s-4);background:#fff;border:1px solid var(--border);border-radius:var(--r-lg)}
-  .prob-item .x{width:38px;height:38px;border-radius:10px;display:grid;place-items:center;flex-shrink:0;font-size:18px;background:var(--fail-100);color:var(--fail-600)}
-  .prob-item.sol .x{background:var(--ok-100);color:var(--ok-600)}
-  .feat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--s-5)}
-  .feat .ic{width:48px;height:48px;border-radius:12px;background:var(--brand-100);color:var(--brand-700);display:grid;place-items:center;font-size:24px;margin-bottom:var(--s-4)}
-  .feat h3{font-size:var(--fs-lg);margin-bottom:8px}
-  .feat p{color:var(--text-muted);font-size:var(--fs-md)}
-  .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--s-6);counter-reset:s}
-  .step{position:relative;padding-top:var(--s-6)}
-  .step::before{counter-increment:s;content:counter(s);position:absolute;top:0;left:0;width:40px;height:40px;border-radius:50%;background:var(--brand-700);color:#fff;display:grid;place-items:center;font-weight:700;font-size:var(--fs-lg)}
-  .step h3{margin:var(--s-4) 0 8px;font-size:var(--fs-lg)}
-  .stats-band{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--s-6);text-align:center}
-  .stat .n{font-size:var(--fs-4xl);font-weight:700;color:var(--brand-700)}
-  .stat .l{color:var(--text-muted);font-size:var(--fs-sm)}
-  .quote-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--s-5)}
-  .quote{display:flex;flex-direction:column;gap:var(--s-4);height:100%}
-  .quote .stars{color:#F59E0B;font-size:var(--fs-md)}
-  .quote .by{display:flex;align-items:center;gap:11px;margin-top:auto}
-  .quote .by .av{width:42px;height:42px;border-radius:50%;background:var(--accent-100);color:var(--accent-700);display:grid;place-items:center;font-weight:700}
-  .cta-band{background:linear-gradient(120deg,var(--brand-800),var(--brand-600));color:#fff;border-radius:var(--r-xl);padding:var(--s-12);text-align:center}
-  .cta-band h2{color:#fff}
-  .cta-band p{color:rgba(255,255,255,.85);max-width:560px;margin:var(--s-3) auto var(--s-6);font-size:var(--fs-lg)}
-  .cta-band .btn-primary{background:#fff;color:var(--brand-800);border-color:#fff}
-  .pricing{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--s-5);align-items:stretch}
-  .price{display:flex;flex-direction:column}
-  .price.pop{border:2px solid var(--brand-600);box-shadow:var(--sh-md);position:relative}
-  .price.pop .tag{position:absolute;top:-12px;left:50%;transform:translateX(-50%)}
-  .price .amt{font-size:var(--fs-4xl);font-weight:700;margin:var(--s-3) 0}
-  .price .amt small{font-size:var(--fs-md);color:var(--text-muted);font-weight:500}
-  .price ul{list-style:none;display:flex;flex-direction:column;gap:11px;margin:var(--s-5) 0;flex:1}
-  .price li{display:flex;gap:10px;font-size:var(--fs-md)}
-  .price li i{color:var(--ok-600);margin-top:2px}
-  .site-foot{background:var(--brand-900);color:rgba(255,255,255,.7);padding:var(--s-16) 0 var(--s-6)}
-  .foot-grid{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:var(--s-8)}
-  .foot-grid h4{color:#fff;font-size:var(--fs-md);margin-bottom:var(--s-4)}
-  .foot-grid a{display:block;color:rgba(255,255,255,.7);padding:5px 0;font-size:var(--fs-md)}
-  .foot-grid a:hover{color:#fff}
-  .foot-bottom{border-top:1px solid rgba(255,255,255,.12);margin-top:var(--s-10);padding-top:var(--s-6);display:flex;justify-content:space-between;flex-wrap:wrap;gap:var(--s-3);font-size:var(--fs-sm)}
-  @media (max-width:880px){
-    .site-nav,.head-cta .btn-outline{display:none}
-    .burger{display:grid;margin-left:auto}
-    .hero .container{grid-template-columns:1fr;gap:var(--s-8)}
-    .prob-grid,.feat-grid,.steps,.quote-grid,.pricing,.foot-grid,.stats-band{grid-template-columns:1fr}
-    .stats-band{grid-template-columns:1fr 1fr}
-  }
-  @media (min-width:881px){.burger{display:none}}
-  /* ── Premium landing typography ── */
-  body{font-family:'Plus Jakarta Sans','DM Sans',system-ui,sans-serif}
-  .hero h1,.sec-head h2,.cta-band h2{font-family:'Fraunces',Georgia,serif;letter-spacing:-.02em}
-  .hero h1{font-size:clamp(42px,5.5vw,62px);line-height:1.08;font-weight:800}
-  .sec-head h2{font-size:clamp(32px,4vw,50px)}
-  .cta-band h2{font-size:clamp(36px,4.5vw,54px)}
-  /* ── Theme switcher ── */
-  .theme-switcher{position:fixed;bottom:var(--s-5);right:var(--s-5);z-index:500;display:flex;flex-direction:column;align-items:flex-end;gap:8px}
-  .theme-panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);box-shadow:var(--sh-lg);padding:14px var(--s-4);min-width:180px;visibility:hidden;opacity:0;pointer-events:none;transform:translateY(8px);transition:opacity .15s ease,transform .15s ease,visibility .15s}
-  .theme-switcher.open .theme-panel{visibility:visible;opacity:1;pointer-events:auto;transform:none}
-  .theme-lbl{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text-faint);margin-bottom:10px;font-family:'DM Sans',sans-serif}
-  .ts-opt{display:flex;align-items:center;gap:10px;width:100%;background:none;border:1.5px solid transparent;border-radius:var(--r-md);padding:9px 10px;font-size:13px;font-weight:500;cursor:pointer;color:var(--ink-700);font-family:'Plus Jakarta Sans','DM Sans',sans-serif}
-  .ts-opt+.ts-opt{margin-top:3px}
-  .ts-opt:hover{background:var(--ink-50)}
-  .ts-opt.active{border-color:var(--brand-500);background:var(--brand-50);color:var(--brand-700);font-weight:700}
-  .ts-dot{width:15px;height:15px;border-radius:4px;flex-shrink:0;outline:2px solid rgba(0,0,0,.08);outline-offset:0}
-  .ts-tick{margin-left:auto;font-size:14px;color:var(--brand-600);opacity:0}
-  .ts-opt.active .ts-tick{opacity:1}
-  .theme-toggle{width:46px;height:46px;border-radius:var(--r-pill);background:var(--brand-700);color:#fff;border:none;display:grid;place-items:center;font-size:20px;cursor:pointer;box-shadow:var(--sh-lg);transition:background var(--dur)}
-  .theme-toggle:hover{background:var(--brand-500)}
+/* ── page-specific: landing ── */
+.hero{position:relative;overflow:hidden;padding:80px 0 70px}
+.hero::before{content:'';position:absolute;top:-200px;right:-100px;width:560px;height:560px;border-radius:50%;background:radial-gradient(circle,rgba(124,58,237,.18),transparent 65%);pointer-events:none}
+.hero::after{content:'';position:absolute;bottom:-180px;left:-120px;width:480px;height:480px;border-radius:50%;background:radial-gradient(circle,rgba(6,182,212,.14),transparent 65%);pointer-events:none}
+.hero-grid{display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:center;position:relative}
+.hero h1{font-size:clamp(44px,5.2vw,64px);font-weight:800;margin:22px 0 22px}
+.hero .lead{font-size:17.5px;color:var(--muted);max-width:470px;line-height:1.7;margin-bottom:32px}
+.hero-actions{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:32px}
+.trust-row{display:flex;gap:22px;flex-wrap:wrap}
+.trust-row span{font-size:13px;color:var(--muted);font-weight:600;display:flex;align-items:center;gap:7px}
+.trust-row i{color:var(--emerald)}
+/* hero pipeline */
+.pipeline{position:relative;background:linear-gradient(160deg,#fff,#F7F5FE);border:1px solid var(--line);border-radius:var(--r-2xl);padding:28px;box-shadow:0 30px 70px rgba(80,70,200,.14)}
+.pl-head{display:flex;align-items:center;gap:10px;margin-bottom:20px}
+.pl-bot{width:40px;height:40px;border-radius:12px;background:var(--grad-brand);display:grid;place-items:center;color:#fff;font-size:20px;box-shadow:0 6px 18px rgba(99,102,241,.4)}
+.pl-bot-txt b{font-family:'Sora';font-size:14px;display:block}
+.pl-bot-txt small{font-size:11px;color:var(--muted)}
+.pl-scan{position:relative;border-radius:var(--r-md);background:var(--bg-2);border:1px dashed rgba(99,102,241,.3);padding:8px;overflow:hidden}
+.pl-scan::before{content:'';position:absolute;top:0;bottom:0;width:60px;background:linear-gradient(90deg,transparent,rgba(99,102,241,.18),transparent);animation:rg-scan 2.6s linear infinite}
+.pl-token{display:flex;align-items:center;justify-content:space-between;background:#fff;border:1px solid var(--line);border-radius:12px;padding:11px 14px;margin:7px;box-shadow:0 2px 8px rgba(80,70,200,.05)}
+.pl-tok-l{display:flex;align-items:center;gap:10px;font-size:13.5px;font-weight:600}
+.pl-ico{width:30px;height:30px;border-radius:9px;display:grid;place-items:center;font-size:14px}
+.pl-bins{display:flex;gap:8px;margin-top:16px}
+.pl-bin{flex:1;text-align:center;padding:12px 6px;border-radius:13px;font-size:11px;font-weight:700;border:1px solid}
+.pl-bin.b1{background:rgba(99,102,241,.08);border-color:rgba(99,102,241,.2);color:var(--indigo)}
+.pl-bin.b2{background:rgba(16,185,129,.08);border-color:rgba(16,185,129,.2);color:var(--emerald-d)}
+.pl-bin.b3{background:rgba(245,158,11,.08);border-color:rgba(245,158,11,.2);color:#B45309}
+.pl-bin .bn{font-family:'Sora';font-size:20px;display:block;margin-top:3px}
+/* stats */
+.stats{padding:18px 0 76px}
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+.stat{text-align:center;padding:26px 18px;background:#fff;border:1px solid var(--line);border-radius:var(--r-lg);box-shadow:var(--sh-xs)}
+.stat .ic{width:46px;height:46px;border-radius:13px;margin:0 auto 12px;display:grid;place-items:center;font-size:22px}
+.stat .n{font-family:'Sora';font-size:32px;font-weight:800;letter-spacing:-.03em}
+.stat .l{font-size:12.5px;color:var(--muted);margin-top:3px}
+/* before/after */
+.ba-grid{display:grid;grid-template-columns:1fr auto 1fr;gap:28px;align-items:center}
+.ba-card{padding:32px;border-radius:var(--r-xl);border:1px solid var(--line)}
+.ba-card.before{background:#fff}
+.ba-card.after{background:linear-gradient(160deg,#fff,#F4F8FF);border-color:rgba(99,102,241,.25);box-shadow:0 20px 50px rgba(80,70,200,.12)}
+.ba-label{font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;margin-bottom:20px;display:flex;align-items:center;gap:8px}
+.ba-card.before .ba-label{color:var(--rose)}.ba-card.after .ba-label{color:var(--indigo)}
+.ba-item{display:flex;gap:13px;padding:13px 0;border-bottom:1px solid var(--line-2)}
+.ba-item:last-child{border:0}
+.ba-item .d{width:30px;height:30px;border-radius:9px;display:grid;place-items:center;flex-shrink:0;font-size:14px}
+.before .d{background:rgba(244,63,94,.1);color:var(--rose)}.after .d{background:rgba(16,185,129,.1);color:var(--emerald-d)}
+.ba-item strong{font-size:14.5px;display:block;margin-bottom:3px}
+.ba-item p{font-size:13px;color:var(--muted);line-height:1.55}
+.ba-arrow{width:54px;height:54px;border-radius:50%;background:var(--grad-brand);color:#fff;display:grid;place-items:center;font-size:24px;box-shadow:0 10px 26px rgba(99,102,241,.4)}
+/* features */
+.feat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+.feat-card{background:#fff;border:1px solid var(--line);border-radius:var(--r-xl);padding:30px;transition:transform .25s,box-shadow .25s;position:relative;overflow:hidden}
+.feat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:5px;background:linear-gradient(90deg,var(--indigo),var(--violet),var(--cyan));opacity:0;transition:opacity .25s}
+.feat-card:hover{transform:translateY(-5px);box-shadow:var(--sh-lg)}
+.feat-card:hover::before{opacity:1}
+.feat-ic{width:60px;height:60px;border-radius:18px;display:grid;place-items:center;font-size:28px;margin-bottom:20px;color:#fff}
+.feat-card h3{font-size:17px;margin-bottom:9px}
+.feat-card p{font-size:14px;color:var(--muted);line-height:1.65}
+/* journey */
+.journey{position:relative;padding:10px 0}
+.journey::before{content:'';position:absolute;left:34px;top:30px;bottom:30px;width:3px;background:linear-gradient(180deg,var(--indigo),var(--violet),var(--cyan));border-radius:2px}
+.j-step{display:grid;grid-template-columns:70px 1fr;gap:24px;align-items:flex-start;padding:18px 0}
+.j-dot{width:70px;height:70px;border-radius:20px;display:grid;place-items:center;color:#fff;font-family:'Sora';font-weight:800;font-size:26px;position:relative;z-index:1;box-shadow:0 12px 30px rgba(99,102,241,.35)}
+.j-body{background:#fff;border:1px solid var(--line);border-radius:var(--r-lg);padding:24px 26px;box-shadow:var(--sh-xs)}
+.j-body h3{font-size:18px;margin-bottom:8px}
+.j-body p{font-size:14.5px;color:var(--muted);line-height:1.65}
+/* testimonials */
+.quote-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+.quote-card{background:#fff;border:1px solid var(--line);border-radius:var(--r-xl);padding:30px;display:flex;flex-direction:column;gap:18px;position:relative}
+.q-bubble{position:absolute;top:-12px;left:28px;width:34px;height:34px;border-radius:50%;background:var(--grad-brand);color:#fff;display:grid;place-items:center;font-size:18px;box-shadow:0 8px 20px rgba(99,102,241,.4)}
+.q-stars{color:var(--amber);font-size:13px;letter-spacing:2px;margin-top:8px}
+.q-text{font-size:14.5px;color:var(--ink-2);line-height:1.75}
+.q-by{display:flex;align-items:center;gap:12px;margin-top:auto;padding-top:18px;border-top:1px solid var(--line-2)}
+.q-av{width:44px;height:44px;border-radius:14px;display:grid;place-items:center;font-weight:800;font-size:14px;color:#fff}
+.q-name{font-weight:700;font-size:14px}.q-role{font-size:12px;color:var(--muted)}
+/* pricing */
+.price-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;align-items:start}
+.price-card{background:#fff;border:1px solid var(--line);border-radius:var(--r-2xl);padding:32px;display:flex;flex-direction:column}
+.price-card.pop{position:relative;border:0;background:var(--grad-brand);color:#fff;box-shadow:0 26px 64px rgba(99,102,241,.4)}
+.price-card.pop .price-desc,.price-card.pop .price-li{color:rgba(255,255,255,.9)}
+.price-card.pop .price-li i{color:#fff}
+.price-card.pop .price-desc{border-color:rgba(255,255,255,.25)}
+.price-label{font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--faint);margin-bottom:8px}
+.price-card.pop .price-label{color:rgba(255,255,255,.7)}
+.price-name{font-family:'Sora';font-size:23px;font-weight:700;margin-bottom:4px}
+.price-amt{font-family:'Sora';font-size:44px;font-weight:800;letter-spacing:-.03em;margin:14px 0 2px}
+.price-per{font-size:13px;color:var(--muted);margin-bottom:18px}
+.price-card.pop .price-per{color:rgba(255,255,255,.7)}
+.price-desc{font-size:14px;color:var(--muted);padding-bottom:18px;margin-bottom:18px;border-bottom:1px solid var(--line-2);line-height:1.6}
+.price-ul{display:flex;flex-direction:column;gap:12px;flex:1;margin-bottom:26px}
+.price-li{display:flex;gap:10px;font-size:14px;align-items:flex-start}
+.price-li i{color:var(--emerald);margin-top:2px}
+.pop-tag{position:absolute;top:-13px;left:50%;transform:translateX(-50%);font-size:11px;font-weight:800;padding:6px 15px;border-radius:var(--r-pill);background:var(--amber);color:#fff;letter-spacing:.05em;box-shadow:0 6px 18px rgba(245,158,11,.4)}
+/* cta */
+.cta-section{padding:60px 0 90px}
+.cta-band{position:relative;overflow:hidden;border-radius:var(--r-2xl);padding:76px 56px;text-align:center;background:var(--grad-hero);color:#fff}
+.cta-band::before{content:'';position:absolute;top:-120px;right:-80px;width:400px;height:400px;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,.15),transparent 65%)}
+.cta-band h2{color:#fff;font-size:clamp(34px,4.2vw,52px);margin-bottom:14px;position:relative}
+.cta-band p{color:rgba(255,255,255,.85);font-size:17px;max-width:520px;margin:0 auto 32px;position:relative}
+.cta-band .btn{position:relative}
+@media (max-width:900px){
+  .hero-grid,.feat-grid,.quote-grid,.price-grid{grid-template-columns:1fr}
+  .stats-grid{grid-template-columns:1fr 1fr}
+  .ba-grid{grid-template-columns:1fr}.ba-arrow{transform:rotate(90deg);margin:0 auto}
+  .cta-band{padding:48px 26px}
+}
 </style>
 </head>
 <body>
+
 <header class="site-head">
   <div class="container">
-    <a class="logo" href="/" style="text-decoration:none;color:inherit"><img src="design-system/assets/logo-mark.png" alt="Regulyze" style="height:34px;width:auto"> Regulyze</a>
-    <nav class="site-nav"><a href="#features">Features</a><a href="#how">How it works</a><a href="#pricing">Pricing</a><a href="#trust">Customers</a></nav>
-    <div class="head-cta">
-      <a href="app/?auth=signup" class="btn btn-primary btn-sm">Start free</a>
+    <div class="head-inner">
+      <a class="logo-wrap" href="/"><img src="design-system/assets/logo-mark.png" alt="Regulyze"> Regulyze</a>
+      <nav class="nav-links"><a href="#features">Features</a><a href="#how">How it works</a><a href="#pricing">Pricing</a><a href="#trust">Customers</a></nav>
+      <div class="head-cta"><a href="app/?auth=signup" class="btn btn-grad">Start free →</a></div>
     </div>
-    <button class="burger" aria-label="Menu"><i class="ti ti-menu-2"></i></button>
   </div>
 </header>
+
 <section class="hero">
   <div class="container">
-    <div>
-      <span class="badge badge-brand"><i class="ti ti-shield-check"></i> FSS (Nutra) Regulations 2022 · ICMR RDA 2020</span>
-      <h1>FSSAI nutraceutical compliance, <span class="hl">checked in seconds</span>.</h1>
-      <p class="lead">Enter your formulation and Regulyze validates every ingredient against FSSR Schedules I–IV, GMP additive lists, NSF closures and RDA limits — then generates an audit-ready report, label checklist and PDF.</p>
-      <div class="actions">
-        <a href="app/?auth=signup" class="btn btn-primary btn-lg"><i class="ti ti-bolt"></i> Check a formulation free</a>
-        <a href="sample-report/" class="btn btn-outline btn-lg"><i class="ti ti-file-text"></i> See a sample report</a>
+    <div class="hero-grid">
+      <div>
+        <span class="chip"><i class="ti ti-shield-check"></i> FSS (Nutra) Regulations 2022 · ICMR RDA 2020</span>
+        <h1>FSSAI nutraceutical compliance, <span class="gradtext">checked in seconds</span>.</h1>
+        <p class="lead">Enter your formulation and Regulyze validates every ingredient against FSSR Schedules I–IV, GMP additive lists, NSF closures and RDA limits — then generates an audit-ready report, label checklist and PDF.</p>
+        <div class="hero-actions">
+          <a href="app/?auth=signup" class="btn btn-grad btn-lg"><i class="ti ti-bolt"></i> Check a formulation free</a>
+          <a href="sample-report/" class="btn btn-soft btn-lg"><i class="ti ti-file-text"></i> See a sample report</a>
+        </div>
+        <div class="trust-row">
+          <span><i class="ti ti-check"></i> 5 free checks, no card</span>
+          <span><i class="ti ti-check"></i> 1,400+ ingredients mapped</span>
+          <span><i class="ti ti-check"></i> Results in under 10s</span>
+        </div>
       </div>
-      <div class="trust-row">
-        <span><i class="ti ti-check"></i> 5 free checks, no card</span>
-        <span><i class="ti ti-check"></i> 1,400+ ingredients mapped</span>
-        <span><i class="ti ti-check"></i> Updated to latest notifications</span>
+      <div class="pipeline" aria-hidden="true">
+        <div class="pl-head"><span class="pl-bot"><i class="ti ti-robot"></i></span><div class="pl-bot-txt"><b>Compliance pipeline</b><small>Immunity Gummies — v3 · scanning…</small></div></div>
+        <div class="pl-scan">
+          <div class="pl-token"><div class="pl-tok-l"><span class="pl-ico" style="background:rgba(99,102,241,.12);color:var(--indigo)"><i class="ti ti-pill"></i></span> Vitamin C</div><span class="tag t-ok">Sched I · OK</span></div>
+          <div class="pl-token"><div class="pl-tok-l"><span class="pl-ico" style="background:rgba(16,185,129,.12);color:var(--emerald-d)"><i class="ti ti-leaf"></i></span> Ashwagandha</div><span class="tag t-ok">Sched IV · OK</span></div>
+          <div class="pl-token"><div class="pl-tok-l"><span class="pl-ico" style="background:rgba(245,158,11,.14);color:#B45309"><i class="ti ti-flask"></i></span> Zinc oxide</div><span class="tag t-warn">Over RDA</span></div>
+          <div class="pl-token"><div class="pl-tok-l"><span class="pl-ico" style="background:rgba(244,63,94,.12);color:#BE123C"><i class="ti ti-ban"></i></span> Synephrine HCl</div><span class="tag t-fail">Not permitted</span></div>
+        </div>
+        <div class="pl-bins">
+          <div class="pl-bin b1">Schedules<span class="bn">2</span></div>
+          <div class="pl-bin b2">Compliant<span class="bn">2</span></div>
+          <div class="pl-bin b3">Flagged<span class="bn">2</span></div>
+        </div>
       </div>
-    </div>
-    <div class="glass" aria-hidden="true">
-      <div class="row between mb-4"><strong>Immunity Gummies — v3</strong><span class="badge badge-warn"><span class="dot"></span> 2 to review</span></div>
-      <div class="mock-row"><div class="mock-ing"><span class="ico sb-s1"><i class="ti ti-pill"></i></span> Vitamin C (Ascorbic acid)</div><span class="badge badge-ok">Schedule I · OK</span></div>
-      <div class="mock-row"><div class="mock-ing"><span class="ico sb-s4"><i class="ti ti-leaf"></i></span> Ashwagandha extract</div><span class="badge badge-ok">Schedule IV · OK</span></div>
-      <div class="mock-row"><div class="mock-ing"><span class="ico sb-s3"><i class="ti ti-flask"></i></span> Zinc (as Zinc oxide)</div><span class="badge badge-warn">Over RDA · 28mg</span></div>
-      <div class="mock-row"><div class="mock-ing"><span class="ico" style="background:var(--fail-100);color:var(--fail-600)"><i class="ti ti-ban"></i></span> Synephrine HCl</div><span class="badge badge-fail">Not permitted</span></div>
-      <div class="mt-4 row gap-3"><div class="grow"><div class="meter warn"><span style="width:78%"></span></div></div><strong style="color:var(--warn-700)">78% compliant</strong></div>
     </div>
   </div>
 </section>
-<section class="section" style="padding-top:var(--s-12);padding-bottom:var(--s-12)">
+
+<section class="stats">
   <div class="container">
-    <p class="center muted" style="font-size:var(--fs-sm);font-weight:600;letter-spacing:.08em;text-transform:uppercase;margin-bottom:var(--s-8)">Trusted by formulators, regulatory teams &amp; contract manufacturers</p>
-    <div class="stats-band">
-      <div class="stat"><div class="n">12,000+</div><div class="l">Formulations checked</div></div>
-      <div class="stat"><div class="n">1,400+</div><div class="l">Ingredients mapped</div></div>
-      <div class="stat"><div class="n">4</div><div class="l">FSSR schedules covered</div></div>
-      <div class="stat"><div class="n">&lt;10s</div><div class="l">Average check time</div></div>
+    <p style="text-align:center;color:var(--faint);font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin-bottom:26px">Trusted by formulators, regulatory teams &amp; contract manufacturers</p>
+    <div class="stats-grid">
+      <div class="stat"><div class="ic" style="background:rgba(99,102,241,.12);color:var(--indigo)"><i class="ti ti-checkup-list"></i></div><div class="n gradtext">12,000+</div><div class="l">Formulations checked</div></div>
+      <div class="stat"><div class="ic" style="background:rgba(124,58,237,.12);color:var(--violet)"><i class="ti ti-database"></i></div><div class="n gradtext">1,400+</div><div class="l">Ingredients mapped</div></div>
+      <div class="stat"><div class="ic" style="background:rgba(6,182,212,.12);color:var(--cyan)"><i class="ti ti-list-numbers"></i></div><div class="n gradtext">4</div><div class="l">FSSR schedules covered</div></div>
+      <div class="stat"><div class="ic" style="background:rgba(16,185,129,.12);color:var(--emerald-d)"><i class="ti ti-bolt"></i></div><div class="n gradtext">&lt;10s</div><div class="l">Average check time</div></div>
     </div>
   </div>
 </section>
+
 <section class="section tint">
   <div class="container">
-    <div class="sec-head"><span class="eyebrow">The problem</span><h2>Compliance shouldn't take three days and a consultant</h2><p class="lead">Manual cross-referencing is slow, error-prone and impossible to audit. Regulyze turns it into a single, traceable check.</p></div>
-    <div class="prob-grid">
-      <div class="prob-list">
-        <div class="prob-item"><span class="x"><i class="ti ti-clock-x"></i></span><div><strong>Hours per formulation</strong><p class="muted">Looking up each ingredient across Schedules I–IV, additive lists and NSF closures by hand.</p></div></div>
-        <div class="prob-item"><span class="x"><i class="ti ti-alert-triangle"></i></span><div><strong>Costly rejections</strong><p class="muted">A single non-permitted ingredient or RDA overage can stall a product launch for months.</p></div></div>
-        <div class="prob-item"><span class="x"><i class="ti ti-files-off"></i></span><div><strong>No audit trail</strong><p class="muted">Spreadsheets and emails don't give you a defensible, timestamped compliance record.</p></div></div>
+    <div class="sec-head"><span class="eyebrow">The problem</span><h2>Compliance shouldn't take three days and a consultant</h2><p>Manual cross-referencing is slow, error-prone and impossible to audit. Regulyze turns it into a single, traceable check.</p></div>
+    <div class="ba-grid">
+      <div class="ba-card before">
+        <div class="ba-label"><i class="ti ti-mood-sad"></i> The old way</div>
+        <div class="ba-item"><span class="d"><i class="ti ti-clock-x"></i></span><div><strong>Hours per formulation</strong><p>Looking up each ingredient across Schedules I–IV, additive lists and NSF closures by hand.</p></div></div>
+        <div class="ba-item"><span class="d"><i class="ti ti-alert-triangle"></i></span><div><strong>Costly rejections</strong><p>A single non-permitted ingredient or RDA overage can stall a launch for months.</p></div></div>
+        <div class="ba-item"><span class="d"><i class="ti ti-files-off"></i></span><div><strong>No audit trail</strong><p>Spreadsheets and emails don't give a defensible, timestamped record.</p></div></div>
       </div>
-      <div class="prob-list">
-        <div class="prob-item sol"><span class="x"><i class="ti ti-bolt"></i></span><div><strong>Seconds, not days</strong><p class="muted">Paste a formulation and get a per-ingredient verdict instantly, mapped to the exact regulation.</p></div></div>
-        <div class="prob-item sol"><span class="x"><i class="ti ti-shield-check"></i></span><div><strong>Catch issues pre-submission</strong><p class="muted">Flags non-permitted actives, additive limits and RDA overages before they reach FSSAI.</p></div></div>
-        <div class="prob-item sol"><span class="x"><i class="ti ti-file-certificate"></i></span><div><strong>Audit-ready reports</strong><p class="muted">Every check produces a cited PDF and label checklist you can hand to auditors.</p></div></div>
+      <div class="ba-arrow"><i class="ti ti-arrow-right"></i></div>
+      <div class="ba-card after">
+        <div class="ba-label"><i class="ti ti-sparkles"></i> With Regulyze</div>
+        <div class="ba-item"><span class="d"><i class="ti ti-bolt"></i></span><div><strong>Seconds, not days</strong><p>Paste a formulation and get a per-ingredient verdict instantly, mapped to the exact regulation.</p></div></div>
+        <div class="ba-item"><span class="d"><i class="ti ti-shield-check"></i></span><div><strong>Catch issues pre-submission</strong><p>Flags non-permitted actives, additive limits and RDA overages before FSSAI.</p></div></div>
+        <div class="ba-item"><span class="d"><i class="ti ti-file-certificate"></i></span><div><strong>Audit-ready reports</strong><p>Every check produces a cited PDF and label checklist for auditors.</p></div></div>
       </div>
     </div>
   </div>
 </section>
+
 <section class="section" id="features">
   <div class="container">
     <div class="sec-head"><span class="eyebrow">Platform</span><h2>Everything you need to ship compliant nutra</h2></div>
     <div class="feat-grid">
-      <div class="card feat card-hover"><div class="ic"><i class="ti ti-list-search"></i></div><h3>Schedule I–IV checks</h3><p>Validates vitamins, minerals, amino acids, botanicals, pre/probiotics against every FSSR schedule with the exact citation.</p></div>
-      <div class="card feat card-hover"><div class="ic"><i class="ti ti-test-pipe"></i></div><h3>Additive &amp; NSF screening</h3><p>Cross-checks GMP/Codex additive lists and NSF approved/rejected closures so nothing slips through.</p></div>
-      <div class="card feat card-hover"><div class="ic"><i class="ti ti-gauge"></i></div><h3>RDA 2020 limits</h3><p>Compares dosages to ICMR-NIN RDA by target group and flags overages and tolerable upper limits.</p></div>
-      <div class="card feat card-hover"><div class="ic"><i class="ti ti-sparkles"></i></div><h3>AI ingredient assist</h3><p>Resolves trade names and unknown actives against the regulatory database automatically.</p></div>
-      <div class="card feat card-hover"><div class="ic"><i class="ti ti-checklist"></i></div><h3>Label checklist</h3><p>Generates the mandatory label declarations and warnings required for your product class.</p></div>
-      <div class="card feat card-hover"><div class="ic"><i class="ti ti-file-download"></i></div><h3>Audit-ready PDF</h3><p>One click exports a branded, cited compliance report and keeps a timestamped history.</p></div>
+      <div class="feat-card"><div class="feat-ic ic-indigo"><i class="ti ti-list-search"></i></div><h3>Schedule I–IV checks</h3><p>Validates vitamins, minerals, amino acids, botanicals and pre/probiotics against every FSSR schedule with the exact citation.</p></div>
+      <div class="feat-card"><div class="feat-ic ic-violet"><i class="ti ti-test-pipe"></i></div><h3>Additive &amp; NSF screening</h3><p>Cross-checks GMP/Codex additive lists and NSF approved/rejected closures so nothing slips through.</p></div>
+      <div class="feat-card"><div class="feat-ic ic-cyan"><i class="ti ti-gauge"></i></div><h3>RDA 2020 limits</h3><p>Compares dosages to ICMR-NIN RDA by target group and flags overages and tolerable upper limits.</p></div>
+      <div class="feat-card"><div class="feat-ic ic-emerald"><i class="ti ti-sparkles"></i></div><h3>AI ingredient assist</h3><p>Resolves trade names and unknown actives against the regulatory database automatically.</p></div>
+      <div class="feat-card"><div class="feat-ic ic-blue"><i class="ti ti-checklist"></i></div><h3>Label checklist</h3><p>Generates the mandatory label declarations and warnings required for your product class.</p></div>
+      <div class="feat-card"><div class="feat-ic ic-fuchsia"><i class="ti ti-file-download"></i></div><h3>Audit-ready PDF</h3><p>One click exports a branded, cited compliance report and keeps a timestamped history.</p></div>
     </div>
   </div>
 </section>
+
 <section class="section tint" id="how">
   <div class="container">
     <div class="sec-head"><span class="eyebrow">How it works</span><h2>From formulation to report in three steps</h2></div>
-    <div class="steps">
-      <div class="step"><h3>Enter your formulation</h3><p class="muted">Type or paste ingredients with dosages — or upload a spec sheet. AI resolves trade names for you.</p></div>
-      <div class="step"><h3>Regulyze runs the checks</h3><p class="muted">Every ingredient is validated against the live regulatory database across all four schedules.</p></div>
-      <div class="step"><h3>Export &amp; act</h3><p class="muted">Review the compliance report, fix flagged items, generate the label checklist and download the PDF.</p></div>
+    <div class="journey">
+      <div class="j-step"><div class="j-dot ic-indigo">1</div><div class="j-body"><h3>Enter your formulation</h3><p>Type or paste ingredients with dosages — or upload a spec sheet. AI resolves trade names for you.</p></div></div>
+      <div class="j-step"><div class="j-dot ic-violet">2</div><div class="j-body"><h3>Regulyze runs the checks</h3><p>Every ingredient is validated against the live regulatory database across all four schedules.</p></div></div>
+      <div class="j-step"><div class="j-dot ic-cyan">3</div><div class="j-body"><h3>Export &amp; act</h3><p>Review the compliance report, fix flagged items, generate the label checklist and download the PDF.</p></div></div>
     </div>
   </div>
 </section>
+
 <section class="section" id="trust">
   <div class="container">
-    <div class="sec-head">
-      <span class="eyebrow">What professionals say</span>
-      <h2>The compliance platform India's nutraceutical industry relies on</h2>
-      <p class="lead">From regulatory affairs teams at established brands to QA directors at contract manufacturers — Regulyze is the tool that removes the guesswork from FSSAI compliance.</p>
-    </div>
+    <div class="sec-head"><span class="eyebrow">What professionals say</span><h2>The compliance platform India's nutraceutical industry relies on</h2><p>From regulatory affairs teams at established brands to QA directors at contract manufacturers.</p></div>
     <div class="quote-grid">
-      <div class="card quote">
-        <div class="stars">★★★★★</div>
-        <p>"What used to take our regulatory team two full working days now takes under fifteen minutes. The cited, audit-ready reports pass internal review without a single follow-up query."</p>
-        <div class="by"><span class="av">RK</span><div><strong>Ritika Kapoor</strong><div class="muted" style="font-size:var(--fs-sm)">Head of Regulatory Affairs · NutriVeda India</div></div></div>
-      </div>
-      <div class="card quote">
-        <div class="stars">★★★★★</div>
-        <p>"We identified a non-permitted active — Synephrine HCl — before it reached the manufacturing floor. That single catch saved us months of delays and paid for a full year's subscription in one day."</p>
-        <div class="by"><span class="av">AS</span><div><strong>Arjun Sethi</strong><div class="muted" style="font-size:var(--fs-sm)">Co-founder &amp; CEO · PureForm Wellness</div></div></div>
-      </div>
-      <div class="card quote">
-        <div class="stars">★★★★★</div>
-        <p>"We run 30–40 compliance checks a month for client brands. The timestamped history means every FSSAI audit is a ten-minute exercise, not a three-day scramble through email threads."</p>
-        <div class="by"><span class="av">MP</span><div><strong>Meena Pillai</strong><div class="muted" style="font-size:var(--fs-sm)">QA Director · Axiom Contract Manufacturing</div></div></div>
-      </div>
+      <div class="quote-card"><span class="q-bubble"><i class="ti ti-quote"></i></span><div class="q-stars">★★★★★</div><p class="q-text">"What used to take our regulatory team two full working days now takes under fifteen minutes. The cited, audit-ready reports pass internal review without a single follow-up query."</p><div class="q-by"><span class="q-av ic-indigo">RK</span><div><div class="q-name">Ritika Kapoor</div><div class="q-role">Head of Regulatory Affairs · NutriVeda India</div></div></div></div>
+      <div class="quote-card"><span class="q-bubble"><i class="ti ti-quote"></i></span><div class="q-stars">★★★★★</div><p class="q-text">"We identified a non-permitted active — Synephrine HCl — before it reached the manufacturing floor. That single catch saved us months of delays and paid for a full year's subscription in one day."</p><div class="q-by"><span class="q-av ic-violet">AS</span><div><div class="q-name">Arjun Sethi</div><div class="q-role">Co-founder &amp; CEO · PureForm Wellness</div></div></div></div>
+      <div class="quote-card"><span class="q-bubble"><i class="ti ti-quote"></i></span><div class="q-stars">★★★★★</div><p class="q-text">"We run 30–40 compliance checks a month for client brands. The timestamped history means every FSSAI audit is a ten-minute exercise, not a three-day scramble through email threads."</p><div class="q-by"><span class="q-av ic-cyan">MP</span><div><div class="q-name">Meena Pillai</div><div class="q-role">QA Director · Axiom Contract Manufacturing</div></div></div></div>
     </div>
   </div>
 </section>
+
 <section class="section tint" id="pricing">
   <div class="container">
     <div class="sec-head"><span class="eyebrow">Pricing</span><h2>Start free. Upgrade when you scale.</h2></div>
-    <div class="pricing">
-      <div class="card price"><h3>Starter</h3><div class="amt">₹0<small>/forever</small></div><p class="muted">For trying Regulyze on a real formulation.</p><ul><li><i class="ti ti-check"></i> 5 compliance checks</li><li><i class="ti ti-check"></i> Full schedule validation</li><li><i class="ti ti-check"></i> Label checklist</li><li><i class="ti ti-check"></i> PDF export</li></ul><a href="app/?auth=signup" class="btn btn-outline btn-block">Start free</a></div>
-      <div class="card price pop"><span class="badge badge-brand tag">Most popular</span><h3>Professional</h3><div class="amt">₹2,499<small>/month</small></div><p class="muted">For active formulators and brands.</p><ul><li><i class="ti ti-check"></i> Unlimited checks</li><li><i class="ti ti-check"></i> AI ingredient assist</li><li><i class="ti ti-check"></i> Full history &amp; audit log</li><li><i class="ti ti-check"></i> Priority support</li></ul><a href="app/?auth=signup" class="btn btn-primary btn-block">Choose Professional</a></div>
-      <div class="card price"><h3>Enterprise</h3><div class="amt">Custom</div><p class="muted">For CMOs &amp; regulatory consultancies.</p><ul><li><i class="ti ti-check"></i> Team seats &amp; roles</li><li><i class="ti ti-check"></i> API access</li><li><i class="ti ti-check"></i> Custom regulatory data</li><li><i class="ti ti-check"></i> SLA &amp; onboarding</li></ul><a href="#" class="btn btn-outline btn-block">Talk to sales</a></div>
+    <div class="price-grid">
+      <div class="price-card"><div class="price-label">Starter</div><div class="price-name">Free</div><div class="price-amt gradtext">₹0</div><div class="price-per">forever</div><div class="price-desc">For trying Regulyze on a real formulation.</div><ul class="price-ul"><li class="price-li"><i class="ti ti-check"></i> 5 compliance checks</li><li class="price-li"><i class="ti ti-check"></i> Full schedule validation</li><li class="price-li"><i class="ti ti-check"></i> Label checklist</li><li class="price-li"><i class="ti ti-check"></i> PDF export</li></ul><a href="app/?auth=signup" class="btn btn-soft btn-block btn-lg">Start free</a></div>
+      <div class="price-card pop"><span class="pop-tag">Most popular</span><div class="price-label">Professional</div><div class="price-name">Pro</div><div class="price-amt">₹2,499</div><div class="price-per">per month</div><div class="price-desc">For active formulators and brands.</div><ul class="price-ul"><li class="price-li"><i class="ti ti-check"></i> Unlimited checks</li><li class="price-li"><i class="ti ti-check"></i> AI ingredient assist</li><li class="price-li"><i class="ti ti-check"></i> Full history &amp; audit log</li><li class="price-li"><i class="ti ti-check"></i> Priority support</li></ul><a href="app/?auth=signup" class="btn btn-white btn-block btn-lg">Choose Professional</a></div>
+      <div class="price-card"><div class="price-label">Enterprise</div><div class="price-name">Custom</div><div class="price-amt gradtext" style="font-size:34px">Custom</div><div class="price-per">for your team</div><div class="price-desc">For CMOs &amp; regulatory consultancies.</div><ul class="price-ul"><li class="price-li"><i class="ti ti-check"></i> Team seats &amp; roles</li><li class="price-li"><i class="ti ti-check"></i> API access</li><li class="price-li"><i class="ti ti-check"></i> Custom regulatory data</li><li class="price-li"><i class="ti ti-check"></i> SLA &amp; onboarding</li></ul><a href="#" class="btn btn-soft btn-block btn-lg">Talk to sales</a></div>
     </div>
   </div>
 </section>
-<section class="section"><div class="container"><div class="cta-band"><h2>Check your first formulation today</h2><p>Join the teams shipping compliant nutraceuticals faster. Five free checks, no credit card required.</p><a href="app/?auth=signup" class="btn btn-primary btn-lg"><i class="ti ti-bolt"></i> Get started free</a></div></div></section>
+
+<section class="cta-section">
+  <div class="container">
+    <div class="cta-band"><h2>Check your first formulation today</h2><p>Join the teams shipping compliant nutraceuticals faster. Five free checks, no credit card required.</p><a href="app/?auth=signup" class="btn btn-white btn-lg"><i class="ti ti-bolt"></i> Get started free</a></div>
+  </div>
+</section>
+
 <footer class="site-foot">
   <div class="container">
     <div class="foot-grid">
-      <div><a class="logo" href="/" style="color:#fff;gap:10px;text-decoration:none"><img src="design-system/assets/logo-mark.png" alt="Regulyze" style="height:34px;width:auto"> Regulyze</a><p style="margin-top:var(--s-4);max-width:280px">FSSAI nutraceutical compliance engine by TPS Xperts Group. Analyze smarter. Comply faster.</p></div>
-      <div><h4>Product</h4><a href="#features">Features</a><a href="#pricing">Pricing</a><a href="sample-report/">Sample report</a><a href="app/">Dashboard</a></div>
-      <div><h4>Company</h4><a href="#">About TPS Xperts</a><a href="#trust">Customers</a><a href="#">Contact</a></div>
-      <div><h4>Legal</h4><a href="#">Privacy</a><a href="#">Terms</a><a href="#">Disclaimer</a></div>
+      <div class="foot-brand"><a class="logo-wrap" href="/"><img src="design-system/assets/logo-mark.png" alt="Regulyze"> Regulyze</a><p>FSSAI nutraceutical compliance engine by TPS Xperts Group. Analyze smarter. Comply faster.</p></div>
+      <div class="foot-col"><h4>Product</h4><a href="#features">Features</a><a href="#pricing">Pricing</a><a href="sample-report/">Sample report</a><a href="app/">Dashboard</a></div>
+      <div class="foot-col"><h4>Company</h4><a href="#">About TPS Xperts</a><a href="#trust">Customers</a><a href="#">Contact</a></div>
+      <div class="foot-col"><h4>Legal</h4><a href="#">Privacy</a><a href="#">Terms</a><a href="#">Disclaimer</a></div>
     </div>
     <div class="foot-bottom"><span>© 2026 TPS Xperts Group · regulyze.in</span><span>Indicative only — not a substitute for legal/regulatory advice.</span></div>
   </div>
 </footer>
-<div class="theme-switcher" id="themeSw">
-  <div class="theme-panel">
-    <div class="theme-lbl">Choose theme</div>
-    <button class="ts-opt active" data-theme=""><span class="ts-dot" style="background:#1A6B5E"></span> Regulatory Teal <span class="ts-tick">✓</span></button>
-    <button class="ts-opt" data-theme="navy"><span class="ts-dot" style="background:#1E3A5F"></span> Navy Professional <span class="ts-tick">✓</span></button>
-    <button class="ts-opt" data-theme="forest"><span class="ts-dot" style="background:#1B4332"></span> Forest Deep <span class="ts-tick">✓</span></button>
-    <button class="ts-opt" data-theme="slate"><span class="ts-dot" style="background:#334155"></span> Slate Minimal <span class="ts-tick">✓</span></button>
-  </div>
-  <button class="theme-toggle" aria-label="Switch theme" title="Switch colour theme"><i class="ti ti-palette"></i></button>
-</div>
-<script>
-(function(){
-  var sw=document.getElementById('themeSw');
-  var saved=localStorage.getItem('rg-theme')||'';
-  if(saved){document.documentElement.dataset.theme=saved;}
-  document.querySelectorAll('.ts-opt').forEach(function(b){
-    b.classList.toggle('active',(b.dataset.theme||'')===(saved));
-  });
-  sw.querySelector('.theme-toggle').addEventListener('click',function(e){
-    e.stopPropagation();sw.classList.toggle('open');
-  });
-  document.querySelectorAll('.ts-opt').forEach(function(b){
-    b.addEventListener('click',function(){
-      var t=b.dataset.theme||'';
-      document.documentElement.dataset.theme=t;
-      localStorage.setItem('rg-theme',t);
-      document.querySelectorAll('.ts-opt').forEach(function(x){x.classList.remove('active');});
-      b.classList.add('active');
-    });
-  });
-  document.addEventListener('click',function(e){if(!sw.contains(e.target))sw.classList.remove('open');});
-})();
-</script>
+
 </body>
 </html>

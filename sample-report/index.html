@@ -5,131 +5,122 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Sample Compliance Report — Regulyze</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Mono&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Manrope:wght@400;500;600;700;800&family=DM+Mono&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.1.0/dist/tabler-icons.min.css">
+<link rel="stylesheet" href="../design-system/assets/regulyze-v2.css">
 <style>
-:root{
-  --brand-900:#0E4B40;--brand-800:#14594C;--brand-700:#1A6B5E;--brand-600:#1F8473;
-  --brand-400:#56B3A1;--brand-200:#C4E8E2;--brand-100:#E6F5F1;--brand-50:#F4FBF8;
-  --ok-700:#0F5C4A;--ok-100:#D0EDE8;--ok-50:#ECFDF5;
-  --warn-700:#92400E;--warn-100:#FAEEDA;--warn-50:#FFFBEB;
-  --fail-700:#791F1F;--fail-600:#A32D2D;--fail-100:#FCEBEB;--fail-50:#FEF2F2;
-  --info-700:#1E40AF;--info-100:#DBEAFE;
-  --ink-900:#0F172A;--ink-700:#334155;--ink-500:#64748B;--ink-400:#94A3B8;
-  --ink-200:#E2E8F0;--ink-100:#F1F5F9;
-  --r-sm:6px;--r-md:10px;--r-lg:14px;
-  --fs-xs:11px;--fs-sm:12px;--fs-md:14px;--fs-lg:17px;--fs-xl:20px;--fs-2xl:24px;
-}
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'DM Sans',system-ui,sans-serif;font-size:14px;line-height:1.6;color:var(--ink-900);background:#f8fafc;-webkit-font-smoothing:antialiased}
-a{color:var(--brand-700);text-decoration:none}
-
-/* Top bar */
-.topbar{background:var(--brand-800);color:#fff;padding:12px 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,.15)}
-.topbar-brand{display:flex;align-items:center;gap:10px;font-weight:700;font-size:17px}
+/* ── page-specific: sample report ── */
+body{background:var(--bg)}
+/* topbar */
+.topbar{position:sticky;top:0;z-index:200;background:rgba(251,250,255,.85);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--line);padding:0 24px}
+.topbar-inner{max-width:1000px;margin:0 auto;height:62px;display:flex;align-items:center;justify-content:space-between}
+.topbar-brand{display:flex;align-items:center;gap:10px;font-family:'Sora';font-weight:700;font-size:18px;letter-spacing:-.03em;color:var(--ink)}
+.topbar-brand img{width:32px;height:32px;object-fit:contain}
+.badge-demo{background:linear-gradient(120deg,rgba(99,102,241,.12),rgba(124,58,237,.12));color:var(--indigo);padding:4px 11px;border-radius:var(--r-pill);font-size:11px;font-weight:700;border:1px solid rgba(99,102,241,.2)}
 .topbar-actions{display:flex;align-items:center;gap:10px}
-.badge-demo{background:rgba(255,255,255,.15);color:#fff;padding:3px 10px;border-radius:999px;font-size:11px;font-weight:600;border:1px solid rgba(255,255,255,.25)}
-.btn-cta{background:#fff;color:var(--brand-700);padding:7px 18px;border-radius:8px;font-size:13px;font-weight:600;border:none;cursor:pointer;transition:all .15s;font-family:inherit}
-.btn-cta:hover{background:var(--brand-100)}
 
-/* Main layout */
-.main{max-width:1000px;margin:0 auto;padding:32px 24px 64px}
+.main{max-width:1000px;margin:0 auto;padding:32px 24px 80px}
 
-/* Report header */
-.report-header{background:#fff;border-radius:var(--r-lg);padding:24px 28px;margin-bottom:20px;border:1px solid var(--brand-200);box-shadow:0 2px 8px rgba(26,107,94,.07)}
-.report-product{font-size:var(--fs-2xl);font-weight:700;color:var(--ink-900);margin-bottom:6px}
-.report-meta{display:flex;flex-wrap:wrap;gap:16px;font-size:var(--fs-xs);color:var(--ink-500);margin-bottom:16px}
-.report-meta span{display:flex;align-items:center;gap:5px}
-.report-meta i{color:var(--brand-400)}
-.overall-badge{display:inline-flex;align-items:center;gap:8px;padding:8px 16px;border-radius:8px;font-size:13px;font-weight:600}
-.overall-ok{background:var(--ok-100);color:var(--ok-700);border:1px solid #A7D9CF}
-.overall-review{background:var(--warn-100);color:var(--warn-700);border:1px solid #F0D68A}
+/* shared section card */
+.rcard{background:#fff;border:1px solid var(--line);border-radius:var(--r-xl);padding:24px 28px;margin-bottom:18px;box-shadow:var(--sh-xs)}
+.rcard-title{font-family:'Sora';font-size:15px;font-weight:700;color:var(--ink);margin-bottom:16px;display:flex;align-items:center;gap:10px;padding-bottom:13px;border-bottom:1px solid var(--line-2)}
+.rcard-title .ric{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;font-size:17px;color:#fff;flex-shrink:0}
 
-/* Summary cards */
-.sum-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
-.sum-card{background:#fff;border-radius:var(--r-md);padding:16px;border:1px solid var(--brand-100);text-align:center;box-shadow:0 1px 4px rgba(26,107,94,.06)}
-.sum-card .num{font-size:var(--fs-2xl);font-weight:700}
-.sum-card .lbl{font-size:var(--fs-xs);color:var(--ink-500);margin-top:3px}
-.num-ok{color:var(--ok-700)} .num-warn{color:var(--warn-700)} .num-fail{color:var(--fail-600)} .num-na{color:var(--ink-400)}
+/* cta banner */
+.cta-banner{position:relative;overflow:hidden;border-radius:var(--r-2xl);padding:36px 36px;color:#fff;text-align:center;margin-bottom:24px;background:var(--grad-hero)}
+.cta-banner::before{content:'';position:absolute;top:-100px;right:-70px;width:340px;height:340px;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,.16),transparent 65%)}
+.cta-banner h2{position:relative;color:#fff;font-size:24px;font-weight:800;margin-bottom:9px}
+.cta-banner p{position:relative;opacity:.88;font-size:14px;margin-bottom:22px;max-width:580px;margin-left:auto;margin-right:auto}
+.cta-banner .btn{position:relative}
 
-/* Section card */
-.card{background:#fff;border-radius:var(--r-lg);padding:20px 24px;margin-bottom:16px;border:1px solid var(--brand-100);box-shadow:0 1px 4px rgba(26,107,94,.06)}
-.card-title{font-size:13px;font-weight:700;color:var(--ink-900);margin-bottom:14px;display:flex;align-items:center;gap:8px;padding-bottom:10px;border-bottom:1px solid var(--brand-100)}
-.card-title i{color:var(--brand-600);font-size:15px}
+/* report header */
+.report-header{position:relative;overflow:hidden;background:linear-gradient(160deg,#fff,#F7F5FE);border:1px solid var(--line);border-radius:var(--r-xl);padding:26px 30px;margin-bottom:20px;box-shadow:var(--sh-sm)}
+.report-product{font-family:'Sora';font-size:25px;font-weight:800;letter-spacing:-.02em;color:var(--ink);margin-bottom:8px}
+.report-meta{display:flex;flex-wrap:wrap;gap:8px 18px;font-size:12px;color:var(--muted);margin-bottom:18px}
+.report-meta span{display:flex;align-items:center;gap:6px}
+.report-meta i{color:var(--violet)}
+.overall-badge{display:inline-flex;align-items:center;gap:8px;padding:9px 18px;border-radius:var(--r-md);font-size:13px;font-weight:700}
+.overall-ok{background:var(--ok-bg);color:var(--ok-d);border:1px solid rgba(16,185,129,.3)}
 
-/* Results table */
-.res-tbl{width:100%;border-collapse:collapse;font-size:var(--fs-xs)}
-.res-tbl th{padding:7px 10px;text-align:left;background:var(--brand-50);color:var(--ink-700);font-weight:600;border-bottom:2px solid var(--brand-200);font-size:10px;text-transform:uppercase;letter-spacing:.05em}
-.res-tbl td{padding:9px 10px;border-bottom:1px solid var(--brand-50);vertical-align:middle}
-.res-tbl tr:hover td{background:var(--brand-50)}
+/* summary cards */
+.sum-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px}
+.sum-card{background:#fff;border:1px solid var(--line);border-radius:var(--r-lg);padding:20px 16px;text-align:center;box-shadow:var(--sh-xs);transition:transform .2s,box-shadow .2s}
+.sum-card:hover{transform:translateY(-3px);box-shadow:var(--sh-sm)}
+.sum-card .sic{width:40px;height:40px;border-radius:12px;margin:0 auto 10px;display:grid;place-items:center;font-size:20px}
+.sum-card .num{font-family:'Sora';font-size:30px;font-weight:800;letter-spacing:-.03em;line-height:1}
+.sum-card .lbl{font-size:12px;color:var(--muted);margin-top:6px;font-weight:600}
+.num-ok{color:var(--ok-d)}.num-warn{color:var(--warn-d)}.num-fail{color:var(--fail-d)}.num-na{color:var(--faint)}
+
+/* results table */
+.res-tbl{width:100%;border-collapse:collapse;font-size:12.5px}
+.res-tbl th{padding:9px 12px;text-align:left;background:var(--bg-2);color:var(--ink-2);font-weight:700;border-bottom:2px solid var(--line);font-size:10.5px;text-transform:uppercase;letter-spacing:.05em}
+.res-tbl th:first-child{border-top-left-radius:var(--r-sm)}
+.res-tbl th:last-child{border-top-right-radius:var(--r-sm)}
+.res-tbl td{padding:11px 12px;border-bottom:1px solid var(--line-2);vertical-align:middle}
+.res-tbl tr:hover td{background:var(--bg)}
 .res-tbl tr:last-child td{border-bottom:none}
-.status-pill{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:999px;font-size:10px;font-weight:600;white-space:nowrap}
-.pill-ok{background:var(--ok-100);color:var(--ok-700)} .pill-warn{background:var(--warn-100);color:var(--warn-700)}
-.pill-fail{background:var(--fail-100);color:var(--fail-600)} .pill-na{background:var(--ink-100);color:var(--ink-500)}
-.pill-review{background:#FEF9C3;color:#713F12}
+.res-tbl strong{font-weight:700;color:var(--ink)}
+.ing-note{font-size:10.5px;color:var(--muted);margin-top:4px;display:flex;align-items:flex-start;gap:5px}
+.ing-note i{color:var(--violet);flex-shrink:0;margin-top:1px}
+.pct-pill{padding:2px 9px;border-radius:var(--r-pill);font-size:10.5px;font-weight:700}
 
-/* Ingredient row note */
-.ing-note{font-size:10px;color:var(--ink-500);margin-top:3px;display:flex;align-items:flex-start;gap:4px}
-.ing-note i{color:var(--brand-400);flex-shrink:0;margin-top:1px}
-
-/* Alert / info boxes */
-.info-box{border-radius:var(--r-md);padding:12px 14px;font-size:var(--fs-xs);display:flex;gap:10px;margin-bottom:12px}
-.info-box i{font-size:16px;flex-shrink:0;margin-top:1px}
-.box-ok{background:var(--ok-50);color:var(--ok-700);border:1px solid #A7D9CF}
-.box-warn{background:var(--warn-50);color:var(--warn-700);border:1px solid #F0D68A}
-.box-fail{background:var(--fail-50);color:var(--fail-700);border:1px solid #F5BFBF}
-.box-info{background:var(--info-100);color:var(--info-700);border:1px solid #BFDBFE}
-
-/* Schedule check rows */
-.sched-row{display:flex;align-items:flex-start;gap:12px;padding:10px 0;border-bottom:1px solid var(--brand-50)}
+/* schedule rows */
+.sched-row{display:flex;align-items:flex-start;gap:13px;padding:13px 0;border-bottom:1px solid var(--line-2)}
 .sched-row:last-child{border-bottom:none}
-.sched-icon{width:32px;height:32px;border-radius:8px;display:grid;place-items:center;font-size:15px;flex-shrink:0}
-.sched-icon-ok{background:var(--ok-100);color:var(--ok-700)}
-.sched-icon-warn{background:var(--warn-100);color:var(--warn-700)}
-.sched-icon-fail{background:var(--fail-100);color:var(--fail-600)}
-.sched-title{font-size:12px;font-weight:600;color:var(--ink-900)}
-.sched-desc{font-size:11px;color:var(--ink-500);margin-top:2px}
+.sched-icon{width:36px;height:36px;border-radius:11px;display:grid;place-items:center;font-size:16px;flex-shrink:0}
+.sched-icon-ok{background:var(--ok-bg);color:var(--ok-d)}
+.sched-icon-warn{background:var(--warn-bg);color:var(--warn-d)}
+.sched-title{font-size:13.5px;font-weight:700;color:var(--ink)}
+.sched-desc{font-size:12.5px;color:var(--muted);margin-top:3px;line-height:1.55}
 
-/* Label checklist */
-.lbl-row{display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-bottom:1px solid var(--brand-50)}
+/* label checklist */
+.lbl-row{display:flex;align-items:flex-start;gap:12px;padding:11px 0;border-bottom:1px solid var(--line-2)}
 .lbl-row:last-child{border-bottom:none}
-.lbl-check{width:20px;height:20px;border-radius:5px;display:grid;place-items:center;flex-shrink:0;font-size:11px;margin-top:1px}
-.lbl-check-ok{background:var(--ok-100);color:var(--ok-700)}
-.lbl-check-req{background:var(--warn-100);color:var(--warn-700)}
-.lbl-text{font-size:12px;color:var(--ink-700)}
-.lbl-req-note{font-size:10px;color:var(--warn-700);margin-top:2px}
+.lbl-check{width:24px;height:24px;border-radius:8px;display:grid;place-items:center;flex-shrink:0;font-size:12px;margin-top:1px}
+.lbl-check-ok{background:var(--ok-bg);color:var(--ok-d)}
+.lbl-check-req{background:var(--warn-bg);color:var(--warn-d)}
+.lbl-text{font-size:13.5px;color:var(--ink-2)}
+.lbl-text strong{color:var(--ink);font-weight:700}
+.lbl-sub{font-size:11px;color:var(--muted);margin-top:3px}
+.lbl-req-note{font-size:11px;color:var(--warn-d);margin-top:3px}
 
-/* Disclaimer */
-.disclaimer{background:var(--brand-50);border:1px solid var(--brand-200);border-radius:var(--r-md);padding:12px 16px;font-size:10px;color:var(--ink-500);margin-top:24px;line-height:1.6}
+/* references */
+.ref-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;font-size:12px;color:var(--ink-2)}
+.ref-item{padding:12px 14px;background:var(--bg-2);border-radius:var(--r-sm);border:1px solid var(--line);line-height:1.5}
+.ref-item strong{color:var(--indigo);font-weight:700}
 
-/* CTA Banner */
-.cta-banner{background:linear-gradient(135deg,var(--brand-800),var(--brand-600));border-radius:var(--r-lg);padding:28px 32px;color:#fff;text-align:center;margin-bottom:32px}
-.cta-banner h2{font-size:22px;font-weight:700;margin-bottom:8px}
-.cta-banner p{opacity:.85;font-size:13px;margin-bottom:20px}
-.btn-white{background:#fff;color:var(--brand-700);padding:10px 24px;border-radius:8px;font-size:14px;font-weight:600;border:none;cursor:pointer;font-family:inherit;transition:all .15s;display:inline-flex;align-items:center;gap:7px}
-.btn-white:hover{background:var(--brand-100)}
+/* disclaimer */
+.disclaimer{background:var(--bg-2);border:1px solid var(--line);border-radius:var(--r-md);padding:14px 18px;font-size:11px;color:var(--muted);margin-top:26px;line-height:1.7}
+.disclaimer strong{color:var(--ink-2)}
 
-/* Demo label overlay */
-.demo-overlay{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:rgba(14,75,64,.95);color:#fff;padding:10px 20px;border-radius:999px;font-size:12px;font-weight:500;z-index:500;box-shadow:0 4px 20px rgba(0,0,0,.2);display:flex;align-items:center;gap:8px}
+/* demo overlay */
+.demo-overlay{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--ink);color:#fff;padding:11px 22px;border-radius:var(--r-pill);font-size:12.5px;font-weight:600;z-index:500;box-shadow:0 12px 30px rgba(30,27,75,.35);display:flex;align-items:center;gap:8px}
+.demo-overlay i{color:var(--violet-l)}
+.demo-overlay a{color:#fff;text-decoration:underline;font-weight:700}
 
 @media(max-width:680px){
   .sum-grid{grid-template-columns:repeat(2,1fr)}
-  .main{padding:20px 16px 48px}
-  .topbar{padding:10px 16px}
+  .ref-grid{grid-template-columns:1fr}
+  .main{padding:20px 16px 64px}
+  .res-tbl{font-size:11.5px}
+  .res-tbl th,.res-tbl td{padding:8px 8px}
 }
 </style>
 </head>
 <body>
 
 <div class="topbar">
-  <a class="topbar-brand" href="/" title="Back to home" style="text-decoration:none;color:inherit;cursor:pointer">
-    <img src="../design-system/assets/logo-mark.png" alt="Regulyze" style="width:30px;height:30px;object-fit:contain">
-    Regulyze
-    <span class="badge-demo">Sample Report</span>
-  </a>
-  <div class="topbar-actions" style="display:flex;align-items:center;gap:10px">
-    <a href="/" class="btn-cta" style="background:transparent;color:#fff;border:1px solid rgba(255,255,255,.35)"><i class="ti ti-home" style="font-size:13px"></i> Home</a>
-    <a href="../app/?auth=signup" class="btn-cta"><i class="ti ti-bolt" style="font-size:13px"></i> Try it free</a>
+  <div class="topbar-inner">
+    <a class="topbar-brand" href="/" title="Back to home">
+      <img src="../design-system/assets/logo-mark.png" alt="Regulyze">
+      Regulyze
+      <span class="badge-demo">Sample Report</span>
+    </a>
+    <div class="topbar-actions">
+      <a href="/" class="btn btn-ghost btn-sm"><i class="ti ti-home"></i> Home</a>
+      <a href="../app/?auth=signup" class="btn btn-grad btn-sm"><i class="ti ti-bolt"></i> Try it free</a>
+    </div>
   </div>
 </div>
 
@@ -139,7 +130,7 @@ a{color:var(--brand-700);text-decoration:none}
   <div class="cta-banner">
     <h2>This is what your compliance report looks like</h2>
     <p>Instantly check any nutraceutical formulation against FSSAI Schedules I–IV, GMP additives, RDA limits and more.</p>
-    <a href="../app/?auth=signup" class="btn-white"><i class="ti ti-bolt"></i> Check your formulation free</a>
+    <a href="../app/?auth=signup" class="btn btn-white btn-lg"><i class="ti ti-bolt"></i> Check your formulation free</a>
   </div>
 
   <!-- Report Header -->
@@ -158,21 +149,21 @@ a{color:var(--brand-700);text-decoration:none}
 
   <!-- Summary Cards -->
   <div class="sum-grid">
-    <div class="sum-card"><div class="num num-ok">6</div><div class="lbl">Compliant</div></div>
-    <div class="sum-card"><div class="num num-warn">3</div><div class="lbl">Review Needed</div></div>
-    <div class="sum-card"><div class="num num-fail">1</div><div class="lbl">Non-Compliant</div></div>
-    <div class="sum-card"><div class="num num-na">2</div><div class="lbl">Not Applicable</div></div>
+    <div class="sum-card"><div class="sic" style="background:var(--ok-bg);color:var(--ok-d)"><i class="ti ti-circle-check"></i></div><div class="num num-ok">6</div><div class="lbl">Compliant</div></div>
+    <div class="sum-card"><div class="sic" style="background:var(--warn-bg);color:var(--warn-d)"><i class="ti ti-alert-triangle"></i></div><div class="num num-warn">3</div><div class="lbl">Review Needed</div></div>
+    <div class="sum-card"><div class="sic" style="background:var(--fail-bg);color:var(--fail-d)"><i class="ti ti-circle-x"></i></div><div class="num num-fail">1</div><div class="lbl">Non-Compliant</div></div>
+    <div class="sum-card"><div class="sic" style="background:rgba(156,153,192,.16);color:var(--faint)"><i class="ti ti-minus"></i></div><div class="num num-na">2</div><div class="lbl">Not Applicable</div></div>
   </div>
 
   <!-- Ingredient Analysis -->
-  <div class="card">
-    <div class="card-title"><i class="ti ti-flask"></i> Ingredient-by-Ingredient Analysis</div>
+  <div class="rcard">
+    <div class="rcard-title"><span class="ric ic-indigo"><i class="ti ti-flask"></i></span> Ingredient-by-Ingredient Analysis</div>
 
-    <div class="info-box box-ok">
+    <div class="note note-ok" style="margin-bottom:12px">
       <i class="ti ti-circle-check"></i>
       <div><strong>6 of 10 ingredients</strong> fully compliant with FSSAI Schedule III-A permitted list and dosage limits.</div>
     </div>
-    <div class="info-box box-warn">
+    <div class="note note-warn" style="margin-bottom:16px">
       <i class="ti ti-alert-triangle"></i>
       <div><strong>Vitamin C at 200 mg</strong> exceeds the Schedule III-A maximum single-dose limit of 160 mg. Consider splitting into two servings or reformulating.</div>
     </div>
@@ -196,17 +187,17 @@ a{color:var(--brand-700);text-decoration:none}
           <td>500 mg</td>
           <td>500 mg/day</td>
           <td>Schedule III-A · Botanicals</td>
-          <td><span class="status-pill pill-ok"><i class="ti ti-check"></i> Compliant</span></td>
+          <td><span class="tag t-ok"><i class="ti ti-check"></i> Compliant</span></td>
         </tr>
         <tr>
           <td>
             <strong>Vitamin C (Ascorbic Acid)</strong>
-            <div class="ing-note"><i class="ti ti-alert-triangle" style="color:var(--warn-700)"></i> Dosage 25% above maximum permitted single dose</div>
+            <div class="ing-note"><i class="ti ti-alert-triangle" style="color:var(--warn-d)"></i> Dosage 25% above maximum permitted single dose</div>
           </td>
           <td>200 mg</td>
           <td>160 mg/dose</td>
           <td>Schedule III-A · Vitamins</td>
-          <td><span class="status-pill pill-warn"><i class="ti ti-alert-triangle"></i> Review Needed</span></td>
+          <td><span class="tag t-warn"><i class="ti ti-alert-triangle"></i> Review Needed</span></td>
         </tr>
         <tr>
           <td>
@@ -216,7 +207,7 @@ a{color:var(--brand-700);text-decoration:none}
           <td>10 mg elemental</td>
           <td>15 mg/day</td>
           <td>Schedule III-A · Minerals</td>
-          <td><span class="status-pill pill-ok"><i class="ti ti-check"></i> Compliant</span></td>
+          <td><span class="tag t-ok"><i class="ti ti-check"></i> Compliant</span></td>
         </tr>
         <tr>
           <td>
@@ -226,17 +217,17 @@ a{color:var(--brand-700);text-decoration:none}
           <td>600 IU</td>
           <td>1000 IU/day</td>
           <td>Schedule III-A · Vitamins</td>
-          <td><span class="status-pill pill-ok"><i class="ti ti-check"></i> Compliant</span></td>
+          <td><span class="tag t-ok"><i class="ti ti-check"></i> Compliant</span></td>
         </tr>
         <tr>
           <td>
             <strong>Elderberry Extract</strong>
-            <div class="ing-note"><i class="ti ti-help-circle" style="color:var(--ink-400)"></i> Not listed in Schedule III-A botanical approved list</div>
+            <div class="ing-note"><i class="ti ti-help-circle" style="color:var(--faint)"></i> Not listed in Schedule III-A botanical approved list</div>
           </td>
           <td>150 mg</td>
           <td>Not specified</td>
           <td>Novel Ingredient / Schedule II check needed</td>
-          <td><span class="status-pill pill-review"><i class="ti ti-question-mark"></i> Verify Listing</span></td>
+          <td><span class="tag t-info"><i class="ti ti-question-mark"></i> Verify Listing</span></td>
         </tr>
         <tr>
           <td>
@@ -245,7 +236,7 @@ a{color:var(--brand-700);text-decoration:none}
           <td>250 mg</td>
           <td>400 mg/day</td>
           <td>Schedule III-A · Botanicals</td>
-          <td><span class="status-pill pill-ok"><i class="ti ti-check"></i> Compliant</span></td>
+          <td><span class="tag t-ok"><i class="ti ti-check"></i> Compliant</span></td>
         </tr>
         <tr>
           <td>
@@ -255,17 +246,17 @@ a{color:var(--brand-700);text-decoration:none}
           <td>5 mg</td>
           <td>10 mg/day</td>
           <td>Schedule III-A · Botanicals</td>
-          <td><span class="status-pill pill-ok"><i class="ti ti-check"></i> Compliant</span></td>
+          <td><span class="tag t-ok"><i class="ti ti-check"></i> Compliant</span></td>
         </tr>
         <tr>
           <td>
             <strong>Selenium (as Sodium Selenate)</strong>
-            <div class="ing-note"><i class="ti ti-alert-triangle" style="color:var(--warn-700)"></i> Conversion: Sodium Selenate → elemental Se factor 0.415</div>
+            <div class="ing-note"><i class="ti ti-alert-triangle" style="color:var(--warn-d)"></i> Conversion: Sodium Selenate → elemental Se factor 0.415</div>
           </td>
           <td>55 mcg elemental</td>
           <td>55 mcg/day</td>
           <td>Schedule III-A · Minerals</td>
-          <td><span class="status-pill pill-ok"><i class="ti ti-check"></i> Compliant</span></td>
+          <td><span class="tag t-ok"><i class="ti ti-check"></i> Compliant</span></td>
         </tr>
         <tr>
           <td>
@@ -275,7 +266,7 @@ a{color:var(--brand-700);text-decoration:none}
           <td>3 mg</td>
           <td>GMP as required</td>
           <td>GMP Additive — Codex List</td>
-          <td><span class="status-pill pill-ok"><i class="ti ti-check"></i> Compliant</span></td>
+          <td><span class="tag t-ok"><i class="ti ti-check"></i> Compliant</span></td>
         </tr>
         <tr>
           <td>
@@ -285,15 +276,15 @@ a{color:var(--brand-700);text-decoration:none}
           <td>10 mg</td>
           <td>GMP as required</td>
           <td>GMP Additive — FSSR List</td>
-          <td><span class="status-pill pill-ok"><i class="ti ti-check"></i> Compliant</span></td>
+          <td><span class="tag t-ok"><i class="ti ti-check"></i> Compliant</span></td>
         </tr>
       </tbody>
     </table>
   </div>
 
   <!-- Schedule Compliance -->
-  <div class="card">
-    <div class="card-title"><i class="ti ti-clipboard-check"></i> Schedule &amp; Regulatory Cross-Check</div>
+  <div class="rcard">
+    <div class="rcard-title"><span class="ric ic-violet"><i class="ti ti-clipboard-check"></i></span> Schedule &amp; Regulatory Cross-Check</div>
 
     <div class="sched-row">
       <div class="sched-icon sched-icon-ok"><i class="ti ti-check"></i></div>
@@ -340,8 +331,8 @@ a{color:var(--brand-700);text-decoration:none}
   </div>
 
   <!-- RDA Analysis -->
-  <div class="card">
-    <div class="card-title"><i class="ti ti-chart-bar"></i> % RDA Analysis (ICMR 2020 Reference)</div>
+  <div class="rcard">
+    <div class="rcard-title"><span class="ric ic-cyan"><i class="ti ti-chart-bar"></i></span> % RDA Analysis (ICMR 2020 Reference)</div>
     <table class="res-tbl">
       <thead>
         <tr>
@@ -359,115 +350,115 @@ a{color:var(--brand-700);text-decoration:none}
           <td>200 mg</td>
           <td>65 mg</td>
           <td>65 mg</td>
-          <td><span style="background:#D0EDE8;color:#0F5C4A;padding:2px 8px;border-radius:999px;font-size:10px;font-weight:600">308%</span></td>
-          <td><span style="background:#D0EDE8;color:#0F5C4A;padding:2px 8px;border-radius:999px;font-size:10px;font-weight:600">308%</span></td>
+          <td><span class="pct-pill" style="background:var(--ok-bg);color:var(--ok-d)">308%</span></td>
+          <td><span class="pct-pill" style="background:var(--ok-bg);color:var(--ok-d)">308%</span></td>
         </tr>
         <tr>
           <td><strong>Vitamin D3</strong></td>
           <td>600 IU (15 mcg)</td>
           <td>15 mcg</td>
           <td>15 mcg</td>
-          <td><span style="background:#D0EDE8;color:#0F5C4A;padding:2px 8px;border-radius:999px;font-size:10px;font-weight:600">100%</span></td>
-          <td><span style="background:#D0EDE8;color:#0F5C4A;padding:2px 8px;border-radius:999px;font-size:10px;font-weight:600">100%</span></td>
+          <td><span class="pct-pill" style="background:var(--ok-bg);color:var(--ok-d)">100%</span></td>
+          <td><span class="pct-pill" style="background:var(--ok-bg);color:var(--ok-d)">100%</span></td>
         </tr>
         <tr>
           <td><strong>Zinc</strong></td>
           <td>10 mg</td>
           <td>17 mg</td>
           <td>10 mg</td>
-          <td><span style="background:#E2E8F0;color:#475569;padding:2px 8px;border-radius:999px;font-size:10px;font-weight:600">59%</span></td>
-          <td><span style="background:#D0EDE8;color:#0F5C4A;padding:2px 8px;border-radius:999px;font-size:10px;font-weight:600">100%</span></td>
+          <td><span class="pct-pill" style="background:rgba(156,153,192,.16);color:var(--muted)">59%</span></td>
+          <td><span class="pct-pill" style="background:var(--ok-bg);color:var(--ok-d)">100%</span></td>
         </tr>
         <tr>
           <td><strong>Selenium</strong></td>
           <td>55 mcg</td>
           <td>40 mcg</td>
           <td>40 mcg</td>
-          <td><span style="background:#D0EDE8;color:#0F5C4A;padding:2px 8px;border-radius:999px;font-size:10px;font-weight:600">138%</span></td>
-          <td><span style="background:#D0EDE8;color:#0F5C4A;padding:2px 8px;border-radius:999px;font-size:10px;font-weight:600">138%</span></td>
+          <td><span class="pct-pill" style="background:var(--ok-bg);color:var(--ok-d)">138%</span></td>
+          <td><span class="pct-pill" style="background:var(--ok-bg);color:var(--ok-d)">138%</span></td>
         </tr>
       </tbody>
     </table>
-    <div class="info-box box-info" style="margin-top:14px;margin-bottom:0">
+    <div class="note note-info" style="margin-top:14px">
       <i class="ti ti-info-circle"></i>
       <div>RDA values sourced from ICMR-NIN Recommended Dietary Allowances for Indians (2020). Vitamin C at 308% RDA is above the 1× RDA threshold; this is permitted for supplements but must be declared on label.</div>
     </div>
   </div>
 
   <!-- Label Checklist -->
-  <div class="card">
-    <div class="card-title"><i class="ti ti-checklist"></i> Mandatory Label Checklist — Health Supplement</div>
-    <div class="info-box box-info" style="margin-bottom:14px">
+  <div class="rcard">
+    <div class="rcard-title"><span class="ric ic-emerald"><i class="ti ti-checklist"></i></span> Mandatory Label Checklist — Health Supplement</div>
+    <div class="note note-info" style="margin-bottom:14px">
       <i class="ti ti-info-circle"></i>
       <div>Per FSS (Labelling and Display) Regulations 2020 and FSSAI Nutraceuticals Order. All items below are mandatory for Health Supplements sold in India.</div>
     </div>
 
     <div class="lbl-row">
-      <div class="lbl-check lbl-check-ok"><i class="ti ti-check" style="font-size:10px"></i></div>
-      <div class="lbl-text"><strong>Product name and nature of food</strong><div style="font-size:10px;color:var(--ink-500);margin-top:2px">e.g. "Immune Support Capsule — Health Supplement"</div></div>
+      <div class="lbl-check lbl-check-ok"><i class="ti ti-check"></i></div>
+      <div class="lbl-text"><strong>Product name and nature of food</strong><div class="lbl-sub">e.g. "Immune Support Capsule — Health Supplement"</div></div>
     </div>
     <div class="lbl-row">
-      <div class="lbl-check lbl-check-ok"><i class="ti ti-check" style="font-size:10px"></i></div>
-      <div class="lbl-text"><strong>Complete list of ingredients with quantities</strong><div style="font-size:10px;color:var(--ink-500);margin-top:2px">All 10 declared ingredients must be listed in descending order by weight</div></div>
+      <div class="lbl-check lbl-check-ok"><i class="ti ti-check"></i></div>
+      <div class="lbl-text"><strong>Complete list of ingredients with quantities</strong><div class="lbl-sub">All 10 declared ingredients must be listed in descending order by weight</div></div>
     </div>
     <div class="lbl-row">
-      <div class="lbl-check lbl-check-ok"><i class="ti ti-check" style="font-size:10px"></i></div>
+      <div class="lbl-check lbl-check-ok"><i class="ti ti-check"></i></div>
       <div class="lbl-text"><strong>Net quantity per serving and per pack</strong></div>
     </div>
     <div class="lbl-row">
-      <div class="lbl-check lbl-check-req"><i class="ti ti-alert-triangle" style="font-size:10px"></i></div>
+      <div class="lbl-check lbl-check-req"><i class="ti ti-alert-triangle"></i></div>
       <div class="lbl-text"><strong>Nutrition information panel</strong>
         <div class="lbl-req-note"><i class="ti ti-alert-triangle" style="font-size:10px"></i> Must declare % RDA for all vitamins/minerals. Vitamin C at 308% RDA must be explicitly declared.</div>
       </div>
     </div>
     <div class="lbl-row">
-      <div class="lbl-check lbl-check-ok"><i class="ti ti-check" style="font-size:10px"></i></div>
+      <div class="lbl-check lbl-check-ok"><i class="ti ti-check"></i></div>
       <div class="lbl-text"><strong>FSSAI license number of manufacturer</strong></div>
     </div>
     <div class="lbl-row">
-      <div class="lbl-check lbl-check-ok"><i class="ti ti-check" style="font-size:10px"></i></div>
+      <div class="lbl-check lbl-check-ok"><i class="ti ti-check"></i></div>
       <div class="lbl-text"><strong>Batch number, manufacturing date, best before date</strong></div>
     </div>
     <div class="lbl-row">
-      <div class="lbl-check lbl-check-ok"><i class="ti ti-check" style="font-size:10px"></i></div>
-      <div class="lbl-text"><strong>Directions for use</strong><div style="font-size:10px;color:var(--ink-500);margin-top:2px">Recommended serving size and frequency</div></div>
+      <div class="lbl-check lbl-check-ok"><i class="ti ti-check"></i></div>
+      <div class="lbl-text"><strong>Directions for use</strong><div class="lbl-sub">Recommended serving size and frequency</div></div>
     </div>
     <div class="lbl-row">
-      <div class="lbl-check lbl-check-req"><i class="ti ti-alert-triangle" style="font-size:10px"></i></div>
+      <div class="lbl-check lbl-check-req"><i class="ti ti-alert-triangle"></i></div>
       <div class="lbl-text"><strong>Advisory / warning statements</strong>
         <div class="lbl-req-note">Must include: "Not a substitute for a varied diet." "Keep out of reach of children." "Consult a physician before use if pregnant/lactating."</div>
       </div>
     </div>
     <div class="lbl-row">
-      <div class="lbl-check lbl-check-ok"><i class="ti ti-check" style="font-size:10px"></i></div>
-      <div class="lbl-text"><strong>"Food Safety Statement" — for health supplements</strong><div style="font-size:10px;color:var(--ink-500);margin-top:2px">"This product is not intended to diagnose, treat, cure or prevent any disease."</div></div>
+      <div class="lbl-check lbl-check-ok"><i class="ti ti-check"></i></div>
+      <div class="lbl-text"><strong>"Food Safety Statement" — for health supplements</strong><div class="lbl-sub">"This product is not intended to diagnose, treat, cure or prevent any disease."</div></div>
     </div>
     <div class="lbl-row">
-      <div class="lbl-check lbl-check-req"><i class="ti ti-alert-triangle" style="font-size:10px"></i></div>
+      <div class="lbl-check lbl-check-req"><i class="ti ti-alert-triangle"></i></div>
       <div class="lbl-text"><strong>Allergen declaration</strong>
         <div class="lbl-req-note">Piperine (black pepper) must be declared as potential allergen for sensitive individuals. Gelatin capsule shell (if bovine) must be declared.</div>
       </div>
     </div>
     <div class="lbl-row">
-      <div class="lbl-check lbl-check-ok"><i class="ti ti-check" style="font-size:10px"></i></div>
-      <div class="lbl-text"><strong>Storage instructions</strong><div style="font-size:10px;color:var(--ink-500);margin-top:2px">e.g. "Store in a cool, dry place below 30°C. Protect from light."</div></div>
+      <div class="lbl-check lbl-check-ok"><i class="ti ti-check"></i></div>
+      <div class="lbl-text"><strong>Storage instructions</strong><div class="lbl-sub">e.g. "Store in a cool, dry place below 30°C. Protect from light."</div></div>
     </div>
     <div class="lbl-row">
-      <div class="lbl-check lbl-check-ok"><i class="ti ti-check" style="font-size:10px"></i></div>
+      <div class="lbl-check lbl-check-ok"><i class="ti ti-check"></i></div>
       <div class="lbl-text"><strong>Country of origin</strong></div>
     </div>
   </div>
 
   <!-- Regulatory References -->
-  <div class="card">
-    <div class="card-title"><i class="ti ti-book"></i> Regulatory References Used</div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:11px;color:var(--ink-700)">
-      <div style="padding:8px 10px;background:var(--brand-50);border-radius:6px;border:1px solid var(--brand-100)"><strong>FSSR 2011</strong> — Food Safety and Standards (Food Products Standards and Food Additives) Regulations</div>
-      <div style="padding:8px 10px;background:var(--brand-50);border-radius:6px;border:1px solid var(--brand-100)"><strong>FSS (Nutraceuticals) Rules 2022</strong> — Schedule I through IV permitted ingredients and dosage limits</div>
-      <div style="padding:8px 10px;background:var(--brand-50);border-radius:6px;border:1px solid var(--brand-100)"><strong>ICMR-NIN RDA 2020</strong> — Recommended Dietary Allowances for Indians, National Institute of Nutrition</div>
-      <div style="padding:8px 10px;background:var(--brand-50);border-radius:6px;border:1px solid var(--brand-100)"><strong>GMP Codex / FSSR Additives</strong> — Permitted processing aids, excipients and additives list</div>
-      <div style="padding:8px 10px;background:var(--brand-50);border-radius:6px;border:1px solid var(--brand-100)"><strong>NSF / FSSAI Closure List</strong> — Prohibited and restricted substances in nutraceuticals</div>
-      <div style="padding:8px 10px;background:var(--brand-50);border-radius:6px;border:1px solid var(--brand-100)"><strong>FSS (Labelling &amp; Display) Regs 2020</strong> — Mandatory label declarations for health supplements</div>
+  <div class="rcard">
+    <div class="rcard-title"><span class="ric ic-blue"><i class="ti ti-book"></i></span> Regulatory References Used</div>
+    <div class="ref-grid">
+      <div class="ref-item"><strong>FSSR 2011</strong> — Food Safety and Standards (Food Products Standards and Food Additives) Regulations</div>
+      <div class="ref-item"><strong>FSS (Nutraceuticals) Rules 2022</strong> — Schedule I through IV permitted ingredients and dosage limits</div>
+      <div class="ref-item"><strong>ICMR-NIN RDA 2020</strong> — Recommended Dietary Allowances for Indians, National Institute of Nutrition</div>
+      <div class="ref-item"><strong>GMP Codex / FSSR Additives</strong> — Permitted processing aids, excipients and additives list</div>
+      <div class="ref-item"><strong>NSF / FSSAI Closure List</strong> — Prohibited and restricted substances in nutraceuticals</div>
+      <div class="ref-item"><strong>FSS (Labelling &amp; Display) Regs 2020</strong> — Mandatory label declarations for health supplements</div>
     </div>
   </div>
 
@@ -475,7 +466,7 @@ a{color:var(--brand-700);text-decoration:none}
   <div class="cta-banner">
     <h2>Ready to check your formulation?</h2>
     <p>Sign up for free and get 5 compliance checks. No credit card required.</p>
-    <a href="../app/?auth=signup" class="btn-white"><i class="ti ti-bolt"></i> Start free — 5 checks included</a>
+    <a href="../app/?auth=signup" class="btn btn-white btn-lg"><i class="ti ti-bolt"></i> Start free — 5 checks included</a>
   </div>
 
   <div class="disclaimer">
@@ -485,7 +476,7 @@ a{color:var(--brand-700);text-decoration:none}
 
 <!-- Demo floating indicator -->
 <div class="demo-overlay">
-  <i class="ti ti-eye"></i> Sample report — <a href="../app/?auth=signup" style="color:#A7D9CF;text-decoration:underline;font-weight:600">try it with your own formulation →</a>
+  <i class="ti ti-eye"></i> Sample report — <a href="../app/?auth=signup">try it with your own formulation →</a>
 </div>
 
 </body>
