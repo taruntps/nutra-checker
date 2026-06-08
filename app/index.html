@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-  <!-- REGULYZE-BUILD-v3.3 -->
+  <!-- REGULYZE-BUILD-v3.5 -->
   <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
@@ -724,13 +724,10 @@ select:focus{outline:none;border-color:var(--brand-500)}
   <input type="checkbox" id="mt" class="mob-toggle" hidden>
   <label for="mt" class="scrim"></label>
   <aside class="sidebar">
-    <div class="brand">
-      <svg width="36" height="36" viewBox="0 0 36 36" fill="none" aria-hidden="true" style="flex-shrink:0">
-        <path d="M 34,18 L 26,32 L 10,32 L 2,18 L 10,4 L 26,4 Z" fill="#7DD4C8"/>
-        <path d="M 8,20 L 15,28 L 28,11" stroke="#ffffff" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg>
+    <a class="brand" href="/" title="Back to home" style="text-decoration:none;color:inherit;cursor:pointer">
+      <img src="../design-system/assets/logo-mark.png" alt="Regulyze" style="width:36px;height:36px;object-fit:contain;flex-shrink:0">
       <b>Regulyze</b>
-    </div>
+    </a>
     <a class="nav-item" href="#" data-tab="5" onclick="goTab(5);renderDashboard();return false" id="nav-dashboard-btn" style="display:none"><i class="ti ti-layout-dashboard"></i> Dashboard</a>
     <a class="nav-item active" href="#" data-tab="0" onclick="goTab(0);return false"><i class="ti ti-list-check"></i> Compliance Tracker</a>
     <a class="nav-item" href="#" data-tab="1" onclick="goTab(1);return false"><i class="ti ti-file-text"></i> Reports</a>
@@ -739,7 +736,7 @@ select:focus{outline:none;border-color:var(--brand-500)}
     <a class="nav-item" href="#" data-tab="4" onclick="goTab(4);rdcInit();return false"><i class="ti ti-gauge"></i> RDA Checker</a>
     <div class="nav-sep"></div>
     <a class="nav-item" href="#" onclick="showProfile();return false" id="nav-account-btn" style="display:none"><i class="ti ti-user-cog"></i> Account</a>
-    <div class="foot" id="sidebar-foot">v3.3 · FSS (Nutra) 2022<br>© TPS Xperts Group</div>
+    <div class="foot" id="sidebar-foot">v3.5 · FSS (Nutra) 2022<br>© TPS Xperts Group</div>
   </aside>
   <div class="main">
     <div class="ticker-wrap"><div class="ticker-move"><span>Regulyze &nbsp;&middot;&nbsp; FSSAI Nutraceutical Compliance Engine &nbsp;&middot;&nbsp; Analyze smarter. Comply faster. &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span>Regulyze &nbsp;&nbsp;&middot;&nbsp; FSSAI Nutraceutical Compliance Engine &nbsp;&middot;&nbsp; Analyze smarter. Comply faster. &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></div></div>
@@ -758,8 +755,9 @@ select:focus{outline:none;border-color:var(--brand-500)}
     <!-- preview-banner removed -->
 
 <div class="overlay" id="auth-overlay" style="display:none">
-  <div class="auth-card" style="max-width:420px;max-height:90vh;overflow-y:auto">
-    <div class="auth-logo"><img src="../design-system/assets/logo.png" alt="Regulyze" style="height:90px;width:auto;display:block;margin:0 auto"></div>
+  <div class="auth-card" style="max-width:420px;max-height:90vh;overflow-y:auto;position:relative">
+    <a href="/" title="Back to home" style="position:absolute;top:14px;right:14px;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:#f1f5f9;color:#64748b;text-decoration:none;font-size:16px;transition:background .15s" onmouseover="this.style.background='#e2e8f0'" onmouseout="this.style.background='#f1f5f9'"><i class="ti ti-x"></i></a>
+    <a href="/" title="Back to home" class="auth-logo" style="display:block;cursor:pointer"><img src="../design-system/assets/logo.png" alt="Regulyze" style="height:90px;width:auto;display:block;margin:0 auto"></a>
     <div class="auth-title">Nutraceutical &amp; Health Supplement<br>Compliance Checker</div>
     <div class="auth-sub">TPS Xperts Group &nbsp;&middot;&nbsp; FSS (Nutra) Regulations 2022</div>
     <div class="auth-tabs">

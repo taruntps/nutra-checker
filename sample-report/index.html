@@ -122,16 +122,14 @@ a{color:var(--brand-700);text-decoration:none}
 <body>
 
 <div class="topbar">
-  <div class="topbar-brand">
-    <svg width="30" height="30" viewBox="0 0 36 36" fill="none" aria-hidden="true">
-      <path d="M 34,18 L 26,32 L 10,32 L 2,18 L 10,4 L 26,4 Z" fill="#7DD4C8"/>
-      <path d="M 8,20 L 15,28 L 28,11" stroke="#ffffff" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"/>
-    </svg>
+  <a class="topbar-brand" href="/" title="Back to home" style="text-decoration:none;color:inherit;cursor:pointer">
+    <img src="../design-system/assets/logo-mark.png" alt="Regulyze" style="width:30px;height:30px;object-fit:contain">
     Regulyze
     <span class="badge-demo">Sample Report</span>
-  </div>
-  <div class="topbar-actions">
-    <a href="../app/" class="btn-cta"><i class="ti ti-bolt" style="font-size:13px"></i> Try it free</a>
+  </a>
+  <div class="topbar-actions" style="display:flex;align-items:center;gap:10px">
+    <a href="/" class="btn-cta" style="background:transparent;color:#fff;border:1px solid rgba(255,255,255,.35)"><i class="ti ti-home" style="font-size:13px"></i> Home</a>
+    <a href="../app/?auth=signup" class="btn-cta"><i class="ti ti-bolt" style="font-size:13px"></i> Try it free</a>
   </div>
 </div>
 
@@ -141,7 +139,7 @@ a{color:var(--brand-700);text-decoration:none}
   <div class="cta-banner">
     <h2>This is what your compliance report looks like</h2>
     <p>Instantly check any nutraceutical formulation against FSSAI Schedules I–IV, GMP additives, RDA limits and more.</p>
-    <a href="../app/" class="btn-white"><i class="ti ti-bolt"></i> Check your formulation free</a>
+    <a href="../app/?auth=signup" class="btn-white"><i class="ti ti-bolt"></i> Check your formulation free</a>
   </div>
 
   <!-- Report Header -->
@@ -477,7 +475,7 @@ a{color:var(--brand-700);text-decoration:none}
   <div class="cta-banner">
     <h2>Ready to check your formulation?</h2>
     <p>Sign up for free and get 5 compliance checks. No credit card required.</p>
-    <a href="../app/" class="btn-white"><i class="ti ti-bolt"></i> Start free — 5 checks included</a>
+    <a href="../app/?auth=signup" class="btn-white"><i class="ti ti-bolt"></i> Start free — 5 checks included</a>
   </div>
 
   <div class="disclaimer">
@@ -487,7 +485,7 @@ a{color:var(--brand-700);text-decoration:none}
 
 <!-- Demo floating indicator -->
 <div class="demo-overlay">
-  <i class="ti ti-eye"></i> Sample report — <a href="../app/" style="color:#A7D9CF;text-decoration:underline;font-weight:600">try it with your own formulation →</a>
+  <i class="ti ti-eye"></i> Sample report — <a href="../app/?auth=signup" style="color:#A7D9CF;text-decoration:underline;font-weight:600">try it with your own formulation →</a>
 </div>
 
 </body>
