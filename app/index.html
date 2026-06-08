@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-  <!-- REGULYZE-BUILD-v4.0 — Design System v2 (Creative Visual Storytelling) -->
+  <!-- REGULYZE-BUILD-v4.1 — Navy Professional default, theme chooser removed -->
   <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
@@ -26,23 +26,23 @@
 
 :root {
   /* Design System v2 — "Creative Visual Storytelling" indigo/violet ramp */
-  --brand-900:#2E2A6E;
-  --brand-800:#3730A3;
-  --brand-700:#4F46E5;
-  --brand-600:#6366F1;
-  --brand-500:#818CF8;
-  --brand-400:#A5B4FC;
-  --brand-300:#C7D0FE;
-  --brand-200:#E1E1FB;
-  --brand-100:#EEEBFD;
-  --brand-50: #F7F5FF;
-  --accent-700:#6D28D9;
-  --accent-600:#7C3AED;
-  --accent-500:#A855F7;
-  --accent-100:#F3E8FF;
-  --accent-50: #FAF5FF;
-  --grad-brand:linear-gradient(120deg,#4F46E5,#7C3AED);
-  --grad-hero:linear-gradient(130deg,#312E81,#7C3AED 60%,#06B6D4);
+  --brand-900:#071526;
+  --brand-800:#0E1F3C;
+  --brand-700:#1E3A5F;
+  --brand-600:#235690;
+  --brand-500:#2D6AB4;
+  --brand-400:#5E9BD6;
+  --brand-300:#93BDE8;
+  --brand-200:#C2D9F0;
+  --brand-100:#E0ECF8;
+  --brand-50: #EEF5FB;
+  --accent-700:#1B4F8A;
+  --accent-600:#235690;
+  --accent-500:#2D6AB4;
+  --accent-100:#E0ECF8;
+  --accent-50: #EEF5FB;
+  --grad-brand:linear-gradient(120deg,#1E3A5F,#235690);
+  --grad-hero:linear-gradient(130deg,#071526,#235690 60%,#2D6AB4);
   --ok-700:#0F5C4A;   --ok-600:#15803D;  --ok-100:#D0EDE8;  --ok-50:#ECFDF5;
   --warn-700:#92400E; --warn-600:#BA7517;--warn-100:#FAEEDA;--warn-50:#FFFBEB;
   --fail-700:#791F1F; --fail-600:#A32D2D;--fail-100:#FCEBEB;--fail-50:#FEF2F2;
@@ -71,17 +71,17 @@
   --s-6:24px; --s-8:32px; --s-10:40px; --s-12:48px; --s-16:64px;
   --s-20:80px; --s-24:96px;
   --r-sm:6px; --r-md:10px; --r-lg:14px; --r-xl:20px; --r-pill:999px;
-  --sh-xs:0 1px 2px rgba(30,27,75,.06);
-  --sh-sm:0 4px 14px rgba(80,70,200,.07);
-  --sh-md:0 10px 28px rgba(80,70,200,.12);
-  --sh-lg:0 20px 50px rgba(80,70,200,.16);
-  --sh-focus:0 0 0 3px rgba(99,102,241,.30);
+  --sh-xs:0 1px 2px rgba(7,21,38,.06);
+  --sh-sm:0 4px 14px rgba(30,58,95,.07);
+  --sh-md:0 10px 28px rgba(30,58,95,.12);
+  --sh-lg:0 20px 50px rgba(30,58,95,.16);
+  --sh-focus:0 0 0 3px rgba(30,58,95,.30);
   --ease:cubic-bezier(.4,0,.2,1);
   --dur:.18s;
   --container:1180px;
   --header-h:64px;
   /* keep legacy aliases so existing JS/CSS still works */
-  --blue:#4F46E5; --blue-mid:#6366F1; --blue-light:#EEEBFD; --blue-dark:#4F46E5;
+  --blue:#1E3A5F; --blue-mid:#235690; --blue-light:#E0ECF8; --blue-dark:#1E3A5F;
   --ok:var(--ok-700); --ok-bg:var(--ok-100);
   --warn:var(--warn-700); --warn-bg:var(--warn-100);
   --fail:var(--fail-600); --fail-bg:var(--fail-100);
@@ -113,8 +113,8 @@ h1,h2,h3,h4{font-family:var(--font-display);line-height:var(--lh-tight);letter-s
 .center{text-align:center}
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:var(--s-2);font-size:var(--fs-md);font-weight:600;line-height:1;padding:11px var(--s-5);border:1.5px solid transparent;border-radius:var(--r-md);cursor:pointer;transition:all var(--dur) var(--ease);white-space:nowrap;min-height:44px;}
 .btn:active{transform:translateY(1px)}
-.btn-primary{background:var(--grad-brand);color:#fff;border-color:transparent;box-shadow:0 6px 18px rgba(99,102,241,.30)}
-.btn-primary:hover{filter:brightness(1.06);box-shadow:0 12px 30px rgba(124,58,237,.40);transform:translateY(-1px)}
+.btn-primary{background:var(--grad-brand);color:#fff;border-color:transparent;box-shadow:0 6px 18px rgba(30,58,95,.30)}
+.btn-primary:hover{filter:brightness(1.06);box-shadow:0 12px 30px rgba(35,86,144,.40);transform:translateY(-1px)}
 .btn-secondary{background:var(--brand-100);color:var(--brand-700);border-color:var(--brand-200)}
 .btn-secondary:hover{background:var(--ok-100)}
 .btn-outline{background:#fff;color:var(--brand-700);border-color:var(--brand-200)}
@@ -141,14 +141,14 @@ h1,h2,h3,h4{font-family:var(--font-display);line-height:var(--lh-tight);letter-s
 .b-ok{background:#DCFCE7;color:#166534}
 .b-warn{background:var(--warn-bg);color:var(--warn)}
 .b-fail{background:var(--fail-bg);color:var(--fail)}
-.b-info{background:#D0EDE8;color:#4F46E5}
+.b-info{background:#D0EDE8;color:#1E3A5F}
 .b-grey{background:var(--bg-surface);color:var(--text-muted);border:1px solid var(--border)}
 .pct-badge{font-size:9px;border-radius:7px;padding:2px 5px;font-weight:600;display:inline-block}
-.pct-ok{background:#D0EDE8;color:#4F46E5}
+.pct-ok{background:#D0EDE8;color:#1E3A5F}
 .pct-hi{background:var(--fail-bg);color:var(--fail)}
 .pct-lo{background:var(--warn-bg);color:var(--warn)}
 .pct-na{background:var(--bg-surface);color:var(--text-faint)}
-.corr{display:inline-block;margin-top:2px;padding:1px 5px;background:#D0EDE8;border-radius:3px;font-size:9px;color:#4F46E5;font-weight:500}
+.corr{display:inline-block;margin-top:2px;padding:1px 5px;background:#D0EDE8;border-radius:3px;font-size:9px;color:#1E3A5F;font-weight:500}
 .card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);padding:var(--s-5);box-shadow:var(--sh-sm)}
 .card-hover{transition:transform var(--dur) var(--ease),box-shadow var(--dur) var(--ease)}
 .card-hover:hover{transform:translateY(-3px);box-shadow:var(--sh-md)}
@@ -185,10 +185,10 @@ h1,h2,h3,h4{font-family:var(--font-display);line-height:var(--lh-tight);letter-s
 .empty{text-align:center;padding:var(--s-12) var(--s-6);color:var(--text-muted)}
 .empty i{font-size:46px;color:var(--brand-300);margin-bottom:var(--s-3)}
 .app{display:grid;grid-template-columns:248px 1fr;min-height:100vh}
-.sidebar{background:linear-gradient(195deg,var(--brand-800),var(--brand-900) 55%,#241F5C);color:#fff;padding:var(--s-5) var(--s-4);display:flex;flex-direction:column;gap:var(--s-2);position:sticky;top:0;height:100vh;overflow-y:auto}
-.sidebar .brand{display:flex;align-items:center;gap:10px;padding:var(--s-2) var(--s-2) var(--s-6)}
+.sidebar{background:linear-gradient(195deg,var(--brand-800),var(--brand-900) 55%,#0A1B30);color:#fff;padding:var(--s-5) var(--s-4);display:flex;flex-direction:column;gap:var(--s-2);position:sticky;top:0;height:100vh;overflow-y:auto}
+.sidebar .brand{display:flex;align-items:center;gap:10px;background:#fff;border-radius:12px;padding:9px 13px;margin-bottom:var(--s-5);box-shadow:0 2px 8px rgba(7,21,38,.18)}
 .sidebar .brand .mark{width:34px;height:34px;border-radius:9px;background:#fff;color:var(--brand-700);display:grid;place-items:center;font-weight:800;font-size:18px;flex-shrink:0}
-.sidebar .brand b{font-size:var(--fs-lg);letter-spacing:-.01em}
+.sidebar .brand b{font-size:var(--fs-lg);letter-spacing:-.01em;color:var(--ink-900)}
 .nav-item{display:flex;align-items:center;gap:11px;padding:11px var(--s-3);border-radius:var(--r-md);color:rgba(255,255,255,.78);font-size:var(--fs-md);font-weight:500;transition:all var(--dur)}
 .nav-item i{font-size:18px;width:20px;text-align:center}
 .nav-item:hover{background:rgba(255,255,255,.08);color:#fff}
@@ -231,7 +231,7 @@ h1,h2,h3,h4{font-family:var(--font-display);line-height:var(--lh-tight);letter-s
 .pill-tabs button{border:none;background:transparent;color:var(--text-muted);font-weight:600;font-size:var(--fs-sm);padding:8px 14px;border-radius:var(--r-md);transition:all var(--dur)}
 .pill-tabs button.active{background:var(--brand-700);color:#fff}
 table{width:100%;border-collapse:collapse;font-size:11px}
-thead th{text-align:left;padding:8px 10px;font-size:9px;font-weight:600;color:#0F5C4A;text-transform:uppercase;letter-spacing:.04em;background:#EEEBFD;border-bottom:1px solid #E1E1FB;white-space:nowrap}
+thead th{text-align:left;padding:8px 10px;font-size:9px;font-weight:600;color:#0F5C4A;text-transform:uppercase;letter-spacing:.04em;background:#E0ECF8;border-bottom:1px solid #C2D9F0;white-space:nowrap}
 tbody td{padding:9px 10px;border-bottom:1px solid var(--border-light);vertical-align:top}
 tbody tr:last-child td{border-bottom:none}
 tbody tr:hover td{background:#f8fbff}
@@ -240,24 +240,24 @@ tbody tr:hover td{background:#f8fbff}
 .str{font-weight:600;font-size:11px}
 .spinner{width:12px;height:12px;border:2px solid currentColor;border-top-color:transparent;border-radius:50%;animation:spin .6s linear infinite;flex-shrink:0}
 .chk-group{margin-bottom:12px}
-.chk-grp-title{font-size:10px;font-weight:600;color:var(--text);margin-bottom:6px;padding:4px 8px;background:#EEEBFD;border-radius:var(--radius-sm);border-left:3px solid #4F46E5}
+.chk-grp-title{font-size:10px;font-weight:600;color:var(--text);margin-bottom:6px;padding:4px 8px;background:#E0ECF8;border-radius:var(--radius-sm);border-left:3px solid #1E3A5F}
 .chk-item{display:flex;gap:8px;padding:6px 2px;border-bottom:1px solid var(--border-light);align-items:flex-start}
 .chk-item:last-child{border-bottom:none}
 .chk-ico{font-size:14px;flex-shrink:0;margin-top:1px}
 .chk-t{font-size:11px;font-weight:500;color:var(--text)}
 .chk-d{font-size:10px;color:var(--text-muted);margin-top:1px;line-height:1.5}
 .flag-box{display:flex;gap:6px;align-items:flex-start;padding:6px 10px;border-radius:6px;font-size:10px;margin-bottom:4px}
-.info-box{padding:8px 11px;background:#EEEBFD;border-radius:var(--radius-sm);font-size:10px;color:#0F5C4A;line-height:1.6;margin-top:9px;border:1px solid #E1E1FB}
+.info-box{padding:8px 11px;background:#E0ECF8;border-radius:var(--radius-sm);font-size:10px;color:#0F5C4A;line-height:1.6;margin-top:9px;border:1px solid #C2D9F0}
 .drop-zone{border:2px dashed var(--border);border-radius:var(--radius-lg);padding:32px 18px;text-align:center;cursor:pointer;transition:all .15s;background:var(--bg-surface)}
-.drop-zone:hover{border-color:#4F46E5;background:#EEEBFD}
+.drop-zone:hover{border-color:#1E3A5F;background:#E0ECF8}
 .drop-zone i{font-size:32px;color:var(--text-faint);display:block;margin-bottom:7px}
 .drop-zone h3{font-size:13px;font-weight:500;color:var(--text);margin-bottom:2px}
 .drop-zone p{font-size:10px;color:var(--text-muted)}
 .cfu-wt-row{display:none;align-items:center;gap:6px;margin-top:3px;padding:5px 8px;background:#FEF3C7;border-radius:4px;font-size:10px;color:#92400E}
 .cfu-wt-row.show{display:flex}
 .cfu-wt-row input{width:80px;padding:4px 7px;border:1px solid #fcd34d;border-radius:4px;font-size:11px;font-family:inherit;background:#fffbeb}
-.btn-add-chip{padding:5px 12px;background:#4F46E5;color:#fff;border:none;border-radius:var(--radius-sm);font-size:11px;font-weight:500;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:3px}
-.btn-add-chip:hover{background:#6366F1}
+.btn-add-chip{padding:5px 12px;background:#1E3A5F;color:#fff;border:none;border-radius:var(--radius-sm);font-size:11px;font-weight:500;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:3px}
+.btn-add-chip:hover{background:#235690}
 .btn-cancel-sm{padding:5px 9px;background:transparent;color:var(--text-muted);border:1px solid var(--border);border-radius:var(--radius-sm);font-size:11px;cursor:pointer;font-family:inherit}
 .chip{display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:12px;font-size:10px;font-weight:500;border:1px solid transparent}
 .chip-x{background:none;border:none;cursor:pointer;font-size:12px;line-height:1;padding:0;opacity:.7}
@@ -273,13 +273,13 @@ tbody tr:hover td{background:#f8fbff}
 .fml-ce:empty:before{content:attr(data-placeholder);color:var(--text-faint);font-family:'DM Sans',sans-serif;font-size:11px;pointer-events:none}
 .fml-ce .fl-line{display:block;border-radius:2px;padding:0 2px;margin:0 -2px}
 .fml-ce .fl-nsf{color:#0a7255;font-weight:500}
-.fml-ce .fl-fssr{color:#6d28d9;font-weight:500}
+.fml-ce .fl-fssr{color:#1B4F8A;font-weight:500}
 .fml-ce .fl-add{color:#B45309;font-weight:500}
 .fml-ce .fl-warn{color:#475569;font-weight:500;font-style:italic}
 .fml-ce .fl-fail{color:#dc2626;font-weight:500;text-decoration:line-through}
 .fml-ce .fl-plain{color:var(--text)}
 .status-bar{display:none;align-items:center;gap:7px;padding:8px 11px;border-radius:var(--radius-sm);font-size:11px;margin:7px 0}
-.status-bar.loading{display:flex;background:#D0EDE8;color:#4F46E5}
+.status-bar.loading{display:flex;background:#D0EDE8;color:#1E3A5F}
 .status-bar.error{display:flex;background:var(--fail-bg);color:var(--fail)}
 .hdr-badge{padding:3px 10px;background:rgba(255,255,255,.15);color:rgba(255,255,255,.9);border-radius:20px;font-size:10px;font-weight:500;border:1px solid rgba(255,255,255,.2)}
 @media (max-width:1024px){.kpi-grid{grid-template-columns:repeat(2,1fr)}}
@@ -412,13 +412,13 @@ tbody tr:hover td{background:#f8fbff}
 .sum-warn .num,.s-warn .num{color:var(--warn-600)}
 .sum-fail .num,.s-fail .num{color:var(--fail-600)}
 .s-total{background:var(--bg-surface);color:var(--text)}
-.s-ok{background:var(--ok-100);color:var(--ok);border-color:#E1E1FB}
+.s-ok{background:var(--ok-100);color:var(--ok);border-color:#C2D9F0}
 .s-warn{background:var(--warn-bg);color:var(--warn);border-color:#fac775}
 .s-fail{background:var(--fail-bg);color:var(--fail);border-color:#f7c1c1}
 
 /* Status/result badges */
 .status-bar{background:var(--brand-50);border:1px solid var(--border);border-radius:var(--r-lg);padding:var(--s-3) var(--s-4);margin-bottom:12px;display:flex;align-items:center;gap:var(--s-3);flex-wrap:wrap}
-.status-bar.loading{display:flex;background:#D0EDE8;color:#4F46E5}
+.status-bar.loading{display:flex;background:#D0EDE8;color:#1E3A5F}
 .status-bar.error{display:flex;background:var(--fail-bg);color:var(--fail)}
 .status-ok{color:var(--ok-700)}
 .status-warn{color:var(--warn-700)}
@@ -449,7 +449,7 @@ tbody tr:hover td{background:#f8fbff}
 .sb-s1{background:var(--ok-100);color:var(--brand-700)}
 .sb-s2{background:#DCFCE7;color:#166534}
 .sb-s3a{background:var(--accent-100);color:#5B21B6}
-.sb-s3b{background:#F3E8FF;color:#6D28D9}
+.sb-s3b{background:#E0ECF8;color:#1B4F8A}
 .sb-s4{background:#FEF3C7;color:#92400E}
 .sb-add{background:var(--brand-100);color:var(--brand-700)}
 .sb-fssr{background:var(--accent-100);color:#4C1D95}
@@ -610,9 +610,9 @@ select:focus{outline:none;border-color:var(--brand-500)}
 
 /* Demo cursor/overlay stuff */
 #dmo-cur{position:fixed;width:22px;height:28px;pointer-events:none;z-index:9999;top:0;left:0;display:none;filter:drop-shadow(0 2px 5px rgba(0,0,0,.35))}
-#dmo-hl{position:fixed;border:2px solid var(--brand-700);border-radius:var(--r-lg);box-shadow:0 0 0 4px rgba(99,102,241,.2);pointer-events:none;z-index:9990;display:none;animation:dmoHlPulse 1.4s ease-in-out infinite}
-@keyframes dmoHlPulse{0%,100%{box-shadow:0 0 0 4px rgba(99,102,241,.2)}50%{box-shadow:0 0 0 9px rgba(99,102,241,.07)}}
-.dmo-ripple{position:fixed;width:32px;height:32px;border-radius:50%;background:rgba(99,102,241,.35);pointer-events:none;z-index:9989;animation:dmoRipple .55s ease-out forwards;transform:translate(-50%,-50%)}
+#dmo-hl{position:fixed;border:2px solid var(--brand-700);border-radius:var(--r-lg);box-shadow:0 0 0 4px rgba(30,58,95,.2);pointer-events:none;z-index:9990;display:none;animation:dmoHlPulse 1.4s ease-in-out infinite}
+@keyframes dmoHlPulse{0%,100%{box-shadow:0 0 0 4px rgba(30,58,95,.2)}50%{box-shadow:0 0 0 9px rgba(30,58,95,.07)}}
+.dmo-ripple{position:fixed;width:32px;height:32px;border-radius:50%;background:rgba(30,58,95,.35);pointer-events:none;z-index:9989;animation:dmoRipple .55s ease-out forwards;transform:translate(-50%,-50%)}
 @keyframes dmoRipple{0%{transform:translate(-50%,-50%) scale(0);opacity:1}100%{transform:translate(-50%,-50%) scale(2.5);opacity:0}}
 #dmo-fake-drop{position:fixed;background:#fff;border:1px solid var(--border);border-radius:var(--r-lg);z-index:9988;overflow:hidden;box-shadow:var(--sh-md);display:none;min-width:200px}
 .dmo-di{padding:9px 13px;border-bottom:1px solid var(--brand-50);display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:var(--fs-sm);transition:background var(--dur)}
@@ -671,18 +671,6 @@ select:focus{outline:none;border-color:var(--brand-500)}
 }
 
 /* Theme switcher widget */
-.rg-theme-sw{position:fixed;bottom:var(--s-5);right:var(--s-5);z-index:400}
-.rg-theme-toggle{width:40px;height:40px;border-radius:50%;background:var(--brand-700);color:#fff;border:none;cursor:pointer;display:grid;place-items:center;font-size:18px;box-shadow:var(--sh-md);transition:all var(--dur)}
-.rg-theme-toggle:hover{background:var(--brand-500);transform:scale(1.05)}
-.rg-theme-panel{position:absolute;bottom:50px;right:0;background:#fff;border:1px solid var(--border);border-radius:var(--r-lg);padding:12px;box-shadow:var(--sh-lg);display:none;min-width:160px;gap:6px;flex-direction:column;visibility:hidden;opacity:0;pointer-events:none;transform:translateY(8px);transition:opacity .15s ease,transform .15s ease,visibility .15s}
-.rg-theme-sw.open .rg-theme-panel{display:flex;visibility:visible;opacity:1;pointer-events:auto;transform:none}
-.rg-ts-lbl,.rg-theme-lbl{font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.1em;padding:0 4px 4px;margin-bottom:4px}
-.rg-ts-btn,.rg-ts-opt{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:var(--r-md);border:1.5px solid transparent;background:none;cursor:pointer;font-family:inherit;font-size:var(--fs-sm);font-weight:500;color:var(--text);transition:background var(--dur);width:100%;text-align:left}
-.rg-ts-btn:hover,.rg-ts-opt:hover{background:var(--brand-50)}
-.rg-ts-btn.active,.rg-ts-opt.active{background:var(--brand-100);color:var(--brand-700);font-weight:600;border-color:var(--brand-500)}
-.rg-ts-swatch,.rg-ts-dot{width:16px;height:16px;border-radius:4px;flex-shrink:0}
-.rg-ts-tick{margin-left:auto;font-size:13px;color:var(--brand-600);opacity:0}
-.rg-ts-opt.active .rg-ts-tick{opacity:1}
 
 /* ── Dashboard ── */
 .db-wrap{padding:var(--s-5) var(--s-6);max-width:1120px}
@@ -779,11 +767,11 @@ select:focus{outline:none;border-color:var(--brand-500)}
       <div style="margin:10px 0;display:flex;align-items:center;gap:8px"><div style="flex:1;height:1px;background:#e2e8f0"></div><span style="font-size:9px;color:#94a3b8">OR</span><div style="flex:1;height:1px;background:#e2e8f0"></div></div>
       <div id="google-signin-btn" style="display:flex;justify-content:center;margin-bottom:8px"></div>
       <div style="font-size:10px;color:#64748b;text-align:center;margin-top:6px;line-height:1.7">
-        New user? Click <strong style="color:#4F46E5;cursor:pointer" onclick="swAuthTab('signup',document.getElementById('tab-signup'))">Sign Up</strong> for 5 free checks<br>
+        New user? Click <strong style="color:#1E3A5F;cursor:pointer" onclick="swAuthTab('signup',document.getElementById('tab-signup'))">Sign Up</strong> for 5 free checks<br>
         Help: WhatsApp +91 9115551545
       </div>
       <div style="text-align:center;margin-top:6px">
-        <span style="font-size:10px;color:#4F46E5;cursor:pointer;text-decoration:underline" onclick="showForgotPassword()">Forgot Password?</span>
+        <span style="font-size:10px;color:#1E3A5F;cursor:pointer;text-decoration:underline" onclick="showForgotPassword()">Forgot Password?</span>
       </div>
     </div>
 
@@ -800,7 +788,7 @@ select:focus{outline:none;border-color:var(--brand-500)}
       <button class="auth-btn" id="fp-btn" onclick="doForgotPassword()"><i class="ti ti-mail"></i> Send OTP</button>
       <div class="auth-err" id="fp-err"></div>
       <div style="text-align:center;margin-top:8px">
-        <span style="font-size:10px;color:#4F46E5;cursor:pointer;text-decoration:underline" onclick="swAuthTab('signin',document.getElementById('tab-signin'))">Back to Sign In</span>
+        <span style="font-size:10px;color:#1E3A5F;cursor:pointer;text-decoration:underline" onclick="swAuthTab('signin',document.getElementById('tab-signin'))">Back to Sign In</span>
       </div>
     </div>
 
@@ -817,7 +805,7 @@ select:focus{outline:none;border-color:var(--brand-500)}
       <div style="margin:10px 0;display:flex;align-items:center;gap:8px"><div style="flex:1;height:1px;background:#e2e8f0"></div><span style="font-size:9px;color:#94a3b8">OR</span><div style="flex:1;height:1px;background:#e2e8f0"></div></div>
       <div id="google-signup-btn" style="display:flex;justify-content:center;margin-bottom:8px"></div>
       <div style="font-size:10px;color:#64748b;text-align:center;margin-top:6px">
-        Already have an account? <strong style="color:#4F46E5;cursor:pointer" onclick="swAuthTab('signin',document.getElementById('tab-signin'))">Sign In</strong>
+        Already have an account? <strong style="color:#1E3A5F;cursor:pointer" onclick="swAuthTab('signin',document.getElementById('tab-signin'))">Sign In</strong>
       </div>
     </div>
   </div>
@@ -861,7 +849,7 @@ select:focus{outline:none;border-color:var(--brand-500)}
       <div class="pay-tab" onclick="swPayTab('coupon',this)">Coupon Code</div>
     </div>
     <div id="pay-upi-c">
-      <div style="background:#EEEBFD;border-radius:9px;padding:12px;margin-bottom:10px;font-size:10px;color:var(--text-muted);line-height:2">
+      <div style="background:#E0ECF8;border-radius:9px;padding:12px;margin-bottom:10px;font-size:10px;color:var(--text-muted);line-height:2">
         UPI ID: <strong style="color:var(--text)">tpsxperts@upi</strong><br>
         Account: <strong style="color:var(--text)">TPS Xperts Group</strong><br>
         After payment, share screenshot on WhatsApp: <strong style="color:var(--text)">+91 9115551545</strong>
@@ -1160,7 +1148,7 @@ select:focus{outline:none;border-color:var(--brand-500)}
     </div>
     <div id="hist-content">
       <div style="text-align:center;padding:26px;color:#64748b">
-        <i class="ti ti-history" style="font-size:30px;display:block;margin-bottom:7px;color:#E1E1FB"></i>
+        <i class="ti ti-history" style="font-size:30px;display:block;margin-bottom:7px;color:#C2D9F0"></i>
         <p style="font-size:11px">Sign in to see your history</p>
       </div>
     </div>
@@ -1185,7 +1173,7 @@ select:focus{outline:none;border-color:var(--brand-500)}
     </div>
     <div class="card" style="padding:0">
       <div style="padding:12px 16px;border-bottom:1px solid var(--border-light);display:flex;align-items:center;gap:6px">
-        <i class="ti ti-table" style="color:#4F46E5;font-size:14px"></i>
+        <i class="ti ti-table" style="color:#1E3A5F;font-size:14px"></i>
         <span style="font-size:12px;font-weight:600;color:var(--text)">% RDA by target group</span>
         <button onclick="rdcPrint()" style="margin-left:auto;padding:4px 10px;font-size:11px;background:none;border:1px solid var(--border);border-radius:var(--radius-sm);cursor:pointer;color:var(--text-muted);font-family:inherit;display:flex;align-items:center;gap:4px;transition:background .15s" onmouseover="this.style.background='var(--blue-light)'" onmouseout="this.style.background='none'"><i class="ti ti-printer" style="font-size:12px"></i> Print / PDF</button>
       </div>
@@ -1299,7 +1287,7 @@ select:focus{outline:none;border-color:var(--brand-500)}
 ═══════════════════════════════════════════════════════════ -->
 <!-- Animated cursor -->
 <svg id="dmo-cur" viewBox="0 0 20 24" xmlns="http://www.w3.org/2000/svg">
-  <path d="M2 2L2 19L6.5 14.5L9.5 21L11.5 20L8.5 13.5L15 13.5L2 2Z" fill="#4F46E5" stroke="#fff" stroke-width="1.2" stroke-linejoin="round"/>
+  <path d="M2 2L2 19L6.5 14.5L9.5 21L11.5 20L8.5 13.5L15 13.5L2 2Z" fill="#1E3A5F" stroke="#fff" stroke-width="1.2" stroke-linejoin="round"/>
 </svg>
 <!-- Highlight ring -->
 <div id="dmo-hl"></div>
@@ -1314,7 +1302,7 @@ select:focus{outline:none;border-color:var(--brand-500)}
 <div id="dmo-cta">
   <div class="dmo-cta-card" style="padding:0;overflow:hidden">
     <!-- Gradient header -->
-    <div style="background:linear-gradient(135deg,#4F46E5 0%,#7C3AED 60%,#A855F7 100%);padding:24px 28px 20px;text-align:center">
+    <div style="background:linear-gradient(135deg,#1E3A5F 0%,#235690 60%,#2D6AB4 100%);padding:24px 28px 20px;text-align:center">
       <div style="display:inline-flex;align-items:center;justify-content:center;width:48px;height:48px;background:rgba(255,255,255,.15);border-radius:14px;margin-bottom:12px">
         <img class="js-logo" alt="Regulyze" style="width:36px;height:36px;object-fit:contain;vertical-align:middle">
       </div>
@@ -1323,21 +1311,21 @@ select:focus{outline:none;border-color:var(--brand-500)}
     </div>
     <!-- Body -->
     <div style="padding:20px 24px 24px">
-    <div style="font-size:12px;color:#64748b;margin-bottom:14px;line-height:1.75;text-align:center">Analyse any nutraceutical formula against <strong style="color:#4F46E5">FSSAI regulations</strong> in seconds — schedules, dose limits, additives, RDA, and label requirements.</div>
+    <div style="font-size:12px;color:#64748b;margin-bottom:14px;line-height:1.75;text-align:center">Analyse any nutraceutical formula against <strong style="color:#1E3A5F">FSSAI regulations</strong> in seconds — schedules, dose limits, additives, RDA, and label requirements.</div>
     <div style="display:flex;gap:6px;flex-wrap:wrap;justify-content:center;margin-bottom:18px">
-      <span style="font-size:10px;background:#EEEBFD;color:#4F46E5;padding:3px 9px;border-radius:10px;font-weight:500;border:1px solid #E1E1FB">✓ Schedule I–IV lookup</span>
-      <span style="font-size:10px;background:#EEEBFD;color:#4F46E5;padding:3px 9px;border-radius:10px;font-weight:500;border:1px solid #E1E1FB">✓ ICMR RDA check</span>
-      <span style="font-size:10px;background:#EEEBFD;color:#4F46E5;padding:3px 9px;border-radius:10px;font-weight:500;border:1px solid #E1E1FB">✓ NSF (Non-Specified Food)</span>
-      <span style="font-size:10px;background:#EEEBFD;color:#4F46E5;padding:3px 9px;border-radius:10px;font-weight:500;border:1px solid #E1E1FB">✓ GMP Additives</span>
-      <span style="font-size:10px;background:#EEEBFD;color:#4F46E5;padding:3px 9px;border-radius:10px;font-weight:500;border:1px solid #E1E1FB">✓ Label checklist</span>
+      <span style="font-size:10px;background:#E0ECF8;color:#1E3A5F;padding:3px 9px;border-radius:10px;font-weight:500;border:1px solid #C2D9F0">✓ Schedule I–IV lookup</span>
+      <span style="font-size:10px;background:#E0ECF8;color:#1E3A5F;padding:3px 9px;border-radius:10px;font-weight:500;border:1px solid #C2D9F0">✓ ICMR RDA check</span>
+      <span style="font-size:10px;background:#E0ECF8;color:#1E3A5F;padding:3px 9px;border-radius:10px;font-weight:500;border:1px solid #C2D9F0">✓ NSF (Non-Specified Food)</span>
+      <span style="font-size:10px;background:#E0ECF8;color:#1E3A5F;padding:3px 9px;border-radius:10px;font-weight:500;border:1px solid #C2D9F0">✓ GMP Additives</span>
+      <span style="font-size:10px;background:#E0ECF8;color:#1E3A5F;padding:3px 9px;border-radius:10px;font-weight:500;border:1px solid #C2D9F0">✓ Label checklist</span>
     </div>
     <div style="display:flex;flex-direction:column;gap:9px">
       <button onclick="DEMO.stop();swAuthTab('signup',document.getElementById('tab-signup'));showAuth();"
-        style="padding:12px;background:#4F46E5;color:#fff;border:none;border-radius:9px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:6px">
+        style="padding:12px;background:#1E3A5F;color:#fff;border:none;border-radius:9px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:6px">
         <i class="ti ti-user-plus"></i> Sign Up Free — 5 Checks Included
       </button>
       <button onclick="DEMO.stop();swAuthTab('signin',document.getElementById('tab-signin'));showAuth();"
-        style="padding:10px;background:#EEEBFD;color:#4F46E5;border:1px solid #E1E1FB;border-radius:9px;font-size:12px;font-weight:500;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:5px">
+        style="padding:10px;background:#E0ECF8;color:#1E3A5F;border:1px solid #C2D9F0;border-radius:9px;font-size:12px;font-weight:500;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:5px">
         <i class="ti ti-login"></i> Already have an account? Sign In
       </button>
       <button onclick="DEMO.ctaReplay()"
@@ -1365,7 +1353,7 @@ const SOLID_ORAL = ['tablet','capsule','softgel','veg_softgel','pills'];
 // ═══════════════════════════════════════════════════════════════════
 // LIVE REGULATION DATABASE
 // ═══════════════════════════════════════════════════════════════════
-console.log('%c✅ Regulyze v2.8 loaded', 'color:#4F46E5;font-weight:bold;font-size:14px');
+console.log('%c✅ Regulyze v2.8 loaded', 'color:#1E3A5F;font-weight:bold;font-size:14px');
 const REG = {
   s1v:[],s1m:[],s1aa:[],s1n:[],overages:{},
   s2:[],s3a:[],s3b:[],s4pre:[],s4pro:[],
@@ -2489,7 +2477,7 @@ function hl(text, q) {
   if(!q||q.length<2) return text;
   try {
     const rx=new RegExp('('+q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+')','gi');
-    return text.replace(rx,'<mark style="background:#D0EDE8;color:#4F46E5;border-radius:2px;padding:0 1px;font-weight:700">$1</mark>');
+    return text.replace(rx,'<mark style="background:#D0EDE8;color:#1E3A5F;border-radius:2px;padding:0 1px;font-weight:700">$1</mark>');
   } catch(e){return text;}
 }
 
@@ -4314,7 +4302,7 @@ function renderReport(results,addResults,catData,pop,popLbl,dosage,dosLbl,claim,
       notes=`<span style="color:#085041;font-size:10px">${_nsfPrefix}Approved by FSSAI under Non-Specified Food category. File: ${lu.nsfFile||'—'}</span><br><span style="font-size:9px;color:var(--text-muted)">${lu.nsfFBO||''}</span>`;
       ok++;
     } else if(lu.st==='ok'){
-      schedTxt=`<span style="font-size:9px;color:#4F46E5;font-weight:600;line-height:1.5">${lu.schedD||lu.sched}</span>`;
+      schedTxt=`<span style="font-size:9px;color:#1E3A5F;font-weight:600;line-height:1.5">${lu.schedD||lu.sched}</span>`;
       if(lu.fuzzy) notes+=`<span style="color:var(--warn);font-size:9px">⚠ Matched as "${lu.matchedAs}" — verify spelling</span><br>`;
       if(lu.synonymNote) notes+=`<span style="color:#085041;font-size:9px">ℹ ${lu.synonymNote}</span><br>`;
       if(kgConv) notes+=`<span style="color:#166534;font-size:9px">ℹ Converted: ${origKg} kg → ${strength.toLocaleString('en-IN')} mg</span><br>`;
@@ -4489,13 +4477,13 @@ function renderReport(results,addResults,catData,pop,popLbl,dosage,dosLbl,claim,
         <td><div class="ing-name">${r.name}</div><div class="ing-sub">Additive/Excipient</div></td>
         <td class="str">${r.strength!=null?`${r.strength} ${r.unit||''}`:'—'}</td>
         <td>${ab}</td>
-        <td style="font-size:9px;color:#4F46E5;font-weight:600">${r.al.listName||'Annexure 3'}</td>
+        <td style="font-size:9px;color:#1E3A5F;font-weight:600">${r.al.listName||'Annexure 3'}</td>
         <td style="font-size:10px;color:var(--text-muted)">${ps}</td>
         <td>${an}</td>
       </tr>`;
     }).join('');
     addSection=`<div style="margin-top:12px;font-size:12px;font-weight:600;color:var(--text);margin-bottom:6px;display:flex;align-items:center;gap:6px">
-      <i class="ti ti-droplet" style="color:#4F46E5;font-size:13px"></i> Additives / Excipients
+      <i class="ti ti-droplet" style="color:#1E3A5F;font-size:13px"></i> Additives / Excipients
     </div>
     <div class="tbl-wrap"><table>
       <thead><tr><th style="width:22%">Additive</th><th style="width:10%">Quantity</th><th style="width:13%">Status</th><th style="width:17%">Reference</th><th style="width:9%">% Total</th><th>Notes</th></tr></thead>
@@ -4506,8 +4494,8 @@ function renderReport(results,addResults,catData,pop,popLbl,dosage,dosLbl,claim,
   // Build claim lines
   const claimTxt=(document.getElementById('claim-text')||{}).value||'';
   const claimLines=claim==='claim'&&claimTxt?claimTxt.split(',').map(c=>c.trim()).filter(Boolean):[];
-  const claimHtml=claimLines.length?`<div style="margin:6px 0;padding:7px 11px;background:#EEEBFD;border-radius:6px;border-left:3px solid #4F46E5">
-    <div style="font-size:9px;font-weight:600;color:#4F46E5;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">Health Claim / Physiological Condition</div>
+  const claimHtml=claimLines.length?`<div style="margin:6px 0;padding:7px 11px;background:#E0ECF8;border-radius:6px;border-left:3px solid #1E3A5F">
+    <div style="font-size:9px;font-weight:600;color:#1E3A5F;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">Health Claim / Physiological Condition</div>
     ${claimLines.map(c=>`<div style="font-size:11px;color:var(--text);padding:1px 0">• ${c}</div>`).join('')}
   </div>`:'';
 
@@ -4527,14 +4515,14 @@ function renderReport(results,addResults,catData,pop,popLbl,dosage,dosLbl,claim,
     const diff=Math.round(actualIngSum-declaredAvgWt);
     if(Math.abs(diff)>1){
       const dir=diff>0?'higher':'lower';
-      const col=dir==='higher'?'#92400E':'#4F46E5';
-      const bg=dir==='higher'?'#FEF3C7':'#EEEBFD';
+      const col=dir==='higher'?'#92400E':'#1E3A5F';
+      const bg=dir==='higher'?'#FEF3C7':'#E0ECF8';
       avgWtNote=` <span style="font-size:9px;background:${bg};color:${col};padding:2px 6px;border-radius:4px;font-weight:500">Sum of ingredients (${Math.round(actualIngSum)} mg) is ${dir} than declared average weight (${Math.round(declaredAvgWt)} mg)</span>`;
     }
   }
   const avgWtBadge=declaredAvgWt?' <span style="font-size:9px;background:#EDE9FE;color:#4C1D95;padding:2px 6px;border-radius:4px;font-weight:500">Average weight declared</span>':'';
   const totalWtHtml=totalMg>0?`<div style="margin-top:10px;padding:7px 11px;background:var(--bg-surface);border-radius:6px;font-size:11px;color:var(--text-muted);display:flex;flex-direction:column;gap:4px">
-    <div style="display:flex;align-items:center;gap:8px"><i class="ti ti-weight" style="color:#4F46E5;font-size:13px"></i>
+    <div style="display:flex;align-items:center;gap:8px"><i class="ti ti-weight" style="color:#1E3A5F;font-size:13px"></i>
     <span><strong style="color:var(--text)">Total serving weight:</strong> ${totalMg.toFixed(1)} mg &nbsp;|&nbsp; ${(totalMg/1000).toFixed(3)} g &nbsp;&middot;&nbsp; Dosage form: ${dosLbl}${avgWtBadge}${hasCFU?` &nbsp;<span style="font-size:9px;background:#FEF3C7;color:#92400E;padding:2px 6px;border-radius:4px;font-weight:500">Excludes probiotic weight — CFU-based ingredients have no fixed mg value; weight depends on CFU/g of the strain used</span>`:''}</span></div>${avgWtNote}</div>`:''
 
   const html=`<div class="card" id="report-main">
@@ -4543,12 +4531,12 @@ function renderReport(results,addResults,catData,pop,popLbl,dosage,dosLbl,claim,
         <div style="font-size:9px;color:#64748b;font-weight:500;letter-spacing:.04em;text-transform:uppercase;margin-bottom:2px">Product name</div>
         <div class="report-title">${prodName}</div>
         <div class="report-meta" style="margin-top:4px;font-size:11px;color:#374151">
-          <span style="color:#4F46E5;font-weight:600">Product Category:</span> ${catData.cats[0]||'—'}
-          &nbsp;<span style="color:#E1E1FB">|</span>&nbsp;
-          <span style="color:#4F46E5;font-weight:600">Target Population:</span> ${popLbl}
-          &nbsp;<span style="color:#E1E1FB">|</span>&nbsp;
-          <span style="color:#4F46E5;font-weight:600">Dosage Form:</span> ${dosLbl}
-          ${claim&&claim!=="none"&&claim!=="no_claim"&&claim!=="No Claim"?"&nbsp;<span style='color:#E1E1FB'>|</span>&nbsp;<span style='color:#4F46E5;font-weight:600'>Claim:</span> "+claim:""}
+          <span style="color:#1E3A5F;font-weight:600">Product Category:</span> ${catData.cats[0]||'—'}
+          &nbsp;<span style="color:#C2D9F0">|</span>&nbsp;
+          <span style="color:#1E3A5F;font-weight:600">Target Population:</span> ${popLbl}
+          &nbsp;<span style="color:#C2D9F0">|</span>&nbsp;
+          <span style="color:#1E3A5F;font-weight:600">Dosage Form:</span> ${dosLbl}
+          ${claim&&claim!=="none"&&claim!=="no_claim"&&claim!=="No Claim"?"&nbsp;<span style='color:#C2D9F0'>|</span>&nbsp;<span style='color:#1E3A5F;font-weight:600'>Claim:</span> "+claim:""}
         </div>
       </div>
       <div style="font-size:9px;color:#94a3b8;text-align:right;flex-shrink:0">Generated ${new Date().toLocaleString('en-IN')}</div>
@@ -4563,7 +4551,7 @@ function renderReport(results,addResults,catData,pop,popLbl,dosage,dosLbl,claim,
       <div class="sum-card s-warn"><div class="num">${rev}</div><div class="lbl">Review needed</div></div>
       <div class="sum-card s-fail"><div class="num">${na}</div><div class="lbl">Not permitted</div></div>
     </div>
-    ${(claim&&claim!=='no_claim'&&claim!=='none'&&claim!=='No Claim')?`<div style="margin:12px 0;padding:10px 14px;background:#EEEBFD;border:1px solid #93C5FD;border-left:3px solid #6366F1;border-radius:8px;font-size:11px;color:#0F5C4A;line-height:1.65"><strong><i class="ti ti-info-circle"></i> Dual Categorisation — FSDU</strong><br>This product, based on the declared physiological condition or health claim, may also be categorisable as a <strong>Food for Special Dietary Use (FSDU)</strong> under FSS (Food Products Standards and Food Additives) Regulations, 2011 — subject to verification of the claimed physiological condition and supporting scientific data. Consult a regulatory expert to evaluate dual categorisation applicability before registration. <em style="opacity:.75;font-size:10px">Not a regulatory opinion.</em></div>`:''}
+    ${(claim&&claim!=='no_claim'&&claim!=='none'&&claim!=='No Claim')?`<div style="margin:12px 0;padding:10px 14px;background:#E0ECF8;border:1px solid #93C5FD;border-left:3px solid #235690;border-radius:8px;font-size:11px;color:#0F5C4A;line-height:1.65"><strong><i class="ti ti-info-circle"></i> Dual Categorisation — FSDU</strong><br>This product, based on the declared physiological condition or health claim, may also be categorisable as a <strong>Food for Special Dietary Use (FSDU)</strong> under FSS (Food Products Standards and Food Additives) Regulations, 2011 — subject to verification of the claimed physiological condition and supporting scientific data. Consult a regulatory expert to evaluate dual categorisation applicability before registration. <em style="opacity:.75;font-size:10px">Not a regulatory opinion.</em></div>`:''}
     ${rows.trim()?`<div class="tbl-wrap"><table>
       <thead><tr><th style="width:16%">Ingredient</th><th style="width:10%">Strength</th><th style="width:12%">Status</th><th style="width:17%">Schedule Reference</th><th style="width:9%">ICMR RDA</th><th style="width:7%">%RDA</th><th>Compliance Notes</th></tr></thead>
       <tbody>${rows}</tbody>
@@ -4704,7 +4692,7 @@ function buildLblHTML(cat) {
       <div class="chk-grp-title">${grp}</div>
       ${items.map(item=>`
         <div class="chk-item">
-          ${item.ok?'<i class="ti ti-circle-check chk-ico" style="color:#4F46E5"></i>':'<i class="ti ti-circle-x chk-ico" style="color:var(--fail)"></i>'}
+          ${item.ok?'<i class="ti ti-circle-check chk-ico" style="color:#1E3A5F"></i>':'<i class="ti ti-circle-x chk-ico" style="color:var(--fail)"></i>'}
           <div>
             <div class="chk-t">${item.t}</div>
             <div class="chk-d">${item.d}</div>
@@ -4746,7 +4734,7 @@ async function downloadPDF() {
 
   // Light watermark logo (positioned behind content)
   const wmk = document.createElement('div');
-  wmk.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) rotate(-25deg);opacity:0.04;pointer-events:none;z-index:0;user-select:none;font-size:72px;font-weight:800;color:#4F46E5;letter-spacing:-2px;white-space:nowrap';
+  wmk.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) rotate(-25deg);opacity:0.04;pointer-events:none;z-index:0;user-select:none;font-size:72px;font-weight:800;color:#1E3A5F;letter-spacing:-2px;white-space:nowrap';
   wmk.textContent = 'Regulyze';
   wrapper.appendChild(wmk);
 
@@ -4789,7 +4777,7 @@ function renderLblChecklist(cat) {
     <div class="card-title"><i class="ti ti-checklist"></i> Mandatory Labelling Requirements — ${catKey}
       
     </div>
-    <div style="background:#EEEBFD;border:1px solid #E1E1FB;border-radius:var(--radius-sm);padding:7px 10px;margin-bottom:12px;font-size:10px;color:#4F46E5">
+    <div style="background:#E0ECF8;border:1px solid #C2D9F0;border-radius:var(--radius-sm);padding:7px 10px;margin-bottom:12px;font-size:10px;color:#1E3A5F">
 
     </div>
     ${buildLblHTML(catKey)}
@@ -5186,7 +5174,7 @@ async function submitRequest(){
   if(!name||!contact){err.textContent='Please fill in name and contact.';return;}
   try{
     await fetch(BACKEND+'/log-activity',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({type:'ACCESS_REQUEST',name,contact:contact+(org?' | '+org:''),status:'pending'})});
-    document.getElementById('request-form').innerHTML='<div style="text-align:center;padding:12px;background:#EEEBFD;border-radius:9px"><div style="font-size:18px;margin-bottom:5px">✓</div><div style="font-size:12px;font-weight:600;color:#4F46E5">Request sent!</div><div style="font-size:10px;color:#3B6D11;margin-top:3px;line-height:1.6">TPS Xperts will send credentials within 24 hours.</div></div>';
+    document.getElementById('request-form').innerHTML='<div style="text-align:center;padding:12px;background:#E0ECF8;border-radius:9px"><div style="font-size:18px;margin-bottom:5px">✓</div><div style="font-size:12px;font-weight:600;color:#1E3A5F">Request sent!</div><div style="font-size:10px;color:#3B6D11;margin-top:3px;line-height:1.6">TPS Xperts will send credentials within 24 hours.</div></div>';
   }catch(e){err.textContent='Could not send. WhatsApp: +91 9115551545';}
 }
 
@@ -5215,7 +5203,7 @@ function renderPlanGrid(){
   const g=document.getElementById('plan-grid');
   g.innerHTML=Object.entries(PLANS).filter(([k])=>k!=='free'&&k!=='enterprise').map(([k,p])=>`
     <div class="plan-box${k==='pro'?' popular':''}">
-      ${k==='pro'?'<div style="position:absolute;top:-10px;left:50%;transform:translateX(-50%);background:#4F46E5;color:#fff;font-size:8px;font-weight:700;padding:2px 9px;border-radius:9px">POPULAR</div>':''}
+      ${k==='pro'?'<div style="position:absolute;top:-10px;left:50%;transform:translateX(-50%);background:#1E3A5F;color:#fff;font-size:8px;font-weight:700;padding:2px 9px;border-radius:9px">POPULAR</div>':''}
       <div class="plan-name">${p.lbl}</div>
       <div class="plan-price">&#8377;${p.price}</div>
       <div class="plan-checks">${p.checks} compliance checks</div>
@@ -5313,7 +5301,7 @@ async function startRzp(){
     const od=await or.json();if(od.error)throw new Error(od.error);
     btn.disabled=false;btn.innerHTML='<i class="ti ti-credit-card"></i> Pay Now with Razorpay';
     new Razorpay({key:od.key_id,amount:od.amount,currency:od.currency,name:'TPS Xperts Group',description:planMeta.lbl+' Plan',order_id:od.order_id,
-      prefill:{email:currentUser.email,name:currentUser.name},theme:{color:'#4F46E5'},
+      prefill:{email:currentUser.email,name:currentUser.name},theme:{color:'#1E3A5F'},
       handler:async(resp)=>{
         btn.disabled=true;btn.innerHTML='<i class="ti ti-loader"></i> Activating...';
         try{
@@ -5330,16 +5318,16 @@ async function startRzp(){
 
 async function renderHistTab(){
   const c=document.getElementById('hist-content');if(!c)return;
-  if(!currentUser||!currentUser.email){c.innerHTML='<div style="text-align:center;padding:24px;color:#64748b"><i class="ti ti-lock" style="font-size:28px;display:block;margin-bottom:7px;color:#E1E1FB"></i><p style="font-size:11px">Sign in to see history.</p></div>';return;}
-  c.innerHTML='<div style="text-align:center;padding:18px;color:#64748b;font-size:11px"><i class="ti ti-loader" style="font-size:22px;display:block;margin-bottom:5px;color:#E1E1FB"></i>Loading history...</div>';
+  if(!currentUser||!currentUser.email){c.innerHTML='<div style="text-align:center;padding:24px;color:#64748b"><i class="ti ti-lock" style="font-size:28px;display:block;margin-bottom:7px;color:#C2D9F0"></i><p style="font-size:11px">Sign in to see history.</p></div>';return;}
+  c.innerHTML='<div style="text-align:center;padding:18px;color:#64748b;font-size:11px"><i class="ti ti-loader" style="font-size:22px;display:block;margin-bottom:5px;color:#C2D9F0"></i>Loading history...</div>';
   const hist=await getHist(currentUser.email);
-  if(!hist.length){c.innerHTML='<div style="text-align:center;padding:24px;color:#64748b"><i class="ti ti-history" style="font-size:28px;display:block;margin-bottom:7px;color:#E1E1FB"></i><p style="font-size:11px">No checks yet.</p></div>';return;}
+  if(!hist.length){c.innerHTML='<div style="text-align:center;padding:24px;color:#64748b"><i class="ti ti-history" style="font-size:28px;display:block;margin-bottom:7px;color:#C2D9F0"></i><p style="font-size:11px">No checks yet.</p></div>';return;}
   let h=`<table class="hist-tbl"><thead><tr><th>Date/Time</th><th>Formulation</th><th>Category</th><th>Action</th></tr></thead><tbody>`;
   hist.forEach((item,i)=>{
     h+=`<tr><td style="font-size:9px;color:#64748b;white-space:nowrap">${item.date}</td>
       <td style="font-size:10px;font-family:monospace;white-space:pre-wrap">${(item.formula||'').replace(/</g,'&lt;')}</td>
-      <td style="font-size:10px;color:#4F46E5">${item.sum||''}</td>
-      <td><button onclick="reloadHist(${i})" style="font-size:9px;padding:3px 6px;background:#EEEBFD;color:#4F46E5;border:1px solid #E1E1FB;border-radius:5px;cursor:pointer;font-family:inherit">Re-check</button></td>
+      <td style="font-size:10px;color:#1E3A5F">${item.sum||''}</td>
+      <td><button onclick="reloadHist(${i})" style="font-size:9px;padding:3px 6px;background:#E0ECF8;color:#1E3A5F;border:1px solid #C2D9F0;border-radius:5px;cursor:pointer;font-family:inherit">Re-check</button></td>
     </tr>`;
   });
   h+='</tbody></table>';
@@ -5436,13 +5424,13 @@ async function handleFile(file){
   if(!currentUser){alert('Please sign in to use AI extraction.');return;}
   const s=document.getElementById('f-status');
   s.style.display='block';
-  s.innerHTML='<div style="display:flex;gap:8px;align-items:center;color:#4F46E5;font-size:11px"><div class="spinner"></div> 📄 Analysing your label — please wait...</div>';
+  s.innerHTML='<div style="display:flex;gap:8px;align-items:center;color:#1E3A5F;font-size:11px"><div class="spinner"></div> 📄 Analysing your label — please wait...</div>';
   try{
     const b64=await new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result.split(',')[1]);r.onerror=()=>rej(new Error('Read failed'));r.readAsDataURL(file);});
     // Update to step 2 after 2s (pass 1 usually completes by then)
     const stepTimer=setTimeout(()=>{
       if(s.innerHTML.includes('Analysing'))
-        s.innerHTML='<div style="display:flex;gap:8px;align-items:center;color:#4F46E5;font-size:11px"><div class="spinner"></div> ✨ Almost done — building your formula...</div>';
+        s.innerHTML='<div style="display:flex;gap:8px;align-items:center;color:#1E3A5F;font-size:11px"><div class="spinner"></div> ✨ Almost done — building your formula...</div>';
     },2200);
     const resp=await fetch(BACKEND+'/extract-ingredients',{
       method:'POST',headers:{'Content-Type':'application/json'},
@@ -5934,9 +5922,9 @@ const DEMO = (function(){
       <div>
         <div class="report-title">Immune Booster Capsules</div>
         <div class="report-meta" style="margin-top:4px;font-size:11px;color:#374151">
-          <span style="color:#4F46E5;font-weight:600">Product Category:</span> Nutraceutical &nbsp;<span style="color:#E1E1FB">|</span>&nbsp;
-          <span style="color:#4F46E5;font-weight:600">Target Population:</span> Sedentary Men (65 kg) &nbsp;<span style="color:#E1E1FB">|</span>&nbsp;
-          <span style="color:#4F46E5;font-weight:600">Dosage Form:</span> Capsule
+          <span style="color:#1E3A5F;font-weight:600">Product Category:</span> Nutraceutical &nbsp;<span style="color:#C2D9F0">|</span>&nbsp;
+          <span style="color:#1E3A5F;font-weight:600">Target Population:</span> Sedentary Men (65 kg) &nbsp;<span style="color:#C2D9F0">|</span>&nbsp;
+          <span style="color:#1E3A5F;font-weight:600">Dosage Form:</span> Capsule
         </div>
       </div>
       <button class="btn btn-primary no-print" onclick="DEMO.stop();showAuth();" style="flex-shrink:0;font-size:11px"><i class="ti ti-lock"></i> Sign In to Analyse</button>
@@ -5954,7 +5942,7 @@ const DEMO = (function(){
           <td><div class="ing-name">Ashwagandha Root Extract</div><div class="ing-sub">Nutraceutical</div></td>
           <td class="str">500 mg</td>
           <td><span class="badge b-ok"><i class="ti ti-check"></i> Compliant</span></td>
-          <td><span style="font-size:9px;color:#4F46E5;font-weight:600;line-height:1.5">SCHEDULE - III PART B PG (59) S.No.1</span></td>
+          <td><span style="font-size:9px;color:#1E3A5F;font-weight:600;line-height:1.5">SCHEDULE - III PART B PG (59) S.No.1</span></td>
           <td style="font-size:9px;color:var(--text-muted)">—</td>
           <td><span class="pct-badge pct-na">—</span></td>
           <td><span style="color:var(--text-muted);font-size:10px">No specific dose limit — FBO adopts usage based on scientific data (Reg 6(2)(c)(i))</span></td>
@@ -5963,7 +5951,7 @@ const DEMO = (function(){
           <td><div class="ing-name">Vitamin C</div><div class="ing-sub">Micronutrient</div></td>
           <td class="str">80 mg</td>
           <td><span class="badge b-warn"><i class="ti ti-alert-triangle"></i> Strength issue</span></td>
-          <td><span style="font-size:9px;color:#4F46E5;font-weight:600;line-height:1.5">SCHEDULE - I PART 1 (Vitamins)</span></td>
+          <td><span style="font-size:9px;color:#1E3A5F;font-weight:600;line-height:1.5">SCHEDULE - I PART 1 (Vitamins)</span></td>
           <td style="font-size:9px;color:var(--text-muted)">40 mg</td>
           <td><span class="pct-badge pct-hi">200%</span></td>
           <td><span style="color:var(--fail);font-size:10px">Exceeds 100% RDA (200% — 80 mg vs RDA 40 mg). FA prior approval required for HS (Reg 6(1)(c)(i)).</span></td>
@@ -5972,7 +5960,7 @@ const DEMO = (function(){
           <td><div class="ing-name">Zinc</div><div class="ing-sub">Mineral</div></td>
           <td class="str">10 mg</td>
           <td><span class="badge b-ok"><i class="ti ti-check"></i> Compliant</span></td>
-          <td><span style="font-size:9px;color:#4F46E5;font-weight:600;line-height:1.5">SCHEDULE - I PART 1 (Minerals)</span></td>
+          <td><span style="font-size:9px;color:#1E3A5F;font-weight:600;line-height:1.5">SCHEDULE - I PART 1 (Minerals)</span></td>
           <td style="font-size:9px;color:var(--text-muted)">17 mg</td>
           <td><span class="pct-badge pct-ok">59%</span></td>
           <td><span style="color:var(--ok);font-size:10px">Within permitted range</span></td>
@@ -5981,7 +5969,7 @@ const DEMO = (function(){
           <td><div class="ing-name">Vitamin D3</div><div class="ing-sub">Micronutrient</div></td>
           <td class="str">600 IU</td>
           <td><span class="badge b-warn"><i class="ti ti-alert-triangle"></i> Strength issue</span></td>
-          <td><span style="font-size:9px;color:#4F46E5;font-weight:600;line-height:1.5">SCHEDULE - I PART 1 (Vitamins)</span></td>
+          <td><span style="font-size:9px;color:#1E3A5F;font-weight:600;line-height:1.5">SCHEDULE - I PART 1 (Vitamins)</span></td>
           <td style="font-size:9px;color:var(--text-muted)">200 IU</td>
           <td><span class="pct-badge pct-hi">300%</span></td>
           <td><span style="color:var(--fail);font-size:10px">Exceeds 100% RDA (300% — 600 IU vs RDA 200 IU). FA prior approval required for HS (Reg 6(1)(c)(i)).</span></td>
@@ -5989,7 +5977,7 @@ const DEMO = (function(){
       </tbody>
     </table></div>
     <div style="margin-top:12px;font-size:12px;font-weight:600;color:var(--text);margin-bottom:6px;display:flex;align-items:center;gap:6px">
-      <i class="ti ti-droplet" style="color:#4F46E5;font-size:13px"></i> Additives / Excipients
+      <i class="ti ti-droplet" style="color:#1E3A5F;font-size:13px"></i> Additives / Excipients
     </div>
     <div class="tbl-wrap"><table>
       <thead><tr><th style="width:22%">Additive</th><th style="width:10%">Quantity</th><th style="width:13%">Status</th><th style="width:17%">Reference</th><th style="width:9%">% Total</th><th>Notes</th></tr></thead>
@@ -5998,14 +5986,14 @@ const DEMO = (function(){
           <td><div class="ing-name">Magnesium Stearate</div><div class="ing-sub">Additive/Excipient</div></td>
           <td class="str">5 mg</td>
           <td><span class="badge b-ok"><i class="ti ti-check"></i> GMP Codex</span></td>
-          <td style="font-size:9px;color:#4F46E5;font-weight:600">GMP Codex (INS 470) — all formats</td>
+          <td style="font-size:9px;color:#1E3A5F;font-weight:600">GMP Codex (INS 470) — all formats</td>
           <td style="font-size:10px;color:var(--text-muted)">0.84%</td>
           <td><span style="color:var(--ok);font-size:10px">Permitted at GMP (quantum satis) levels in all food categories and formats. Ref: FSSAI Direction 05.06.2024.</span></td>
         </tr>
       </tbody>
     </table></div>
     <div style="margin-top:10px;padding:7px 11px;background:var(--bg-surface);border-radius:6px;font-size:11px;color:var(--text-muted);display:flex;align-items:center;gap:8px">
-      <i class="ti ti-weight" style="color:#4F46E5;font-size:13px"></i>
+      <i class="ti ti-weight" style="color:#1E3A5F;font-size:13px"></i>
       <span><strong style="color:var(--text)">Total serving weight:</strong> 595.0 mg &nbsp;|&nbsp; 0.595 g &nbsp;&middot;&nbsp; Dosage form: Capsule</span>
     </div>
     <div class="disclaimer"><strong>Disclaimer:</strong> Indicative only. Based on FSS (Nutra) Regulations 2022 &amp; ICMR RDA 2020. Not a substitute for legal/regulatory advice. &mdash; <strong>Regulyze by TPS Xperts Group &nbsp;&middot;&nbsp; regulyze.in</strong></div>
@@ -6839,10 +6827,10 @@ function rdcPrint() {
   if (!w) return;
   w.document.write('<!DOCTYPE html><html><head><title>% RDA by Target Group \u2014 Regulyze</title><style>' +
     'body{font-family:system-ui,-apple-system,sans-serif;padding:28px 32px;font-size:12px;color:#1e293b;margin:0}' +
-    'h2{color:#4F46E5;margin:0 0 3px;font-size:15px}' +
+    'h2{color:#1E3A5F;margin:0 0 3px;font-size:15px}' +
     'p{color:#64748b;font-size:10.5px;margin:0 0 16px}' +
     'table{width:100%;border-collapse:collapse}' +
-    'thead th{padding:7px 10px;background:#f8fafc;border-bottom:2px solid #E1E1FB;color:#64748b;font-weight:600;font-size:10.5px;text-align:center;vertical-align:top;line-height:1.4}' +
+    'thead th{padding:7px 10px;background:#f8fafc;border-bottom:2px solid #C2D9F0;color:#64748b;font-weight:600;font-size:10.5px;text-align:center;vertical-align:top;line-height:1.4}' +
     'thead th:first-child{text-align:left;min-width:160px}' +
     'tbody td{padding:8px 10px;border-bottom:1px solid #f1f5f9;text-align:center;vertical-align:middle}' +
     'tbody td:first-child{text-align:left}' +
@@ -6908,35 +6896,9 @@ document.addEventListener('keydown',function(e){
 })();
 </script>
 
-<div class="rg-theme-sw" id="rgThemeSw">
-  <div class="rg-theme-panel">
-    <div class="rg-ts-lbl">Choose theme</div>
-    <button class="rg-ts-btn active" data-theme=""><span class="rg-ts-swatch" style="background:#4F46E5"></span> Regulatory Teal <span class="rg-ts-tick">✓</span></button>
-    <button class="rg-ts-btn" data-theme="navy"><span class="rg-ts-swatch" style="background:#1E3A5F"></span> Navy Professional <span class="rg-ts-tick">✓</span></button>
-    <button class="rg-ts-btn" data-theme="forest"><span class="rg-ts-swatch" style="background:#1B4332"></span> Forest Deep <span class="rg-ts-tick">✓</span></button>
-    <button class="rg-ts-btn" data-theme="slate"><span class="rg-ts-swatch" style="background:#334155"></span> Slate Minimal <span class="rg-ts-tick">✓</span></button>
-  </div>
-  <button class="rg-theme-toggle" aria-label="Switch theme" title="Switch colour theme"><i class="ti ti-palette"></i></button>
-</div>
 <script>
-(function(){
-  var sw=document.getElementById('rgThemeSw');
-  if(!sw)return;
-  var saved=localStorage.getItem('rg-theme')||'';
-  if(saved)document.documentElement.dataset.theme=saved;
-  document.querySelectorAll('.rg-ts-btn').forEach(function(b){b.classList.toggle('active',(b.dataset.theme||'')===(saved));});
-  sw.querySelector('.rg-theme-toggle').addEventListener('click',function(e){e.stopPropagation();sw.classList.toggle('open');});
-  document.querySelectorAll('.rg-ts-btn').forEach(function(b){
-    b.addEventListener('click',function(){
-      var t=b.dataset.theme||'';
-      document.documentElement.dataset.theme=t;
-      localStorage.setItem('rg-theme',t);
-      document.querySelectorAll('.rg-ts-btn').forEach(function(x){x.classList.remove('active');});
-      b.classList.add('active');
-    });
-  });
-  document.addEventListener('click',function(e){if(!sw.contains(e.target))sw.classList.remove('open');});
-})();
+/* Theme locked to Navy Professional (default). Theme chooser removed. */
+(function(){ try{ localStorage.removeItem('rg-theme'); }catch(e){} document.documentElement.removeAttribute('data-theme'); })();
 </script>
 <script>
 (function(){
