@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-  <!-- REGULYZE-BUILD-v4.1 — Navy Professional default, theme chooser removed -->
+  <!-- REGULYZE-BUILD-v4.2 — RDA baseline synced to sheet, sheet-driven factors, offline notice -->
   <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
@@ -1177,6 +1177,7 @@ select:focus{outline:none;border-color:var(--brand-500)}
         <span style="font-size:12px;font-weight:600;color:var(--text)">% RDA by target group</span>
         <button onclick="rdcPrint()" style="margin-left:auto;padding:4px 10px;font-size:11px;background:none;border:1px solid var(--border);border-radius:var(--radius-sm);cursor:pointer;color:var(--text-muted);font-family:inherit;display:flex;align-items:center;gap:4px;transition:background .15s" onmouseover="this.style.background='var(--blue-light)'" onmouseout="this.style.background='none'"><i class="ti ti-printer" style="font-size:12px"></i> Print / PDF</button>
       </div>
+      <div id="rdc-offline-note" style="display:none;padding:8px 16px;background:var(--warn-50);color:var(--warn-700);font-size:11px;border-bottom:1px solid var(--warn-100);align-items:center;gap:6px"><i class="ti ti-alert-triangle"></i> Showing built-in offline RDA values — the live database hasn't loaded yet. Reconnect and recalculate for the latest sheet data.</div>
       <div class="rdc-tbl-wrap">
         <table class="rdc-tbl">
           <thead id="rdc-thead"></thead>
@@ -1358,7 +1359,7 @@ const REG = {
   s1v:[],s1m:[],s1aa:[],s1n:[],overages:{},
   s2:[],s3a:[],s3b:[],s4pre:[],s4pro:[],
   fssr_permitted:[],
-  addhs:[],addtab:[],rda:{},
+  addhs:[],addtab:[],rda:{},rdaFromSheet:false,
   gmp_codex:[],gmp_fssr:[],gmp_index:[],
   nsf_approved:[],nsf_rejected:[],
   mineral_conv:{},  // salt → {factor, parentNutrient, rdaUnit, convType}
@@ -2189,6 +2190,8 @@ async function loadDB() {
         if(!hasData) console.warn('TPS: RDA columns may not match expected format. Check RDA_2020 sheet headers.');
         else console.log('TPS: RDA column format OK — sedentary men sample:', sample.sed_men_65kg);
       }
+      // Mark that live-sheet RDA actually loaded (drives the offline-fallback notice)
+      REG.rdaFromSheet = Array.isArray(rda) && rda.length > 0;
     })();
 
     buildIdx();
@@ -3688,26 +3691,26 @@ function lookupAdd(name,dosage) {
 //   boys_10_12, girls_10_12, boys_13_15, girls_13_15, boys_16_18, girls_16_18
 // ═══════════════════════════════════════════════════════════════════════
 const RDA_BASELINE = {
-  vitamin_c:    {uom:'mg',  v:[80,80,80,65,65,65,115,95,35,40,50,65,65,80,70,90,80]},
+  vitamin_c:    {uom:'mg',  v:[80,80,80,65,65,65,80,115,30,35,45,55,50,70,65,85,70]},
   vitamin_d:    {uom:'IU',  v:[600,600,600,600,600,600,600,600,600,600,600,600,600,600,600,600,600]},
-  vitamin_a:    {uom:'mcg', v:[1000,1000,1000,840,840,840,950,950,510,590,700,880,880,1000,1000,1000,1000]},
-  vitamin_b12:  {uom:'mcg', v:[2.2,2.2,2.2,2.2,2.2,2.2,3.2,3.2,2.2,2.2,2.2,2.2,2.2,2.2,2.2,2.2,2.2]},
+  vitamin_a:    {uom:'mcg', v:[1000,1000,1000,840,840,840,900,950,390,510,630,770,790,930,890,1000,860]},
+  vitamin_b12:  {uom:'mcg', v:[2.2,2.2,2.2,2.2,2.2,2.2,2.45,3.2,1.2,2.2,2.2,2.2,2.2,2.2,2.2,2.2,2.2]},
   vitamin_b6:   {uom:'mg',  v:[1.9,2.4,3.1,1.9,1.9,2.4,2.3,2.47,0.9,1.2,1.5,2,1.9,2.6,2.2,3,2.3]},
   vitamin_b2:   {uom:'mg',  v:[2,2.5,3.2,1.9,2.4,3.1,2.7,3,1.1,1.3,1.6,2.1,1.9,2.7,2.2,3.1,2.3]},
-  vitamin_b1:   {uom:'mg',  v:[1.4,1.8,2.3,1.4,1.4,1.8,2.1,2.1,0.9,1.1,1.3,1.7,1.6,2.2,1.8,2.5,2]},
-  niacin:       {uom:'mg',  v:[14,18,23,11,14,18,20,23,7,9,11,15,14,19,16,22,17]},
-  folic_acid:   {uom:'mcg', v:[176,176,176,129,129,129,194,182,79,90,113,148,148,188,158,224,176]},
+  vitamin_b1:   {uom:'mg',  v:[1.4,1.8,2.3,1.4,1.7,2.2,2,2.1,0.7,0.9,1.1,1.5,1.4,1.9,1.6,2.2,1.7]},
+  niacin:       {uom:'mg',  v:[14,18,23,11,14,18,13,16,7,9,11,15,14,19,16,22,17]},
+  folic_acid:   {uom:'mcg', v:[176.47058823529412,176.47058823529412,176.47058823529412,129.41176470588235,129.41176470588235,129.41176470588235,335.29411764705884,194.11764705882354,70.58823529411765,79.41176470588235,100.0,129.41176470588235,132.35294117647058,167.64705882352942,144.11764705882354,200.0,158.8235294117647]},
   folate:       {uom:'mcg', v:[300,300,300,220,220,220,570,330,120,135,170,220,225,285,245,340,270]},
-  biotin:       {uom:'mcg', v:[40,40,40,40,40,40,45,50,25,25,30,35,35,40,40,45,40]},
-  pantothenic:  {uom:'mg',  v:[5,5,5,5,5,5,7,7,4,4,5,5,5,6,5,6,5]},
+  biotin:       {uom:'mcg', v:[40,40,40,40,40,40,40,45,20,25,25,35,35,35,35,35,35]},
+  pantothenic:  {uom:'mg',  v:[5,5,5,5,5,5,5,7,4,4,4,5,5,5,5,5,5]},
   vitamin_e:    {uom:'mg',  v:[10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10]},
   vitamin_k:    {uom:'mcg', v:[55,55,55,55,55,55,55,55,55,55,55,55,55,55,55,55,55]},
-  calcium:      {uom:'mg',  v:[1000,1000,1000,1000,1000,1000,1200,1200,550,650,750,900,900,1000,1000,1000,1000]},
-  iron:         {uom:'mg',  v:[19,19,19,29,29,29,23,27,11,13,16,21,27,32,27,28,26]},
-  zinc:         {uom:'mg',  v:[17,17,17,13.2,13.2,13.2,14.1,14.9,4.5,5.3,6.8,9.6,9.7,12.4,11.5,14.4,11.7]},
-  magnesium:    {uom:'mg',  v:[440,440,440,370,370,370,400,400,125,165,220,305,305,375,340,430,385]},
-  iodine:       {uom:'mcg', v:[140,140,140,140,140,140,280,280,90,100,120,140,140,155,155,155,155]},
-  selenium:     {uom:'mcg', v:[40,40,40,40,40,40,40,50,25,35,35,45,40,55,45,55,45]},
+  calcium:      {uom:'mg',  v:[1000,1000,1000,1000,1000,1000,1000,1200,500,550,650,850,850,1000,1000,1050,1050]},
+  iron:         {uom:'mg',  v:[19,19,19,29,29,29,27,23,8,11,15,16,28,22,30,26,32]},
+  zinc:         {uom:'mg',  v:[17,17,17,13.2,13.2,13.2,14.5,14.1,3.3,4.5,5.9,8.5,8.5,14.3,12.8,17.6,14.2]},
+  magnesium:    {uom:'mg',  v:[440,440,440,370,370,370,440,400,90,125,175,240,250,345,340,440,380]},
+  iodine:       {uom:'mcg', v:[140,140,140,140,140,140,220,280,90,90,90,100,100,140,140,140,140]},
+  selenium:     {uom:'mcg', v:[40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40]},
   chromium:     {uom:'mcg', v:[50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50]},
   copper:       {uom:'mg',  v:[1.7,1.7,1.7,1.7,1.7,1.7,1.7,1.7,1.7,1.7,1.7,1.7,1.7,1.7,1.7,1.7,1.7]},
   manganese:    {uom:'mg',  v:[4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4]},
@@ -3716,17 +3719,17 @@ const RDA_BASELINE = {
   sodium:       {uom:'mg',  v:[2000,2000,2000,2000,2000,2000,2000,2000,2000,2000,2000,2000,2000,2000,2000,2000,2000]},
   chloride:     {uom:'mg',  v:[2300,2300,2300,2300,2300,2300,2300,2300,1500,1900,1900,2300,2300,2300,2300,2300,2300]},
   molybdenum:   {uom:'mcg', v:[45,45,45,45,45,45,45,45,45,45,45,45,45,45,45,45,45]},
-  histidine:    {uom:'mg',  v:[650,650,650,550,550,550,650,550,183,259,183,183,183,183,183,183,183]},
-  isoleucine:   {uom:'mg',  v:[1300,1300,1300,1100,1100,1100,1300,1100,366,518,366,366,366,366,366,366,366]},
-  leucine:      {uom:'mg',  v:[2535,2535,2535,2145,2145,2145,2535,2145,713.7,1010,713.7,713.7,713.7,713.7,713.7,713.7,713.7]},
-  lysine:       {uom:'mg',  v:[1950,1950,1950,1650,1650,1650,1950,1650,549,777,549,549,549,549,549,549,549]},
-  methionine:   {uom:'mg',  v:[650,650,650,550,550,550,650,550,183,259,183,183,183,183,183,183,183]},
-  cysteine:     {uom:'mg',  v:[260,260,260,220,220,220,260,220,73.2,103.6,73.2,73.2,73.2,73.2,73.2,73.2,73.2]},
-  threonine:    {uom:'mg',  v:[975,975,975,825,825,825,975,825,274.5,388.5,274.5,274.5,274.5,274.5,274.5,274.5,274.5]},
-  tryptophan:   {uom:'mg',  v:[260,260,260,220,220,220,260,220,73.2,103.6,73.2,73.2,73.2,73.2,73.2,73.2,73.2]},
-  valine:       {uom:'mg',  v:[1690,1690,1690,1430,1430,1430,1690,1430,475.8,673.4,475.8,475.8,475.8,475.8,475.8,475.8,475.8]},
-  phenylalanine:{uom:'mg',  v:[1625,1625,1625,1375,1375,1375,1625,1375,457.5,647.5,457.5,457.5,457.5,457.5,457.5,457.5,457.5]},
-  tyrosine:     {uom:'mg',  v:[1625,1625,1625,1375,1375,1375,1625,1375,457.5,647.5,457.5,457.5,457.5,457.5,457.5,457.5,457.5]},
+  histidine:    {uom:'mg',  v:[650,650,650,550,550,550,650,550,129,183,253,349,364,505,496,644,557]},
+  isoleucine:   {uom:'mg',  v:[1300,1300,1300,1100,1100,1100,1300,1100,258,366,506,698,728,1010,992,1288,1114]},
+  leucine:      {uom:'mg',  v:[2535,2535,2535,2145,2145,2145,2535,2145,503,714,986,1361,1420,1970,1934,2512,2172]},
+  lysine:       {uom:'mg',  v:[1950,1950,1950,1650,1650,1650,1950,1650,387,549,759,1047,1092,1515,1488,1932,1671]},
+  methionine:   {uom:'mg',  v:[650,650,650,550,550,550,650,550,129,183,253,349,364,505,496,644,557]},
+  cysteine:     {uom:'mg',  v:[260,260,260,220,220,220,260,220,52,73,101,140,146,202,198,258,223]},
+  threonine:    {uom:'mg',  v:[975,975,975,825,825,825,975,825,194,275,380,524,546,758,744,966,836]},
+  tryptophan:   {uom:'mg',  v:[260,260,260,220,220,220,260,220,52,73,101,140,146,202,198,258,223]},
+  valine:       {uom:'mg',  v:[1690,1690,1690,1430,1430,1430,1690,1430,335,476,658,907,947,1313,1290,1674,1448]},
+  phenylalanine:{uom:'mg',  v:[1625,1625,1625,1375,1375,1375,1625,1375,323,458,633,873,910,1263,1240,1610,1393]},
+  tyrosine:     {uom:'mg',  v:[1625,1625,1625,1375,1375,1375,1625,1375,323,458,633,873,910,1263,1240,1610,1393]},
 };
 // Column index mapping — matches the v[] array above
 const RDA_POP_IDX = {
@@ -6745,10 +6748,33 @@ function rdcBuildHead() {
     }).join('') + '</tr>';
 }
 
+// Sheet-driven conversion factors: when a salt form in RDC_ING also exists in the
+// live Vitamin_Conversions / Mineral_Conversions sheet (matched by normalised name),
+// adopt the sheet's authoritative factor. Exact-name match only — if no match, the
+// built-in factor is kept unchanged (so this can never apply a wrong factor).
+function rdcSyncFactors() {
+  try {
+    RDC_ING.forEach(function(ing){
+      if (!ing || !ing.s) return;            // only salt/derived forms carry a factor
+      if (ing.ct === 'mcg_to_IU') return;    // IU structural factor (×40) — leave as-is
+      const key = nq(ing.d);
+      let e = null;
+      if (window.REG) {
+        if (REG.vitamin_conv && REG.vitamin_conv[key]) e = REG.vitamin_conv[key];
+        else if (REG.mineral_conv && REG.mineral_conv[key]) e = REG.mineral_conv[key][ing.k] || REG.mineral_conv[key]._first;
+      }
+      if (e && typeof e.factor === 'number' && e.factor > 0 && isFinite(e.factor)) ing.f = e.factor;
+    });
+  } catch (err) { console.warn('rdcSyncFactors skipped:', err && err.message); }
+}
+
 function rdcRenderTable() {
   const thead = document.getElementById('rdc-thead');
   const tbody = document.getElementById('rdc-tbody');
   if (!thead || !tbody) return;
+  rdcSyncFactors();
+  const offEl = document.getElementById('rdc-offline-note');
+  if (offEl) offEl.style.display = (window.REG && REG.rdaFromSheet === false) ? 'flex' : 'none';
   thead.innerHTML = rdcBuildHead();
   const valid = RDC_ROWS.filter(r => r.ing && r.str && +r.str > 0);
   if (!valid.length) {
