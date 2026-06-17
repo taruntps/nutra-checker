@@ -7042,6 +7042,44 @@ document.addEventListener('keydown',function(e){
     try{ await SB.from('history').insert({user_id:currentUser.id, formula:(formula||'').slice(0,2000), summary:sum, category:sum}); }catch(e){ console.warn(e); }
   };
 
+
+  // ----- Forgot password via Supabase (keeps the existing OTP screen) -----
+  window.doForgotPassword=async function(){
+    var btn=document.getElementById('fp-btn'), err=document.getElementById('fp-err'); err.textContent='';
+    var email=(document.getElementById('fp-email').value||'').trim().toLowerCase();
+    if(!window._fpOtpSent){
+      if(!email){ err.style.color='#A32D2D'; err.textContent='Please enter your email.'; return; }
+      btn.disabled=true; btn.innerHTML='<i class="ti ti-loader"></i> Sending code...';
+      try{
+        var r=await SB.auth.resetPasswordForEmail(email);
+        if(r.error){ err.style.color='#A32D2D'; err.textContent=friendly(r.error.message); btn.disabled=false; btn.innerHTML='<i class="ti ti-mail"></i> Send OTP'; return; }
+        window._fpOtpSent=true;
+        document.getElementById('fp-otp-section').style.display='block';
+        document.getElementById('fp-email').disabled=true;
+        btn.innerHTML='<i class="ti ti-check"></i> Verify OTP & Reset'; btn.disabled=false;
+        err.style.color='#166534'; err.textContent='Email sent to '+email+'. Enter the 6-digit code from it (or click the link in the email).';
+      }catch(e){ err.style.color='#A32D2D'; err.textContent='Could not send. Please try again.'; btn.disabled=false; btn.innerHTML='<i class="ti ti-mail"></i> Send OTP'; }
+    } else {
+      var otp=(document.getElementById('fp-otp').value||'').trim();
+      var np=(document.getElementById('fp-newpass').value||'').trim();
+      var np2=(document.getElementById('fp-newpass2').value||'').trim();
+      if(!otp){ err.style.color='#A32D2D'; err.textContent='Please enter the code.'; return; }
+      if(!np||np.length<6){ err.style.color='#A32D2D'; err.textContent='Password must be at least 6 characters.'; return; }
+      if(np!==np2){ err.style.color='#A32D2D'; err.textContent='Passwords do not match.'; return; }
+      btn.disabled=true; btn.innerHTML='<i class="ti ti-loader"></i> Resetting...';
+      try{
+        var v=await SB.auth.verifyOtp({email:email, token:otp, type:'recovery'});
+        if(v.error){ err.style.color='#A32D2D'; err.textContent='Invalid or expired code. Please try again.'; btn.disabled=false; btn.innerHTML='<i class="ti ti-check"></i> Verify OTP & Reset'; return; }
+        var u=await SB.auth.updateUser({password:np});
+        if(u.error){ err.style.color='#A32D2D'; err.textContent=friendly(u.error.message); btn.disabled=false; btn.innerHTML='<i class="ti ti-check"></i> Verify OTP & Reset'; return; }
+        err.style.color='#166534'; err.textContent='Password reset! Signing you in...';
+        window._fpOtpSent=false;
+        var who=(v.data&&v.data.user)||(u.data&&u.data.user);
+        setTimeout(function(){ if(who) rgAfterAuth(who); }, 1200);
+      }catch(e){ err.style.color='#A32D2D'; err.textContent='Could not reset. Please try again.'; btn.disabled=false; btn.innerHTML='<i class="ti ti-check"></i> Verify OTP & Reset'; }
+    }
+  };
+
   async function rgInit(){
     try{ document.querySelectorAll('.g_id_signin,[data-client_id]').forEach(function(el){ el.style.display='none'; }); }catch(e){}
     try{ var b=document.createElement('div'); b.textContent='TEST BUILD · secure login (Supabase) — your live app is unaffected';
@@ -7050,7 +7088,7 @@ document.addEventListener('keydown',function(e){
     try{ var r=await SB.auth.getSession();
       if(r.data&&r.data.session&&r.data.session.user){ await rgAfterAuth(r.data.session.user); } else { setLoggedOut(); }
     }catch(e){ setLoggedOut(); }
-    SB.auth.onAuthStateChange(function(evt){ if(evt==='SIGNED_OUT') setLoggedOut(); });
+    SB.auth.onAuthStateChange(function(evt,sess){ if(evt==='SIGNED_OUT') setLoggedOut(); else if(evt==='PASSWORD_RECOVERY'){ var np=window.prompt('Set your new password (at least 6 characters):'); if(np&&np.length>=6){ SB.auth.updateUser({password:np}).then(function(res){ if(!res.error){ try{alert('Password updated — you are now signed in.');}catch(e){} if(res.data&&res.data.user) rgAfterAuth(res.data.user); } else { try{alert('Could not update password: '+res.error.message);}catch(e){} } }); } } });
     console.log('Regulyze × Supabase integration active (app-next)');
   }
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', function(){ setTimeout(rgInit,300); });
