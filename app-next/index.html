@@ -1205,7 +1205,7 @@ select:focus{outline:none;border-color:var(--brand-500)}
         <div class="db-greeting-title" id="db-greeting-name">Welcome back!</div>
         <div class="db-greeting-sub">Here's your compliance activity overview</div>
       </div>
-      <button class="btn btn-primary" onclick="goTab(0);return false" style="gap:6px"><i class="ti ti-plus" style="font-size:15px"></i> New Check</button>
+      <button class="btn btn-primary" onclick="clearAll();goTab(0);return false" style="gap:6px"><i class="ti ti-plus" style="font-size:15px"></i> New Check</button>
     </div>
 
     <!-- Stat Cards -->
@@ -1260,7 +1260,7 @@ select:focus{outline:none;border-color:var(--brand-500)}
       <div class="db-card">
         <div class="db-card-hdr"><span><i class="ti ti-bolt"></i>Quick Actions</span></div>
         <div class="db-actions">
-          <button class="db-action-btn" onclick="goTab(0)"><i class="ti ti-plus"></i><span>New Compliance Check</span></button>
+          <button class="db-action-btn" onclick="clearAll();goTab(0)"><i class="ti ti-plus"></i><span>New Compliance Check</span></button>
           <button class="db-action-btn" onclick="goTab(4);rdcInit()"><i class="ti ti-gauge"></i><span>RDA Calculator</span></button>
           <button class="db-action-btn" onclick="goTab(2)"><i class="ti ti-checklist"></i><span>Label Checklist</span></button>
           <a class="db-action-btn" href="../sample-report/" target="_blank"><i class="ti ti-file-text"></i><span>View Sample Report</span></a>
