@@ -7080,6 +7080,42 @@ document.addEventListener('keydown',function(e){
     }
   };
 
+
+  // ----- Secure payment verification via Supabase Edge Function -----
+  window.startRzp=async function(){
+    var btn=document.getElementById('rzp-pay-btn'), err=document.getElementById('rzp-err'); err.textContent='';
+    if(!selectedPlan||!currentUser){ err.textContent='Select a plan and sign in first.'; return; }
+    if(typeof Razorpay==='undefined'){ err.textContent='Payment system not loaded. Please refresh and try again.'; return; }
+    var planMeta=PLANS[selectedPlan]; if(!planMeta){ err.textContent='Unknown plan. Please re-select a plan.'; return; }
+    btn.disabled=true; btn.innerHTML='<i class="ti ti-loader"></i> Creating order...';
+    try{
+      var or=await fetch(BACKEND+'/create-order',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({plan:selectedPlan,email:currentUser.email,name:currentUser.name})});
+      var od=await or.json(); if(od.error) throw new Error(od.error);
+      btn.disabled=false; btn.innerHTML='<i class="ti ti-credit-card"></i> Pay Now with Razorpay';
+      new Razorpay({key:od.key_id,amount:od.amount,currency:od.currency,name:'TPS Xperts Group',description:planMeta.lbl+' Plan',order_id:od.order_id,
+        prefill:{email:currentUser.email,name:currentUser.name},theme:{color:'#1E3A5F'},
+        handler:async function(resp){
+          btn.disabled=true; btn.innerHTML='<i class="ti ti-loader"></i> Verifying payment...';
+          try{
+            var inv=await SB.functions.invoke('verify-payment',{body:{
+              plan:selectedPlan,
+              razorpay_order_id:resp.razorpay_order_id,
+              razorpay_payment_id:resp.razorpay_payment_id,
+              razorpay_signature:resp.razorpay_signature
+            }});
+            if(inv.error) throw new Error((inv.error&&inv.error.message)||'verification failed');
+            var vd=inv.data;
+            if(!vd||!vd.ok) throw new Error((vd&&vd.error)||'Payment could not be verified.');
+            if(currentUser){ var pr=await loadProfile(currentUser.id); if(pr) currentUser.profile=pr; }
+            try{hidePayModal();}catch(e){} try{hidePlanGate();}catch(e){} try{updCheckBar();updWB();}catch(e){}
+            try{ showSt('🎉 Payment successful! '+((PLANS[vd.plan]&&PLANS[vd.plan].lbl)||vd.plan)+' plan activated.','loading'); setTimeout(hideSt,5000);}catch(e){}
+            btn.disabled=false; btn.innerHTML='<i class="ti ti-credit-card"></i> Pay Now with Razorpay';
+          }catch(ve){ err.textContent='Verification failed: '+ve.message; btn.disabled=false; btn.innerHTML='<i class="ti ti-credit-card"></i> Pay Now with Razorpay'; }
+        }
+      }).open();
+    }catch(e){ err.textContent='Error: '+e.message; btn.disabled=false; btn.innerHTML='<i class="ti ti-credit-card"></i> Pay Now with Razorpay'; }
+  };
+
   async function rgInit(){
     try{ document.querySelectorAll('.g_id_signin,[data-client_id]').forEach(function(el){ el.style.display='none'; }); }catch(e){}
     try{ var b=document.createElement('div'); b.textContent='TEST BUILD · secure login (Supabase) — your live app is unaffected';
