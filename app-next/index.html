@@ -2718,7 +2718,7 @@ function classifyLine(name) {
     if(n&&n.length>2&&(n===k||n.includes(k)&&k.length>4)) return 'fl-add';
   }
   // NSF only if not found in any schedule — Approved takes precedence over Rejected
-  for(const r of REG.nsf_approved){const n=nq(r.Product_Name||'');if(n.length>2&&(k===n||(n.length>12&&(k.includes(n)||n.includes(k))))) return 'fl-nsf';}
+  for(const r of REG.nsf_approved){const n=nq(r.Product_Name||'');if(n.length>2&&(k===n||(n.length>12&&k.includes(n))||(k.length>=8&&n.length>12&&n.includes(k)))) return 'fl-nsf';}
   // FSSR 2011 permitted ingredients
   for(const r of REG.fssr_permitted){
     if((r.Status||'active').toLowerCase()==='omitted') continue;
@@ -2729,7 +2729,7 @@ function classifyLine(name) {
   for(const r of REG.nsf_rejected){
     const n=nq(r.Product_Name||'');
     if(REG.nsf_approved.some(a=>nq(a.Product_Name||'')===n)) continue;
-    if(n.length>2&&(k===n||(n.length>12&&(k.includes(n)||n.includes(k))))) return 'fl-fail';
+    if(n.length>2&&(k===n||(n.length>12&&k.includes(n))||(k.length>=8&&n.length>12&&n.includes(k)))) return 'fl-fail';
   }
   return 'fl-warn';
 }
@@ -3585,14 +3585,14 @@ function lookupIng(name, parentHint, _skipInner) {
   // Approved takes full precedence — if in Approved, never show as Rejected
   for(const r of REG.nsf_approved){
     const n=nq(r.Product_Name||'');
-    if(n.length>2&&(k===n||(n.length>12&&(k.includes(n)||n.includes(k)))))
+    if(n.length>2&&(k===n||(n.length>12&&k.includes(n))||(k.length>=8&&n.length>12&&n.includes(k))))
       return {st:'nsf_ok',sched:'NSF Approved',cat:'NSF Approved',d:r,nsfFile:r.File_Number_Date||'',nsfFBO:r.FBO||''};
   }
   for(const r of REG.nsf_rejected){
     const n=nq(r.Product_Name||'');
     // Skip if this product name is also in NSF Approved
     if(REG.nsf_approved.some(a=>nq(a.Product_Name||'')===n)) continue;
-    if(n.length>2&&(k===n||(n.length>12&&(k.includes(n)||n.includes(k)))))
+    if(n.length>2&&(k===n||(n.length>12&&k.includes(n))||(k.length>=8&&n.length>12&&n.includes(k))))
       return {st:'nsf_fail',sched:'NSF Rejected',cat:'NSF Rejected',d:r,nsfFile:r.File_Number_Date||'',nsfApplicant:r.Applicant||''};
   }
 
