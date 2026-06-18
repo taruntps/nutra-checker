@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-  <!-- REGULYZE-BUILD-v5.0 — Supabase: secure login + server usage + cloud history (LIVE) -->
+  <!-- REGULYZE-BUILD-v5.1 — Supabase: secure login + server usage + cloud history (LIVE); reset-code input accepts full-length code -->
   <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
@@ -782,7 +782,7 @@ select:focus{outline:none;border-color:var(--brand-500)}
       <div style="font-size:10px;color:#64748b;margin-bottom:10px">Enter your registered email. We will send an OTP to reset your password.</div>
       <div class="auth-fld"><label>Email</label><input type="email" id="fp-email" placeholder="your@email.com"></div>
       <div id="fp-otp-section" style="display:none">
-        <div class="auth-fld"><label>OTP (6-digit)</label><input type="text" id="fp-otp" placeholder="Enter OTP from email" maxlength="6"></div>
+        <div class="auth-fld"><label>OTP (code from email)</label><input type="text" id="fp-otp" placeholder="Enter the code from email" maxlength="10" autocomplete="one-time-code" inputmode="numeric"></div>
         <div class="auth-fld"><label>New Password</label><input type="password" id="fp-newpass" placeholder="Min 6 characters"></div>
         <div class="auth-fld"><label>Confirm Password</label><input type="password" id="fp-newpass2" placeholder="Re-enter new password"></div>
       </div>
@@ -7078,10 +7078,10 @@ document.addEventListener('keydown',function(e){
         document.getElementById('fp-otp-section').style.display='block';
         document.getElementById('fp-email').disabled=true;
         btn.innerHTML='<i class="ti ti-check"></i> Verify OTP & Reset'; btn.disabled=false;
-        err.style.color='#166534'; err.textContent='Email sent to '+email+'. Enter the 6-digit code from it (or click the link in the email).';
+        err.style.color='#166534'; err.textContent='Email sent to '+email+'. Enter the code from it (or click the link in the email).';
       }catch(e){ err.style.color='#A32D2D'; err.textContent='Could not send. Please try again.'; btn.disabled=false; btn.innerHTML='<i class="ti ti-mail"></i> Send OTP'; }
     } else {
-      var otp=(document.getElementById('fp-otp').value||'').trim();
+      var otp=(document.getElementById('fp-otp').value||'').replace(/\s+/g,'').trim();
       var np=(document.getElementById('fp-newpass').value||'').trim();
       var np2=(document.getElementById('fp-newpass2').value||'').trim();
       if(!otp){ err.style.color='#A32D2D'; err.textContent='Please enter the code.'; return; }
