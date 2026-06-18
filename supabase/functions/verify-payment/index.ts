@@ -1,11 +1,12 @@
 // Supabase Edge Function: verify-payment
-// Securely verifies a Razorpay payment and upgrades the signed-in user's plan.
-// The browser never decides the plan — this runs on Supabase's servers.
+// Verifies a Razorpay payment signature, confirms amount matches the plan price
+// server-side, then upgrades the user's plan in the profiles table.
 //
-// Required secrets (set in Supabase → Edge Functions → Secrets):
-//   RAZORPAY_KEY_ID      = your Razorpay Key Id  (rzp_live_... or rzp_test_...)
-//   RAZORPAY_KEY_SECRET  = your Razorpay Key Secret
-// (SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY are injected automatically.)
+// Request  (POST JSON): { razorpay_order_id, razorpay_payment_id, razorpay_signature, plan }
+// Response (JSON):      { ok: true, plan, checks } | { error }
+//
+// Required secrets: RAZORPAY_KEY_ID, RAZORPAY_KEY_SECRET
+// Built-in secrets: SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY (auto-injected by Supabase)
 
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
@@ -14,84 +15,97 @@ const cors = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
   "Access-Control-Allow-Methods": "POST, OPTIONS",
 };
+const j = (b: unknown, s = 200) =>
+  new Response(JSON.stringify(b), { status: s, headers: { ...cors, "Content-Type": "application/json" } });
 
-function jsonResp(body: unknown, status = 200) {
-  return new Response(JSON.stringify(body), {
-    status,
-    headers: { ...cors, "Content-Type": "application/json" },
-  });
-}
-
-async function hmacHex(secret: string, data: string): Promise<string> {
-  const key = await crypto.subtle.importKey(
-    "raw",
-    new TextEncoder().encode(secret),
-    { name: "HMAC", hash: "SHA-256" },
-    false,
-    ["sign"],
-  );
-  const sig = await crypto.subtle.sign("HMAC", key, new TextEncoder().encode(data));
-  return [...new Uint8Array(sig)].map((b) => b.toString(16).padStart(2, "0")).join("");
-}
-
-// Expected price per plan, in paise (₹1 = 100 paise). Keep in sync with /create-order.
-const PRICE_PAISE: Record<string, { amount: number; checks: number }> = {
-  basic:     { amount: 49900,  checks: 10 },
-  pro:       { amount: 149900, checks: 50 },
-  monthly:   { amount: 299900, checks: 99999 },
-  unlimited: { amount: 999900, checks: 99999 },
+// Keep in sync with create-order
+const PRICE_PAISE: Record<string, number> = {
+  basic: 49900,
+  pro: 149900,
+  monthly: 299900,
+  unlimited: 999900,
 };
 
+// Checks granted per plan — keep in sync with PLANS in index.html
+const PLAN_CHECKS: Record<string, number> = {
+  basic: 10,
+  pro: 50,
+  monthly: 99999,
+  unlimited: 99999,
+};
+
+async function hmacSHA256(secret: string, message: string): Promise<string> {
+  const enc = new TextEncoder();
+  const key = await crypto.subtle.importKey(
+    "raw", enc.encode(secret), { name: "HMAC", hash: "SHA-256" }, false, ["sign"]
+  );
+  const sig = await crypto.subtle.sign("HMAC", key, enc.encode(message));
+  return Array.from(new Uint8Array(sig)).map(b => b.toString(16).padStart(2, "0")).join("");
+}
+
 Deno.serve(async (req) => {
-  if (req.method === "OPTIONS") return new Response("ok", { headers: cors });
-  if (req.method !== "POST") return jsonResp({ ok: false, error: "method not allowed" }, 405);
+  if (req.method === "OPTIONS") return new Response(null, { status: 204, headers: cors });
+  if (req.method !== "POST") return j({ error: "method not allowed" });
 
   try {
-    const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
-    const SERVICE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const KEY_ID = Deno.env.get("RAZORPAY_KEY_ID");
     const KEY_SECRET = Deno.env.get("RAZORPAY_KEY_SECRET");
-    if (!KEY_ID || !KEY_SECRET) return jsonResp({ ok: false, error: "razorpay secrets not configured" }, 500);
+    const SUPABASE_URL = Deno.env.get("SUPABASE_URL");
+    const SERVICE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
 
-    const admin = createClient(SUPABASE_URL, SERVICE_KEY);
+    if (!KEY_ID || !KEY_SECRET) return j({ error: "razorpay secrets not configured" }, 500);
+    if (!SUPABASE_URL || !SERVICE_KEY) return j({ error: "supabase not configured" }, 500);
 
-    // 1) Identify the signed-in user from their token
-    const jwt = (req.headers.get("Authorization") || "").replace("Bearer ", "");
-    const { data: u, error: uErr } = await admin.auth.getUser(jwt);
-    if (uErr || !u?.user) return jsonResp({ ok: false, error: "not authenticated" }, 401);
-    const userId = u.user.id;
+    // Identify the calling user from their JWT
+    const authHeader = req.headers.get("Authorization") || "";
+    const jwt = authHeader.replace(/^Bearer\s+/i, "");
+    const admin = createClient(SUPABASE_URL, SERVICE_KEY, { auth: { persistSession: false } });
+    const { data: { user }, error: authErr } = await admin.auth.getUser(jwt);
+    if (authErr || !user) return j({ error: "unauthorized" }, 401);
 
-    // 2) Read & validate input
-    const { plan, razorpay_order_id, razorpay_payment_id, razorpay_signature } = await req.json();
-    if (!plan || !razorpay_order_id || !razorpay_payment_id || !razorpay_signature) {
-      return jsonResp({ ok: false, error: "missing fields" }, 400);
+    const { razorpay_order_id, razorpay_payment_id, razorpay_signature, plan } = await req.json();
+    if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature || !plan) {
+      return j({ error: "missing required fields" }, 400);
     }
-    const expectedPlan = PRICE_PAISE[plan];
-    if (!expectedPlan) return jsonResp({ ok: false, error: "unknown plan" }, 400);
 
-    // 3) Verify the Razorpay signature (proves the payment is genuine)
-    const expectedSig = await hmacHex(KEY_SECRET, `${razorpay_order_id}|${razorpay_payment_id}`);
-    if (expectedSig !== razorpay_signature) return jsonResp({ ok: false, error: "signature mismatch" }, 400);
+    // 1. Verify Razorpay signature: HMAC-SHA256(order_id|payment_id)
+    const expected = await hmacSHA256(KEY_SECRET, `${razorpay_order_id}|${razorpay_payment_id}`);
+    if (expected !== razorpay_signature) {
+      console.error("signature mismatch", { expected, got: razorpay_signature });
+      return j({ error: "invalid payment signature" }, 400);
+    }
 
-    // 4) Confirm with Razorpay's API: captured + correct order + correct amount
-    const rp = await fetch(`https://api.razorpay.com/v1/payments/${razorpay_payment_id}`, {
+    // 2. Confirm amount on the order matches our price table (prevents plan-swap attacks)
+    const orderResp = await fetch(`https://api.razorpay.com/v1/orders/${razorpay_order_id}`, {
       headers: { Authorization: "Basic " + btoa(`${KEY_ID}:${KEY_SECRET}`) },
     });
-    const pay = await rp.json();
-    if (!rp.ok) return jsonResp({ ok: false, error: "razorpay lookup failed" }, 400);
-    if (pay.order_id !== razorpay_order_id) return jsonResp({ ok: false, error: "order mismatch" }, 400);
-    if (pay.status !== "captured" && pay.status !== "authorized") return jsonResp({ ok: false, error: "payment not captured" }, 400);
-    if (Number(pay.amount) !== expectedPlan.amount) return jsonResp({ ok: false, error: "amount mismatch" }, 400);
+    if (!orderResp.ok) {
+      console.error("razorpay order fetch failed", orderResp.status, await orderResp.text());
+      return j({ error: "could not verify order with Razorpay" }, 502);
+    }
+    const order = await orderResp.json();
+    const expectedAmount = PRICE_PAISE[plan];
+    if (!expectedAmount) return j({ error: "unknown plan" }, 400);
+    if (order.amount !== expectedAmount) {
+      console.error("amount mismatch", { orderAmount: order.amount, expectedAmount, plan });
+      return j({ error: "payment amount does not match plan price" }, 400);
+    }
 
-    // 5) Upgrade the user's plan (server-trusted)
-    const { error: upErr } = await admin
+    // 3. Upgrade user's plan in profiles table
+    const checks = PLAN_CHECKS[plan] ?? 5;
+    const { error: updateErr } = await admin
       .from("profiles")
-      .update({ plan, plan_checks: expectedPlan.checks, used: 0 })
-      .eq("id", userId);
-    if (upErr) return jsonResp({ ok: false, error: upErr.message }, 500);
+      .update({ plan, checks, used: 0 })
+      .eq("id", user.id);
 
-    return jsonResp({ ok: true, plan, plan_checks: expectedPlan.checks });
+    if (updateErr) {
+      console.error("profile update failed", updateErr);
+      return j({ error: "plan upgrade failed: " + updateErr.message }, 500);
+    }
+
+    console.log("plan upgraded", { userId: user.id, plan, checks });
+    return j({ ok: true, plan, checks });
   } catch (e) {
-    return jsonResp({ ok: false, error: String((e as Error)?.message || e) }, 500);
+    return j({ error: String((e as Error)?.message || e) }, 500);
   }
 });
