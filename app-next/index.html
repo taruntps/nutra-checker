@@ -761,7 +761,7 @@ select:focus{outline:none;border-color:var(--brand-500)}
 
     <!-- SIGN IN -->
     <div id="signin-form">
-      <div class="auth-fld"><label>Email or username</label><input type="text" id="auth-email" placeholder="Email, or staff username (e.g. anjali)" autocomplete="username"></div>
+      <div class="auth-fld"><label>Email or username</label><input type="text" id="auth-email" placeholder="Email or username" autocomplete="username"></div>
       <div class="auth-fld"><label>Password</label><input type="password" id="auth-pass" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;" onkeydown="if(event.key==='Enter')doLogin()" autocomplete="current-password"></div>
       <button class="auth-btn" onclick="doLogin()" id="login-btn"><i class="ti ti-login"></i> Sign In</button>
       <div class="auth-err" id="login-err"></div>
