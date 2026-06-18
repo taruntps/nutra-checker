@@ -7146,6 +7146,26 @@ document.addEventListener('keydown',function(e){
     }catch(e){ var el2=document.getElementById('login-err'); if(el2)el2.textContent='Google sign-in error: '+e.message; }
   };
 
+  // ----- Coupon redeem via Supabase grant codes (replaces Render /validate-coupon) -----
+  window.validateCoupon=async function(code,errId){
+    var err=document.getElementById(errId);
+    if(!code||!code.trim()){ if(err)err.textContent='Please enter a code.'; return false; }
+    if(!currentUser){ if(err)err.textContent='Please sign in first.'; return false; }
+    if(err){ err.style.color=''; err.textContent='Checking…'; }
+    try{
+      var r=await SB.rpc('redeem_grant_coupon',{p_code:code.trim()});
+      if(r.error){ if(err){err.style.color='';err.textContent='Could not redeem: '+r.error.message;} return false; }
+      var d=r.data;
+      if(!d || !d.ok){ if(err){err.style.color='';err.textContent=(d&&d.error)||'Invalid code.';} return false; }
+      try{ var pr=await loadProfile(currentUser.id); if(pr) currentUser.profile=pr; }catch(e){}
+      try{hidePayModal();}catch(e){} try{hidePlanGate();}catch(e){} try{updCheckBar();updWB();}catch(e){}
+      var lbl=(PLANS[d.plan]&&PLANS[d.plan].lbl)||d.plan||'Upgraded';
+      if(err){ err.style.color='#166534'; err.textContent='✓ '+lbl+' plan activated!'; }
+      try{ showSt('✓ '+lbl+' plan activated!','loading'); setTimeout(hideSt,5000); }catch(e){}
+      return true;
+    }catch(e){ if(err)err.textContent='Connection error: '+e.message; return false; }
+  };
+
   function rgGoogleInit(){
     if(typeof google==='undefined'||!google.accounts||!google.accounts.id){ rgGoogleInit._n=(rgGoogleInit._n||0)+1; if(rgGoogleInit._n<40) setTimeout(rgGoogleInit,400); return; }
     try{

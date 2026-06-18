@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-  <!-- REGULYZE-BUILD-v5.0-NEXT — Supabase secure login + server usage + cloud history (TEST) -->
+  <!-- REGULYZE-BUILD-v5.0 — Supabase: secure login + server usage + cloud history (LIVE) -->
   <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
@@ -6948,7 +6948,7 @@ document.addEventListener('keydown',function(e){
 })();
 </script>
 
-<!-- ===== Regulyze × Supabase integration (TEST BUILD app-next) ===== -->
+<!-- ===== Regulyze × Supabase integration ===== -->
 <script>
 (function(){
   var SUPA_URL='https://afttrokqchfcpjcekuyh.supabase.co';
@@ -7146,6 +7146,26 @@ document.addEventListener('keydown',function(e){
     }catch(e){ var el2=document.getElementById('login-err'); if(el2)el2.textContent='Google sign-in error: '+e.message; }
   };
 
+  // ----- Coupon redeem via Supabase grant codes (replaces Render /validate-coupon) -----
+  window.validateCoupon=async function(code,errId){
+    var err=document.getElementById(errId);
+    if(!code||!code.trim()){ if(err)err.textContent='Please enter a code.'; return false; }
+    if(!currentUser){ if(err)err.textContent='Please sign in first.'; return false; }
+    if(err){ err.style.color=''; err.textContent='Checking…'; }
+    try{
+      var r=await SB.rpc('redeem_grant_coupon',{p_code:code.trim()});
+      if(r.error){ if(err){err.style.color='';err.textContent='Could not redeem: '+r.error.message;} return false; }
+      var d=r.data;
+      if(!d || !d.ok){ if(err){err.style.color='';err.textContent=(d&&d.error)||'Invalid code.';} return false; }
+      try{ var pr=await loadProfile(currentUser.id); if(pr) currentUser.profile=pr; }catch(e){}
+      try{hidePayModal();}catch(e){} try{hidePlanGate();}catch(e){} try{updCheckBar();updWB();}catch(e){}
+      var lbl=(PLANS[d.plan]&&PLANS[d.plan].lbl)||d.plan||'Upgraded';
+      if(err){ err.style.color='#166534'; err.textContent='✓ '+lbl+' plan activated!'; }
+      try{ showSt('✓ '+lbl+' plan activated!','loading'); setTimeout(hideSt,5000); }catch(e){}
+      return true;
+    }catch(e){ if(err)err.textContent='Connection error: '+e.message; return false; }
+  };
+
   function rgGoogleInit(){
     if(typeof google==='undefined'||!google.accounts||!google.accounts.id){ rgGoogleInit._n=(rgGoogleInit._n||0)+1; if(rgGoogleInit._n<40) setTimeout(rgGoogleInit,400); return; }
     try{
@@ -7170,15 +7190,12 @@ document.addEventListener('keydown',function(e){
   async function rgInit(){
     try{ window.initGoogleAuth=function(){}; window.handleGoogleCredential=function(){}; }catch(e){}
     rgGoogleInit();
-    try{ var b=document.createElement('div'); b.textContent='TEST BUILD · secure login (Supabase) — your live app is unaffected';
-      b.style.cssText='position:fixed;bottom:0;left:0;right:0;z-index:9998;background:#0E1F3C;color:#fff;font:600 12px Manrope,system-ui,sans-serif;text-align:center;padding:7px 12px';
-      document.body.appendChild(b); }catch(e){}
     try{ var r=await SB.auth.getSession();
       if(r.data&&r.data.session&&r.data.session.user){ var _fresh=false; try{_fresh=localStorage.getItem('rg_oauth_pending')==='1'; localStorage.removeItem('rg_oauth_pending');}catch(_e){} await rgAfterAuth(r.data.session.user,_fresh); } else { if(!/[?&](code|error)=/.test(location.search)) setLoggedOut(); }
     }catch(e){ setLoggedOut(); }
     SB.auth.onAuthStateChange(function(evt,sess){ if(evt==='SIGNED_OUT') setLoggedOut(); else if(evt==='SIGNED_IN'){ if(!currentUser && sess && sess.user){ try{localStorage.removeItem('rg_oauth_pending');}catch(e){} rgAfterAuth(sess.user, true); } } else if(evt==='PASSWORD_RECOVERY'){ var np=window.prompt('Set your new password (at least 6 characters):'); if(np&&np.length>=6){ SB.auth.updateUser({password:np}).then(function(res){ if(!res.error){ try{alert('Password updated — you are now signed in.');}catch(e){} if(res.data&&res.data.user) rgAfterAuth(res.data.user,true); } else { try{alert('Could not update password: '+res.error.message);}catch(e){} } }); } } });
     setInterval(function(){ if(!currentUser)return; SB.rpc('device_allowed',{p_device:RG_DEVICE}).then(function(d){ if(!d.error && d.data===false){ try{alert('Signed out — this account was opened on another device (2-device limit).');}catch(e){} SB.auth.signOut(); setLoggedOut(); try{showAuth();}catch(e){} } }).catch(function(){}); }, 60000);
-    console.log('Regulyze × Supabase integration active (app-next)');
+    console.log('Regulyze × Supabase integration active');
   }
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', function(){ setTimeout(rgInit,300); });
   else setTimeout(rgInit,300);
