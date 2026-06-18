@@ -7072,7 +7072,7 @@ document.addEventListener('keydown',function(e){
       if(!email){ err.style.color='#A32D2D'; err.textContent='Please enter your email.'; return; }
       btn.disabled=true; btn.innerHTML='<i class="ti ti-loader"></i> Sending code...';
       try{
-        var r=await SB.auth.resetPasswordForEmail(email);
+        var r=await SB.auth.resetPasswordForEmail(email,{redirectTo:window.location.href.split('#')[0].split('?')[0]});
         if(r.error){ err.style.color='#A32D2D'; err.textContent=friendly(r.error.message); btn.disabled=false; btn.innerHTML='<i class="ti ti-mail"></i> Send OTP'; return; }
         window._fpOtpSent=true;
         document.getElementById('fp-otp-section').style.display='block';
