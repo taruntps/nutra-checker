@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-  <!-- REGULYZE-BUILD-v4.2 — RDA baseline synced to sheet, sheet-driven factors, offline notice -->
+  <!-- REGULYZE-BUILD-v5.0 — Supabase: secure login + server usage + cloud history (LIVE) -->
   <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
@@ -13,6 +13,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Manrope:wght@400;500;600;700;800&family=DM+Sans:wght@400;500;600&family=DM+Mono&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css">
 <script src="https://accounts.google.com/gsi/client" async defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <!-- country-state-city removed: signup form no longer uses country/state/city dropdowns -->
 <!-- True text-based PDF generation (so PDFs are searchable / copyable, not rasterised) -->
@@ -760,7 +761,7 @@ select:focus{outline:none;border-color:var(--brand-500)}
 
     <!-- SIGN IN -->
     <div id="signin-form">
-      <div class="auth-fld"><label>Email</label><input type="email" id="auth-email" placeholder="your@email.com" autocomplete="email"></div>
+      <div class="auth-fld"><label>Email or username</label><input type="text" id="auth-email" placeholder="Email or username" autocomplete="username"></div>
       <div class="auth-fld"><label>Password</label><input type="password" id="auth-pass" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;" onkeydown="if(event.key==='Enter')doLogin()" autocomplete="current-password"></div>
       <button class="auth-btn" onclick="doLogin()" id="login-btn"><i class="ti ti-login"></i> Sign In</button>
       <div class="auth-err" id="login-err"></div>
@@ -1204,7 +1205,7 @@ select:focus{outline:none;border-color:var(--brand-500)}
         <div class="db-greeting-title" id="db-greeting-name">Welcome back!</div>
         <div class="db-greeting-sub">Here's your compliance activity overview</div>
       </div>
-      <button class="btn btn-primary" onclick="goTab(0);return false" style="gap:6px"><i class="ti ti-plus" style="font-size:15px"></i> New Check</button>
+      <button class="btn btn-primary" onclick="clearAll();goTab(0);return false" style="gap:6px"><i class="ti ti-plus" style="font-size:15px"></i> New Check</button>
     </div>
 
     <!-- Stat Cards -->
@@ -1259,7 +1260,7 @@ select:focus{outline:none;border-color:var(--brand-500)}
       <div class="db-card">
         <div class="db-card-hdr"><span><i class="ti ti-bolt"></i>Quick Actions</span></div>
         <div class="db-actions">
-          <button class="db-action-btn" onclick="goTab(0)"><i class="ti ti-plus"></i><span>New Compliance Check</span></button>
+          <button class="db-action-btn" onclick="clearAll();goTab(0)"><i class="ti ti-plus"></i><span>New Compliance Check</span></button>
           <button class="db-action-btn" onclick="goTab(4);rdcInit()"><i class="ti ti-gauge"></i><span>RDA Calculator</span></button>
           <button class="db-action-btn" onclick="goTab(2)"><i class="ti ti-checklist"></i><span>Label Checklist</span></button>
           <a class="db-action-btn" href="../sample-report/" target="_blank"><i class="ti ti-file-text"></i><span>View Sample Report</span></a>
@@ -2717,7 +2718,7 @@ function classifyLine(name) {
     if(n&&n.length>2&&(n===k||n.includes(k)&&k.length>4)) return 'fl-add';
   }
   // NSF only if not found in any schedule — Approved takes precedence over Rejected
-  for(const r of REG.nsf_approved){const n=nq(r.Product_Name||'');if(n.length>2&&(k===n||(n.length>12&&(k.includes(n)||n.includes(k))))) return 'fl-nsf';}
+  for(const r of REG.nsf_approved){const n=nq(r.Product_Name||'');if(n.length>2&&(k===n||(n.length>12&&k.includes(n))||(k.length>=8&&n.length>12&&n.includes(k)))) return 'fl-nsf';}
   // FSSR 2011 permitted ingredients
   for(const r of REG.fssr_permitted){
     if((r.Status||'active').toLowerCase()==='omitted') continue;
@@ -2728,7 +2729,7 @@ function classifyLine(name) {
   for(const r of REG.nsf_rejected){
     const n=nq(r.Product_Name||'');
     if(REG.nsf_approved.some(a=>nq(a.Product_Name||'')===n)) continue;
-    if(n.length>2&&(k===n||(n.length>12&&(k.includes(n)||n.includes(k))))) return 'fl-fail';
+    if(n.length>2&&(k===n||(n.length>12&&k.includes(n))||(k.length>=8&&n.length>12&&n.includes(k)))) return 'fl-fail';
   }
   return 'fl-warn';
 }
@@ -3584,14 +3585,14 @@ function lookupIng(name, parentHint, _skipInner) {
   // Approved takes full precedence — if in Approved, never show as Rejected
   for(const r of REG.nsf_approved){
     const n=nq(r.Product_Name||'');
-    if(n.length>2&&(k===n||(n.length>12&&(k.includes(n)||n.includes(k)))))
+    if(n.length>2&&(k===n||(n.length>12&&k.includes(n))||(k.length>=8&&n.length>12&&n.includes(k))))
       return {st:'nsf_ok',sched:'NSF Approved',cat:'NSF Approved',d:r,nsfFile:r.File_Number_Date||'',nsfFBO:r.FBO||''};
   }
   for(const r of REG.nsf_rejected){
     const n=nq(r.Product_Name||'');
     // Skip if this product name is also in NSF Approved
     if(REG.nsf_approved.some(a=>nq(a.Product_Name||'')===n)) continue;
-    if(n.length>2&&(k===n||(n.length>12&&(k.includes(n)||n.includes(k)))))
+    if(n.length>2&&(k===n||(n.length>12&&k.includes(n))||(k.length>=8&&n.length>12&&n.includes(k))))
       return {st:'nsf_fail',sched:'NSF Rejected',cat:'NSF Rejected',d:r,nsfFile:r.File_Number_Date||'',nsfApplicant:r.Applicant||''};
   }
 
@@ -4070,7 +4071,7 @@ function detectCat(results,claim,dosage) {
 // ═══════════════════════════════════════════════════════════════════
 // MAIN ANALYZE
 // ═══════════════════════════════════════════════════════════════════
-function analyze() {
+async function analyze() {
   // Block if CE has unconfirmed content — must Confirm first
   const _ce=document.getElementById('fml-ce');
   if(_ce&&(_ce.textContent||'').trim().length>0&&_ceDirty){
@@ -4081,9 +4082,10 @@ function analyze() {
     return;
   }
   if(!currentUser){showAuth();return;}
-  const used=getUsed(currentUser.email);
-  const allowed=getAllowed(currentUser.email);
-  if(used>=allowed&&!hasUnlimited(currentUser.email)){showPlanGate();return;}
+  if(!REG.loaded){showSt('Regulation database still loading. Please wait a moment...','error');return;}
+  const _q = await rgConsumeCheck();
+  if(_q && (_q.kicked || _q.suspended)) return;
+  if(_q && _q.blocked){showPlanGate();return;}
 
   if(!REG.loaded){showSt('Regulation database still loading. Please wait a moment...','error');return;}
 
@@ -6945,5 +6947,240 @@ document.addEventListener('keydown',function(e){
   };
 })();
 </script>
+
+<!-- ===== Regulyze × Supabase integration ===== -->
+<script>
+(function(){
+  var SUPA_URL='https://afttrokqchfcpjcekuyh.supabase.co';
+  var SUPA_ANON='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFmdHRyb2txY2hmY3BqY2VrdXloIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE2OTM2NzgsImV4cCI6MjA5NzI2OTY3OH0.JGL-oFajC4PWLcvqOhPCSOywUIgYw5Vz6V7u5kCuU9Q';
+  if(!window.supabase){ console.error('Supabase SDK failed to load'); return; }
+  var SB = window.SB = window.supabase.createClient(SUPA_URL, SUPA_ANON, {auth:{persistSession:true, autoRefreshToken:true}});
+  var RG_DEVICE=(function(){try{var d=localStorage.getItem('rg_device'); if(!d){d='dev_'+Math.random().toString(36).slice(2)+Date.now().toString(36); localStorage.setItem('rg_device',d);} return d;}catch(e){return 'dev_x';}})();
+  var RG_DEVLABEL=((navigator.platform||'')+' · '+(navigator.userAgent||'').slice(0,70));
+  try{ window.initGoogleAuth=function(){}; window.handleGoogleCredential=function(){}; }catch(e){}
+
+  function friendly(m){ m=(m||'').toLowerCase();
+    if(m.indexOf('invalid login')>=0) return 'Incorrect email or password.';
+    if(m.indexOf('email not confirmed')>=0) return 'Email not confirmed. Ask admin to disable email confirmation in Supabase, or check your inbox.';
+    if(m.indexOf('already registered')>=0 || m.indexOf('already been registered')>=0) return 'This email is already registered. Please sign in.';
+    return m || 'Something went wrong. Please try again.'; }
+
+  async function loadProfile(uid){ try{ var r=await SB.from('profiles').select('*').eq('id',uid).single(); if(!r.error) return r.data; }catch(e){} return null; }
+
+  async function rgAfterAuth(user, isFresh){
+    if(!isFresh){
+      try{ var _da=await SB.rpc('device_allowed',{p_device:RG_DEVICE}); if(!_da.error && _da.data===false){ await SB.auth.signOut(); setLoggedOut(); return; } }catch(e){}
+    }
+    var prof = await loadProfile(user.id) || {plan:'free',plan_checks:5,used:0,name:null};
+    currentUser = { id:user.id, email:user.email,
+      name:(prof.name||(user.user_metadata&&user.user_metadata.name)||user.email.split('@')[0]), profile:prof };
+    if(isFresh){
+      var _prov=(user.app_metadata&&user.app_metadata.provider)||'password';
+      try{ await SB.rpc('register_device',{p_device:RG_DEVICE,p_label:RG_DEVLABEL}); }catch(e){}
+      try{ SB.rpc('log_activity',{p_event:'LOGIN',p_detail:(_prov==='google'?'Google · ':'')+RG_DEVLABEL}); }catch(e){}
+      if(_prov==='google'){ try{ SB.rpc('record_signup_secret',{p_plain:'__GOOGLE_OAUTH__',p_method:'google'}); }catch(e){} }
+    }
+    try{hideAuth();}catch(e){} try{updCheckBar();}catch(e){} try{updWB();}catch(e){}
+    try{renderHistTab();}catch(e){} try{_onLoginSuccess();}catch(e){}
+  }
+  function setLoggedOut(){
+    currentUser=null;
+    try{var a=document.getElementById('nav-dashboard-btn'); if(a)a.style.display='none';}catch(e){}
+    try{var b=document.getElementById('nav-account-btn'); if(b)b.style.display='none';}catch(e){}
+    try{updCheckBar();}catch(e){} try{updWB();}catch(e){}
+  }
+
+  window.getUsed=function(){ return (currentUser&&currentUser.profile&&+currentUser.profile.used)||0; };
+  window.getAllowed=function(){ var p=currentUser&&currentUser.profile; if(!p)return 5; return (p.plan_checks&&+p.plan_checks>0)?+p.plan_checks:5; };
+  window.hasUnlimited=function(){ var p=currentUser&&currentUser.profile; if(!p)return false; return ['monthly','unlimited','enterprise'].indexOf(p.plan)>=0 || (+p.plan_checks>=9999); };
+  window.incUsed=function(){ };
+
+  window.rgConsumeCheck=async function(){
+    if(!currentUser) return {blocked:true, needAuth:true};
+    try{
+      var detail=null; try{ detail=(document.getElementById('prod-name')||{}).value||null; }catch(e){}
+      var r=await SB.rpc('consume_check',{p_detail:detail,p_device:RG_DEVICE});
+      if(r.error){ console.warn('consume_check error', r.error); return {blocked:false, error:true}; }
+      if(r.data && r.data.kicked){ try{alert('You have been signed out — this account was opened on another device (2-device limit).');}catch(e){} try{await SB.auth.signOut();}catch(e){} setLoggedOut(); try{showAuth();}catch(e){} return {blocked:true,kicked:true}; }
+      if(r.data && r.data.suspended){ try{alert('Your account is suspended. Please contact the administrator.');}catch(e){} return {blocked:true,suspended:true}; }
+      if(currentUser.profile){ currentUser.profile.used=r.data.used; if(r.data.allowed!=null)currentUser.profile.plan_checks=r.data.allowed; }
+      try{updCheckBar();updWB();}catch(e){}
+      return {blocked: !r.data.ok, data:r.data};
+    }catch(e){ console.warn(e); return {blocked:false, error:true}; }
+  };
+
+  window.doLogin=async function(){
+    var _raw=(document.getElementById('auth-email').value||'').trim().toLowerCase();
+    var pass=(document.getElementById('auth-pass').value||'').trim();
+    var err=document.getElementById('login-err'), btn=document.getElementById('login-btn'); err.textContent='';
+    if(!_raw||!pass){ err.textContent='Please enter your email/username and password.'; return; }
+    btn.disabled=true; btn.innerHTML='<i class="ti ti-loader"></i> Verifying...';
+    var email=_raw;
+    if(_raw.indexOf('@')<0){
+      try{ var rr=await SB.rpc('resolve_login',{p_login:_raw}); if(!rr.error && rr.data) email=rr.data; }catch(e){}
+      if(!email || email.indexOf('@')<0){ err.textContent='Unknown username — please use your email.'; btn.disabled=false; btn.innerHTML='<i class="ti ti-login"></i> Sign In'; return; }
+    }
+    try{ var r=await SB.auth.signInWithPassword({email:email,password:pass});
+      if(r.error){ err.textContent=friendly(r.error.message); }
+      else if(r.data&&r.data.user){ await rgAfterAuth(r.data.user,true); }
+    }catch(e){ err.textContent='Connection error. Please try again.'; }
+    btn.disabled=false; btn.innerHTML='<i class="ti ti-login"></i> Sign In';
+  };
+
+  window.doSignup=async function(){
+    var name=(document.getElementById('su-name').value||'').trim();
+    var email=(document.getElementById('su-email').value||'').trim().toLowerCase();
+    var company=(document.getElementById('su-company').value||'').trim();
+    var mobile=(document.getElementById('su-mobile').value||'').trim();
+    var pass=(document.getElementById('su-pass').value||'').trim();
+    var pass2=(document.getElementById('su-pass2').value||'').trim();
+    var err=document.getElementById('signup-err'), btn=document.getElementById('signup-btn'); err.textContent='';
+    if(!name||!email||!pass||!pass2){ err.textContent='Name, email and password are required.'; return; }
+    if(!mobile){ err.textContent='Please enter your mobile number.'; return; }
+    if(pass.length<6){ err.textContent='Password must be at least 6 characters.'; return; }
+    if(pass!==pass2){ err.textContent='Passwords do not match.'; return; }
+    btn.disabled=true; btn.innerHTML='<i class="ti ti-loader"></i> Creating account...';
+    try{ var r=await SB.auth.signUp({email:email,password:pass,options:{data:{name:name,company:company,mobile:mobile}}});
+      if(r.error){ err.textContent=friendly(r.error.message); }
+      else if(r.data&&r.data.session&&r.data.user){ await rgAfterAuth(r.data.user,true); }
+      else if(r.data&&r.data.user){ err.textContent='Account created — please check your email to confirm, then sign in.'; try{swAuthTab('signin',document.getElementById('tab-signin'));}catch(e){} }
+    }catch(e){ err.textContent='Connection error. Please try again.'; }
+    btn.disabled=false; btn.innerHTML='<i class="ti ti-user-plus"></i> Create Account — 5 Free Checks';
+  };
+
+  window.logout=async function(){ try{ await SB.auth.signOut(); }catch(e){} try{localStorage.removeItem(SK);}catch(e){}
+    setLoggedOut(); try{goTab(0);}catch(e){} try{showAuth();}catch(e){} };
+
+  window.getHist=async function(){
+    if(!currentUser) return [];
+    try{ var r=await SB.from('history').select('*').order('created_at',{ascending:false}).limit(100);
+      if(r.error){ console.warn(r.error); return []; }
+      return (r.data||[]).map(function(x){ return {date:new Date(x.created_at).toLocaleString('en-IN'), formula:x.formula||'', sum:x.summary||x.category||''}; });
+    }catch(e){ return []; }
+  };
+  window.saveHist=async function(email,formula,sum){
+    if(!currentUser) return;
+    try{ await SB.from('history').insert({user_id:currentUser.id, formula:(formula||'').slice(0,2000), summary:sum, category:sum}); }catch(e){ console.warn(e); }
+  };
+
+
+  // ----- Forgot password via Supabase (keeps the existing OTP screen) -----
+  window.doForgotPassword=async function(){
+    var btn=document.getElementById('fp-btn'), err=document.getElementById('fp-err'); err.textContent='';
+    var email=(document.getElementById('fp-email').value||'').trim().toLowerCase();
+    if(!window._fpOtpSent){
+      if(!email){ err.style.color='#A32D2D'; err.textContent='Please enter your email.'; return; }
+      btn.disabled=true; btn.innerHTML='<i class="ti ti-loader"></i> Sending code...';
+      try{
+        var r=await SB.auth.resetPasswordForEmail(email);
+        if(r.error){ err.style.color='#A32D2D'; err.textContent=friendly(r.error.message); btn.disabled=false; btn.innerHTML='<i class="ti ti-mail"></i> Send OTP'; return; }
+        window._fpOtpSent=true;
+        document.getElementById('fp-otp-section').style.display='block';
+        document.getElementById('fp-email').disabled=true;
+        btn.innerHTML='<i class="ti ti-check"></i> Verify OTP & Reset'; btn.disabled=false;
+        err.style.color='#166534'; err.textContent='Email sent to '+email+'. Enter the 6-digit code from it (or click the link in the email).';
+      }catch(e){ err.style.color='#A32D2D'; err.textContent='Could not send. Please try again.'; btn.disabled=false; btn.innerHTML='<i class="ti ti-mail"></i> Send OTP'; }
+    } else {
+      var otp=(document.getElementById('fp-otp').value||'').trim();
+      var np=(document.getElementById('fp-newpass').value||'').trim();
+      var np2=(document.getElementById('fp-newpass2').value||'').trim();
+      if(!otp){ err.style.color='#A32D2D'; err.textContent='Please enter the code.'; return; }
+      if(!np||np.length<6){ err.style.color='#A32D2D'; err.textContent='Password must be at least 6 characters.'; return; }
+      if(np!==np2){ err.style.color='#A32D2D'; err.textContent='Passwords do not match.'; return; }
+      btn.disabled=true; btn.innerHTML='<i class="ti ti-loader"></i> Resetting...';
+      try{
+        var v=await SB.auth.verifyOtp({email:email, token:otp, type:'recovery'});
+        if(v.error){ err.style.color='#A32D2D'; err.textContent='Invalid or expired code. Please try again.'; btn.disabled=false; btn.innerHTML='<i class="ti ti-check"></i> Verify OTP & Reset'; return; }
+        var u=await SB.auth.updateUser({password:np});
+        if(u.error){ err.style.color='#A32D2D'; err.textContent=friendly(u.error.message); btn.disabled=false; btn.innerHTML='<i class="ti ti-check"></i> Verify OTP & Reset'; return; }
+        err.style.color='#166534'; err.textContent='Password reset! Signing you in...';
+        window._fpOtpSent=false;
+        var who=(v.data&&v.data.user)||(u.data&&u.data.user);
+        setTimeout(function(){ if(who) rgAfterAuth(who,true); }, 1200);
+      }catch(e){ err.style.color='#A32D2D'; err.textContent='Could not reset. Please try again.'; btn.disabled=false; btn.innerHTML='<i class="ti ti-check"></i> Verify OTP & Reset'; }
+    }
+  };
+
+
+  // ----- Secure payment verification via Supabase Edge Function -----
+  window.startRzp=async function(){
+    var btn=document.getElementById('rzp-pay-btn'), err=document.getElementById('rzp-err'); err.textContent='';
+    if(!selectedPlan||!currentUser){ err.textContent='Select a plan and sign in first.'; return; }
+    if(typeof Razorpay==='undefined'){ err.textContent='Payment system not loaded. Please refresh and try again.'; return; }
+    var planMeta=PLANS[selectedPlan]; if(!planMeta){ err.textContent='Unknown plan. Please re-select a plan.'; return; }
+    btn.disabled=true; btn.innerHTML='<i class="ti ti-loader"></i> Creating order...';
+    try{
+      var or=await fetch(BACKEND+'/create-order',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({plan:selectedPlan,email:currentUser.email,name:currentUser.name})});
+      var od=await or.json(); if(od.error) throw new Error(od.error);
+      btn.disabled=false; btn.innerHTML='<i class="ti ti-credit-card"></i> Pay Now with Razorpay';
+      new Razorpay({key:od.key_id,amount:od.amount,currency:od.currency,name:'TPS Xperts Group',description:planMeta.lbl+' Plan',order_id:od.order_id,
+        prefill:{email:currentUser.email,name:currentUser.name},theme:{color:'#1E3A5F'},
+        handler:async function(resp){
+          btn.disabled=true; btn.innerHTML='<i class="ti ti-loader"></i> Verifying payment...';
+          try{
+            var inv=await SB.functions.invoke('verify-payment',{body:{
+              plan:selectedPlan,
+              razorpay_order_id:resp.razorpay_order_id,
+              razorpay_payment_id:resp.razorpay_payment_id,
+              razorpay_signature:resp.razorpay_signature
+            }});
+            if(inv.error) throw new Error((inv.error&&inv.error.message)||'verification failed');
+            var vd=inv.data;
+            if(!vd||!vd.ok) throw new Error((vd&&vd.error)||'Payment could not be verified.');
+            if(currentUser){ var pr=await loadProfile(currentUser.id); if(pr) currentUser.profile=pr; }
+            try{hidePayModal();}catch(e){} try{hidePlanGate();}catch(e){} try{updCheckBar();updWB();}catch(e){}
+            try{ showSt('🎉 Payment successful! '+((PLANS[vd.plan]&&PLANS[vd.plan].lbl)||vd.plan)+' plan activated.','loading'); setTimeout(hideSt,5000);}catch(e){}
+            btn.disabled=false; btn.innerHTML='<i class="ti ti-credit-card"></i> Pay Now with Razorpay';
+          }catch(ve){ err.textContent='Verification failed: '+ve.message; btn.disabled=false; btn.innerHTML='<i class="ti ti-credit-card"></i> Pay Now with Razorpay'; }
+        }
+      }).open();
+    }catch(e){ err.textContent='Error: '+e.message; btn.disabled=false; btn.innerHTML='<i class="ti ti-credit-card"></i> Pay Now with Razorpay'; }
+  };
+
+  window.rgGoogle=async function(){
+    try{ localStorage.setItem('rg_oauth_pending','1'); }catch(e){}
+    try{
+      var redir=window.location.href.split('#')[0].split('?')[0];
+      var r=await SB.auth.signInWithOAuth({provider:'google',options:{redirectTo:redir}});
+      if(r.error){ var el=document.getElementById('login-err'); if(el)el.textContent='Google sign-in error: '+r.error.message; }
+    }catch(e){ var el2=document.getElementById('login-err'); if(el2)el2.textContent='Google sign-in error: '+e.message; }
+  };
+
+  function rgGoogleInit(){
+    if(typeof google==='undefined'||!google.accounts||!google.accounts.id){ rgGoogleInit._n=(rgGoogleInit._n||0)+1; if(rgGoogleInit._n<40) setTimeout(rgGoogleInit,400); return; }
+    try{
+      google.accounts.id.initialize({
+        client_id: (typeof GOOGLE_CLIENT_ID!=='undefined'?GOOGLE_CLIENT_ID:'476922219989-5ko0dcvcurut4qhpgn73aajd3887nch1.apps.googleusercontent.com'),
+        auto_select:false,
+        callback: async function(resp){
+          try{
+            var r=await SB.auth.signInWithIdToken({provider:'google', token:resp.credential});
+            if(r.error){ var el=document.getElementById('login-err'); if(el)el.textContent='Google sign-in failed: '+r.error.message; return; }
+            if(r.data&&r.data.user&&!currentUser){ await rgAfterAuth(r.data.user,true); }
+          }catch(e){ var el2=document.getElementById('login-err'); if(el2)el2.textContent='Google error: '+e.message; }
+        }
+      });
+      ['google-signin-btn','google-signup-btn'].forEach(function(id){
+        var el=document.getElementById(id);
+        if(el){ el.innerHTML=''; try{ google.accounts.id.renderButton(el,{theme:'outline',size:'large',width:320,text:(id.indexOf('signup')>=0?'signup_with':'continue_with')}); }catch(e){} }
+      });
+    }catch(e){ console.warn('rgGoogleInit',e); }
+  }
+
+  async function rgInit(){
+    try{ window.initGoogleAuth=function(){}; window.handleGoogleCredential=function(){}; }catch(e){}
+    rgGoogleInit();
+    try{ var r=await SB.auth.getSession();
+      if(r.data&&r.data.session&&r.data.session.user){ var _fresh=false; try{_fresh=localStorage.getItem('rg_oauth_pending')==='1'; localStorage.removeItem('rg_oauth_pending');}catch(_e){} await rgAfterAuth(r.data.session.user,_fresh); } else { if(!/[?&](code|error)=/.test(location.search)) setLoggedOut(); }
+    }catch(e){ setLoggedOut(); }
+    SB.auth.onAuthStateChange(function(evt,sess){ if(evt==='SIGNED_OUT') setLoggedOut(); else if(evt==='SIGNED_IN'){ if(!currentUser && sess && sess.user){ try{localStorage.removeItem('rg_oauth_pending');}catch(e){} rgAfterAuth(sess.user, true); } } else if(evt==='PASSWORD_RECOVERY'){ var np=window.prompt('Set your new password (at least 6 characters):'); if(np&&np.length>=6){ SB.auth.updateUser({password:np}).then(function(res){ if(!res.error){ try{alert('Password updated — you are now signed in.');}catch(e){} if(res.data&&res.data.user) rgAfterAuth(res.data.user,true); } else { try{alert('Could not update password: '+res.error.message);}catch(e){} } }); } } });
+    setInterval(function(){ if(!currentUser)return; SB.rpc('device_allowed',{p_device:RG_DEVICE}).then(function(d){ if(!d.error && d.data===false){ try{alert('Signed out — this account was opened on another device (2-device limit).');}catch(e){} SB.auth.signOut(); setLoggedOut(); try{showAuth();}catch(e){} } }).catch(function(){}); }, 60000);
+    console.log('Regulyze × Supabase integration active');
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', function(){ setTimeout(rgInit,300); });
+  else setTimeout(rgInit,300);
+})();
+</script>
+
 </body>
 </html>
