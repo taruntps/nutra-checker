@@ -98,6 +98,7 @@ select.mini{padding:4px 6px;border:1px solid var(--line);border-radius:6px;font:
     <div id="pane-users" class="card">
       <div class="toolbar">
         <input id="u-search" placeholder="Search name / email / username…" oninput="renderUsers()" style="flex:1;min-width:200px">
+        <button class="btn sm" onclick="openAddUser()"><i class="ti ti-user-plus"></i> Add user</button>
         <button class="btn sm gho" onclick="loadUsers()"><i class="ti ti-refresh"></i> Refresh</button>
         <span class="muted" id="u-count"></span>
       </div>
@@ -135,6 +136,22 @@ select.mini{padding:4px 6px;border:1px solid var(--line);border-radius:6px;font:
     </div>
   </div>
 </div>
+
+<!-- ADD USER MODAL -->
+<div class="modal-bg" id="addmodal"><div class="modal" style="max-width:520px">
+  <h3><i class="ti ti-user-plus"></i> Add user <i class="ti ti-x x" onclick="closeAdd()"></i></h3>
+  <div class="fld"><label>Email *</label><input id="au-email" type="email" placeholder="person@company.com"></div>
+  <div class="fld"><label>Password *</label><input id="au-pass" type="text" placeholder="min 6 characters (visible to admin)"></div>
+  <div class="fld"><label>Name</label><input id="au-name" type="text"></div>
+  <div class="fld"><label>Username (optional — for short login like &quot;anjali&quot;)</label><input id="au-username" type="text"></div>
+  <div style="display:flex;gap:10px">
+    <div class="fld" style="flex:1"><label>Plan</label><select id="au-plan"><option>free</option><option>basic</option><option>pro</option><option>monthly</option><option>unlimited</option><option>enterprise</option></select></div>
+    <div class="fld" style="flex:1"><label>Mobile</label><input id="au-mobile" type="text"></div>
+  </div>
+  <div class="fld"><label>Company</label><input id="au-company" type="text"></div>
+  <button class="btn" style="width:100%;justify-content:center" onclick="submitAddUser()"><i class="ti ti-check"></i> Create user</button>
+  <div class="err" id="au-err"></div>
+</div></div>
 
 <!-- USER DETAIL MODAL -->
 <div class="modal-bg" id="umodal"><div class="modal">
@@ -318,6 +335,23 @@ async function addCoupon(){
 async function setCoupon(code,status){ const {error}=await SB.from('coupons').update({status}).eq('code',code); if(error)alert(error.message); else loadCoupons(); }
 async function delCoupon(code){ if(!confirm('Delete coupon '+code+'?'))return; const {error}=await SB.from('coupons').delete().eq('code',code); if(error)alert(error.message); else loadCoupons(); }
 
+function openAddUser(){ ['au-email','au-pass','au-name','au-username','au-mobile','au-company'].forEach(function(i){var e=$(i);if(e)e.value='';}); $('au-plan').value='free'; $('au-err').textContent=''; $('addmodal').classList.add('on'); }
+function closeAdd(){ $('addmodal').classList.remove('on'); }
+async function submitAddUser(){
+  const err=$('au-err'); err.textContent='';
+  const email=($('au-email').value||'').trim().toLowerCase(), pass=($('au-pass').value||'').trim();
+  if(!email||!pass){ err.style.color='#C0392B'; err.textContent='Email and password are required.'; return; }
+  if(pass.length<6){ err.style.color='#C0392B'; err.textContent='Password must be at least 6 characters.'; return; }
+  err.style.color='#566'; err.textContent='Creating…';
+  const body={email:email,password:pass,name:($('au-name').value||'').trim(),username:($('au-username').value||'').trim().toLowerCase(),plan:$('au-plan').value,mobile:($('au-mobile').value||'').trim(),company:($('au-company').value||'').trim()};
+  try{
+    const r=await SB.functions.invoke('admin-create-user',{body:body});
+    if(r.error) throw new Error((r.error&&r.error.message)||'failed');
+    if(!r.data||!r.data.ok) throw new Error((r.data&&r.data.error)||'failed');
+    err.style.color='#0F9D58'; err.textContent='User created!';
+    setTimeout(function(){ closeAdd(); loadUsers(); },700);
+  }catch(e){ err.style.color='#C0392B'; err.textContent='Failed: '+e.message; }
+}
 boot();
 </script>
 </body>
