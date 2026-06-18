@@ -820,7 +820,7 @@ select:focus{outline:none;border-color:var(--brand-500)}
     <div class="auth-sub" id="pf-plan" style="margin-bottom:18px">Free Plan</div>
     <div class="auth-fld"><label>Full Name</label><input type="text" id="pf-name" placeholder="Your full name"></div>
     <div class="auth-fld"><label>Email <span style="color:#94a3b8;font-weight:400;font-size:9px">(cannot be changed)</span></label><input type="email" id="pf-email" disabled style="background:#f1f5f9;color:#64748b;cursor:not-allowed"></div>
-    <div class="auth-fld"><label>Mobile Number</label><input type="tel" id="pf-mobile" placeholder="+91 9XXXXXXXXX"></div>
+    <div class="auth-fld"><label>Mobile Number</label><input type="tel" id="pf-mobile" placeholder="10-digit mobile number" maxlength="15" inputmode="numeric"></div>
     <div class="auth-fld"><label>Company / Organisation</label><input type="text" id="pf-company" placeholder="Company or organisation name"></div>
     <button class="auth-btn" id="pf-save-btn" onclick="saveProfile()"><i class="ti ti-device-floppy"></i> Save Changes</button>
     <div id="pf-msg" style="text-align:center;font-size:11px;font-weight:600;margin-top:8px;min-height:14px"></div>
@@ -5800,8 +5800,12 @@ async function saveProfile(){
   const av=document.getElementById('user-avatar');if(av)av.textContent=name.charAt(0).toUpperCase();
   msg.style.color='var(--ok-700)';msg.textContent='Saved ✓';
   if(btn){btn.disabled=true;btn.innerHTML='<i class="ti ti-check"></i> Saved';}
-  // Best-effort sync to backend (non-blocking)
-  try{fetch(BACKEND+'/register',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,email:currentUser.email,mobile,company,update:true}),signal:AbortSignal.timeout(5000)});}catch(e){}
+  // Save to Supabase (source of truth)
+  try{
+    var _sr=await SB.from('profiles').update({name,mobile,company}).eq('id',currentUser.id);
+    if(_sr.error){ msg.style.color='var(--fail-600)'; msg.textContent='Could not save: '+_sr.error.message; if(btn){btn.disabled=false;btn.innerHTML='<i class="ti ti-device-floppy"></i> Save Changes';} return; }
+    if(currentUser.profile){ currentUser.profile.name=name; currentUser.profile.mobile=mobile; currentUser.profile.company=company; }
+  }catch(e){ msg.style.color='var(--fail-600)'; msg.textContent='Save failed. Please try again.'; if(btn){btn.disabled=false;btn.innerHTML='<i class="ti ti-device-floppy"></i> Save Changes';} return; }
   setTimeout(()=>{if(btn){btn.disabled=false;btn.innerHTML='<i class="ti ti-device-floppy"></i> Save Changes';}msg.textContent='';},1800);
 }
 
