@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-  <!-- REGULYZE-BUILD-v5.3 — Supabase: secure login + server usage + cloud history (LIVE); reset-code input accepts full-length code; durable guard against duplicate password prompt in code-reset flow -->
+  <!-- REGULYZE-BUILD-v5.4 — Supabase: secure login + server usage + cloud history (LIVE); reset-code input accepts full-length code; durable guard against duplicate password prompt; log SIGNUP / PASSWORD_RESET / LOGOUT to activity -->
   <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
@@ -7042,13 +7042,13 @@ document.addEventListener('keydown',function(e){
     btn.disabled=true; btn.innerHTML='<i class="ti ti-loader"></i> Creating account...';
     try{ var r=await SB.auth.signUp({email:email,password:pass,options:{data:{name:name,company:company,mobile:mobile}}});
       if(r.error){ err.textContent=friendly(r.error.message); }
-      else if(r.data&&r.data.session&&r.data.user){ await rgAfterAuth(r.data.user,true); }
+      else if(r.data&&r.data.session&&r.data.user){ try{ SB.rpc('log_activity',{p_event:'SIGNUP',p_detail:RG_DEVLABEL}); }catch(e){} await rgAfterAuth(r.data.user,true); }
       else if(r.data&&r.data.user){ err.textContent='Account created — please check your email to confirm, then sign in.'; try{swAuthTab('signin',document.getElementById('tab-signin'));}catch(e){} }
     }catch(e){ err.textContent='Connection error. Please try again.'; }
     btn.disabled=false; btn.innerHTML='<i class="ti ti-user-plus"></i> Create Account — 5 Free Checks';
   };
 
-  window.logout=async function(){ try{ await SB.auth.signOut(); }catch(e){} try{localStorage.removeItem(SK);}catch(e){}
+  window.logout=async function(){ try{ await SB.rpc('log_activity',{p_event:'LOGOUT',p_detail:RG_DEVLABEL}); }catch(e){} try{ await SB.auth.signOut(); }catch(e){} try{localStorage.removeItem(SK);}catch(e){}
     setLoggedOut(); try{goTab(0);}catch(e){} try{showAuth();}catch(e){} };
 
   window.getHist=async function(){
@@ -7095,6 +7095,7 @@ document.addEventListener('keydown',function(e){
         var u=await SB.auth.updateUser({password:np});
         if(u.error){ err.style.color='#A32D2D'; err.textContent=friendly(u.error.message); btn.disabled=false; btn.innerHTML='<i class="ti ti-check"></i> Verify OTP & Reset'; return; }
         err.style.color='#166534'; err.textContent='Password reset! Signing you in...';
+        try{ SB.rpc('log_activity',{p_event:'PASSWORD_RESET',p_detail:RG_DEVLABEL}); }catch(e){}
         window._fpOtpSent=false;
         var who=(v.data&&v.data.user)||(u.data&&u.data.user);
         setTimeout(function(){ if(who) rgAfterAuth(who,true); }, 1200);
