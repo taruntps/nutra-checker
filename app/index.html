@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-  <!-- REGULYZE-BUILD-v5.5 — Supabase: secure login + server usage + cloud history (LIVE); all activity events logged correctly; no duplicate LOGIN after password reset -->
+  <!-- REGULYZE-BUILD-v5.6 — dual-channel OTP (email + SMS via 2Factor.in): send-otp + verify-otp-custom edge functions; password reset now server-side, no Supabase Auth OTP dependency -->
   <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
@@ -7072,13 +7072,18 @@ document.addEventListener('keydown',function(e){
       if(!email){ err.style.color='#A32D2D'; err.textContent='Please enter your email.'; return; }
       btn.disabled=true; btn.innerHTML='<i class="ti ti-loader"></i> Sending code...';
       try{
-        var r=await SB.auth.resetPasswordForEmail(email,{redirectTo:window.location.href.split('#')[0].split('?')[0]});
-        if(r.error){ err.style.color='#A32D2D'; err.textContent=friendly(r.error.message); btn.disabled=false; btn.innerHTML='<i class="ti ti-mail"></i> Send OTP'; return; }
+        var r=await fetch(SUPA_URL+'/functions/v1/send-otp',{
+          method:'POST',
+          headers:{'Content-Type':'application/json','Authorization':'Bearer '+SUPA_ANON},
+          body:JSON.stringify({email:email,purpose:'reset'})
+        });
+        var rd=await r.json();
+        if(!rd.ok){ err.style.color='#A32D2D'; err.textContent=rd.error||'Could not send code. Please try again.'; btn.disabled=false; btn.innerHTML='<i class="ti ti-mail"></i> Send OTP'; return; }
         window._fpOtpSent=true;
         document.getElementById('fp-otp-section').style.display='block';
         document.getElementById('fp-email').disabled=true;
-        btn.innerHTML='<i class="ti ti-check"></i> Verify OTP & Reset'; btn.disabled=false;
-        err.style.color='#166534'; err.textContent='Email sent to '+email+'. Enter the code from it (or click the link in the email).';
+        btn.innerHTML='<i class="ti ti-check"></i> Verify & Reset Password'; btn.disabled=false;
+        err.style.color='#166534'; err.textContent='Code sent to your email and mobile (if registered). Valid for 10 minutes.';
       }catch(e){ err.style.color='#A32D2D'; err.textContent='Could not send. Please try again.'; btn.disabled=false; btn.innerHTML='<i class="ti ti-mail"></i> Send OTP'; }
     } else {
       var otp=(document.getElementById('fp-otp').value||'').replace(/\s+/g,'').trim();
@@ -7088,18 +7093,22 @@ document.addEventListener('keydown',function(e){
       if(!np||np.length<6){ err.style.color='#A32D2D'; err.textContent='Password must be at least 6 characters.'; return; }
       if(np!==np2){ err.style.color='#A32D2D'; err.textContent='Passwords do not match.'; return; }
       btn.disabled=true; btn.innerHTML='<i class="ti ti-loader"></i> Resetting...';
-      window._rgSkipRecoveryPrompt=true; /* the form sets the password itself — block the link-fallback prompt that the PASSWORD_RECOVERY event would raise */
       try{
-        var v=await SB.auth.verifyOtp({email:email, token:otp, type:'recovery'});
-        if(v.error){ err.style.color='#A32D2D'; err.textContent='Invalid or expired code. Please try again.'; btn.disabled=false; btn.innerHTML='<i class="ti ti-check"></i> Verify OTP & Reset'; return; }
-        var u=await SB.auth.updateUser({password:np});
-        if(u.error){ err.style.color='#A32D2D'; err.textContent=friendly(u.error.message); btn.disabled=false; btn.innerHTML='<i class="ti ti-check"></i> Verify OTP & Reset'; return; }
+        var v=await fetch(SUPA_URL+'/functions/v1/verify-otp-custom',{
+          method:'POST',
+          headers:{'Content-Type':'application/json','Authorization':'Bearer '+SUPA_ANON},
+          body:JSON.stringify({email:email,otp:otp,purpose:'reset',new_password:np})
+        });
+        var vd=await v.json();
+        if(!vd.ok){ err.style.color='#A32D2D'; err.textContent=vd.error||'Invalid or expired code.'; btn.disabled=false; btn.innerHTML='<i class="ti ti-check"></i> Verify & Reset Password'; return; }
         err.style.color='#166534'; err.textContent='Password reset! Signing you in...';
-        try{ await SB.rpc('log_activity',{p_event:'PASSWORD_RESET',p_detail:RG_DEVLABEL}); }catch(e){}
         window._fpOtpSent=false;
-        var who=(v.data&&v.data.user)||(u.data&&u.data.user);
-        setTimeout(function(){ if(who) rgAfterAuth(who,false); }, 1200);
-      }catch(e){ err.style.color='#A32D2D'; err.textContent='Could not reset. Please try again.'; btn.disabled=false; btn.innerHTML='<i class="ti ti-check"></i> Verify OTP & Reset'; }
+        var si=await SB.auth.signInWithPassword({email:email,password:np});
+        if(si.data&&si.data.user){
+          try{ await SB.rpc('log_activity',{p_event:'PASSWORD_RESET',p_detail:RG_DEVLABEL}); }catch(e){}
+          setTimeout(function(){ rgAfterAuth(si.data.user,true); },800);
+        }
+      }catch(e){ err.style.color='#A32D2D'; err.textContent='Could not reset. Please try again.'; btn.disabled=false; btn.innerHTML='<i class="ti ti-check"></i> Verify & Reset Password'; }
     }
   };
 
@@ -7195,7 +7204,7 @@ document.addEventListener('keydown',function(e){
     try{ var r=await SB.auth.getSession();
       if(r.data&&r.data.session&&r.data.session.user){ var _fresh=false; try{_fresh=localStorage.getItem('rg_oauth_pending')==='1'; localStorage.removeItem('rg_oauth_pending');}catch(_e){} await rgAfterAuth(r.data.session.user,_fresh); } else { if(!/[?&](code|error)=/.test(location.search)) setLoggedOut(); }
     }catch(e){ setLoggedOut(); }
-    SB.auth.onAuthStateChange(function(evt,sess){ if(evt==='SIGNED_OUT') setLoggedOut(); else if(evt==='SIGNED_IN'){ if(!currentUser && sess && sess.user){ try{localStorage.removeItem('rg_oauth_pending');}catch(e){} rgAfterAuth(sess.user, true); } } else if(evt==='PASSWORD_RECOVERY'){ if(window._fpOtpSent||window._rgSkipRecoveryPrompt) return; /* form reset flow collects the password itself; only prompt when arriving via the email link */ var np=window.prompt('Set your new password (at least 6 characters):'); if(np&&np.length>=6){ SB.auth.updateUser({password:np}).then(function(res){ if(!res.error){ try{alert('Password updated — you are now signed in.');}catch(e){} if(res.data&&res.data.user) rgAfterAuth(res.data.user,true); } else { try{alert('Could not update password: '+res.error.message);}catch(e){} } }); } } });
+    SB.auth.onAuthStateChange(function(evt,sess){ if(evt==='SIGNED_OUT') setLoggedOut(); else if(evt==='SIGNED_IN'){ if(!currentUser && sess && sess.user){ try{localStorage.removeItem('rg_oauth_pending');}catch(e){} rgAfterAuth(sess.user, true); } } else if(evt==='PASSWORD_RECOVERY'){ /* no-op — password reset is now handled entirely by the send-otp / verify-otp-custom edge functions; this event is never fired by our new flow */ } });
     setInterval(function(){ if(!currentUser)return; SB.rpc('device_allowed',{p_device:RG_DEVICE}).then(function(d){ if(!d.error && d.data===false){ try{alert('Signed out — this account was opened on another device (2-device limit).');}catch(e){} SB.auth.signOut(); setLoggedOut(); try{showAuth();}catch(e){} } }).catch(function(){}); }, 60000);
     console.log('Regulyze × Supabase integration active');
   }
