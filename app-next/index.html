@@ -7146,9 +7146,30 @@ document.addEventListener('keydown',function(e){
     }catch(e){ var el2=document.getElementById('login-err'); if(el2)el2.textContent='Google sign-in error: '+e.message; }
   };
 
+  function rgGoogleInit(){
+    if(typeof google==='undefined'||!google.accounts||!google.accounts.id){ rgGoogleInit._n=(rgGoogleInit._n||0)+1; if(rgGoogleInit._n<40) setTimeout(rgGoogleInit,400); return; }
+    try{
+      google.accounts.id.initialize({
+        client_id: (typeof GOOGLE_CLIENT_ID!=='undefined'?GOOGLE_CLIENT_ID:'476922219989-5ko0dcvcurut4qhpgn73aajd3887nch1.apps.googleusercontent.com'),
+        auto_select:false,
+        callback: async function(resp){
+          try{
+            var r=await SB.auth.signInWithIdToken({provider:'google', token:resp.credential});
+            if(r.error){ var el=document.getElementById('login-err'); if(el)el.textContent='Google sign-in failed: '+r.error.message; return; }
+            if(r.data&&r.data.user&&!currentUser){ await rgAfterAuth(r.data.user,true); }
+          }catch(e){ var el2=document.getElementById('login-err'); if(el2)el2.textContent='Google error: '+e.message; }
+        }
+      });
+      ['google-signin-btn','google-signup-btn'].forEach(function(id){
+        var el=document.getElementById(id);
+        if(el){ el.innerHTML=''; try{ google.accounts.id.renderButton(el,{theme:'outline',size:'large',width:320,text:(id.indexOf('signup')>=0?'signup_with':'continue_with')}); }catch(e){} }
+      });
+    }catch(e){ console.warn('rgGoogleInit',e); }
+  }
+
   async function rgInit(){
-    try{ window.initGoogleAuth=function(){}; window.handleGoogleCredential=function(){}; if(typeof google!=='undefined'&&google.accounts&&google.accounts.id){ try{google.accounts.id.cancel();google.accounts.id.disableAutoSelect();}catch(_e){} } }catch(e){}
-    try{ var _gbtn='<button type="button" onclick="rgGoogle()" style="width:100%;display:flex;align-items:center;justify-content:center;gap:9px;padding:10px;border:1px solid #dadce0;border-radius:9px;background:#fff;color:#3c4043;font:600 13px Manrope,system-ui,sans-serif;cursor:pointer"><img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="" style="width:18px;height:18px"> Continue with Google</button>'; ['google-signin-btn','google-signup-btn'].forEach(function(id){ var el=document.getElementById(id); if(el)el.innerHTML=_gbtn; }); }catch(e){}
+    try{ window.initGoogleAuth=function(){}; window.handleGoogleCredential=function(){}; }catch(e){}
+    rgGoogleInit();
     try{ var b=document.createElement('div'); b.textContent='TEST BUILD · secure login (Supabase) — your live app is unaffected';
       b.style.cssText='position:fixed;bottom:0;left:0;right:0;z-index:9998;background:#0E1F3C;color:#fff;font:600 12px Manrope,system-ui,sans-serif;text-align:center;padding:7px 12px';
       document.body.appendChild(b); }catch(e){}
