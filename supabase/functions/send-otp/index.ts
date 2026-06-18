@@ -113,7 +113,8 @@ Deno.serve(async (req) => {
       } catch (e) { console.error("SMS fetch failed:", e); }
     }
 
-    return j({ ok: true });
+    const smsSent = /^\d{10}$/.test(mob10);
+    return j({ ok: true, sms: smsSent });
   } catch (e) {
     return j({ ok: false, error: String((e as Error)?.message || e) });
   }

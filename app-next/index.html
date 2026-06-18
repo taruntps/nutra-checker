@@ -7083,7 +7083,7 @@ document.addEventListener('keydown',function(e){
         document.getElementById('fp-otp-section').style.display='block';
         document.getElementById('fp-email').disabled=true;
         btn.innerHTML='<i class="ti ti-check"></i> Verify & Reset Password'; btn.disabled=false;
-        err.style.color='#166834'; err.textContent='Code sent to your email and mobile (if registered). Valid for 10 minutes.';
+        err.style.color='#166534'; err.textContent=rd.sms?'Code sent to your email and mobile — enter it below (same code works for both).':'Code sent to your email. Enter it below. (Add your mobile number in profile to also receive via SMS.)';
       }catch(e){ err.style.color='#A32D2D'; err.textContent='Could not send. Please try again.'; btn.disabled=false; btn.innerHTML='<i class="ti ti-mail"></i> Send OTP'; }
     } else {
       var otp=(document.getElementById('fp-otp').value||'').replace(/\s+/g,'').trim();
