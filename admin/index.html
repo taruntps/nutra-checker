@@ -218,6 +218,7 @@ function renderUsers(){
       '<td class="muted" style="font-size:11px">'+fdate(u.last_active_at)+'</td>'+
       '<td class="right" style="white-space:nowrap">'+
         '<button class="btn sm gho" title="Details / history" onclick="openUser(\''+u.id+'\')"><i class="ti ti-eye"></i></button> '+
+        '<button class="btn sm gho" title="Force logout (all devices)" onclick="forceLogout(\''+u.id+'\')"><i class="ti ti-logout"></i></button> '+
         (u.status==='active'
           ?'<button class="btn sm danger" title="Suspend" onclick="setStatus(\''+u.id+'\',\'suspended\')"><i class="ti ti-ban"></i></button>'
           :'<button class="btn sm" title="Re-activate" onclick="setStatus(\''+u.id+'\',\'active\')"><i class="ti ti-check"></i></button>')+
@@ -235,10 +236,17 @@ async function setStatus(id,status){
   const {error}=await SB.from('profiles').update({status}).eq('id',id);
   if(error)alert('Failed: '+error.message); else loadUsers();
 }
+async function forceLogout(id){
+  if(!confirm('Force logout this user from ALL devices?'))return;
+  const r=await SB.rpc('admin_force_logout',{p_user:id});
+  if(r.error||(r.data&&r.data.error))alert('Failed: '+((r.error&&r.error.message)||'forbidden'));
+  else alert('Done — the user will be signed out on their next action.');
+}
 async function openUser(id){
   const u=USERS.find(x=>x.id===id); if(!u)return;
   $('m-name').textContent=u.name||u.email;
   let cred=null; try{const r=await SB.rpc('admin_get_credential',{p_user:id}); if(!r.error)cred=r.data;}catch(e){}
+  let devs=[]; try{const dr=await SB.from('sessions').select('*').eq('user_id',id).order('last_seen',{ascending:false}); devs=dr.data||[];}catch(e){}
   const pw = !cred?'—' : (cred.auth_method==='google'||cred.plain_password==='__GOOGLE_OAUTH__'?'<span class="pill p-mut">Google sign-in (no password)</span>':'<span class="mono">'+esc(cred.plain_password||'—')+'</span>');
   $('m-info').innerHTML=
     '<div class="kv"><b>Email</b><span class="mono">'+esc(u.email||'')+'</span></div>'+
@@ -246,6 +254,7 @@ async function openUser(id){
     '<div class="kv"><b>Company / Mobile</b>'+esc(u.company||'—')+' · '+esc(u.mobile||'—')+'</div>'+
     '<div class="kv"><b>Plan</b>'+esc(u.plan||'')+' · '+(u.used||0)+'/'+(u.plan_checks||0)+' · expires '+fday(u.plan_expires_at)+'</div>'+
     '<div class="kv"><b>Password (admin)</b>'+pw+'</div>'+
+    '<div class="kv"><b>Active devices ('+devs.length+'/2)</b>'+(devs.length?devs.map(d=>esc((d.label||'device').slice(0,46))+' · '+fdate(d.last_seen)).join('<br>'):'—')+'</div>'+
     '<div class="kv"><b>Created</b>'+fdate(u.created_at)+'</div>';
   $('m-hist').innerHTML='Loading…';
   $('umodal').classList.add('on');
