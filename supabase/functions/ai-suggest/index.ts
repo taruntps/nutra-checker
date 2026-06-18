@@ -15,9 +15,8 @@ const cors = {
 const j = (b: unknown, s = 200) =>
   new Response(JSON.stringify(b), { status: s, headers: { ...cors, "Content-Type": "application/json" } });
 
-// Default to the most capable model. To reduce cost, change to
-// "claude-haiku-4-5" (cheapest) or "claude-sonnet-4-6" (balanced).
-const MODEL = "claude-opus-4-8";
+// Balanced cost/quality. "claude-haiku-4-5" is cheaper; "claude-opus-4-8" is the most capable.
+const MODEL = "claude-sonnet-4-6";
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { status: 204, headers: cors });

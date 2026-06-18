@@ -17,8 +17,8 @@ const cors = {
 const j = (b: unknown, s = 200) =>
   new Response(JSON.stringify(b), { status: s, headers: { ...cors, "Content-Type": "application/json" } });
 
-// Vision-capable model. To reduce cost, change to "claude-sonnet-4-6".
-const MODEL = "claude-opus-4-8";
+// Vision-capable, balanced cost/quality. "claude-opus-4-8" is the most capable.
+const MODEL = "claude-sonnet-4-6";
 
 const PROMPT =
   "You are reading a nutraceutical / health-supplement product label. Extract the ingredient " +
