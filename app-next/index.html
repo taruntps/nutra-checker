@@ -761,7 +761,7 @@ select:focus{outline:none;border-color:var(--brand-500)}
 
     <!-- SIGN IN -->
     <div id="signin-form">
-      <div class="auth-fld"><label>Email</label><input type="email" id="auth-email" placeholder="your@email.com" autocomplete="email"></div>
+      <div class="auth-fld"><label>Email or username</label><input type="text" id="auth-email" placeholder="Email, or staff username (e.g. anjali)" autocomplete="username"></div>
       <div class="auth-fld"><label>Password</label><input type="password" id="auth-pass" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;" onkeydown="if(event.key==='Enter')doLogin()" autocomplete="current-password"></div>
       <button class="auth-btn" onclick="doLogin()" id="login-btn"><i class="ti ti-login"></i> Sign In</button>
       <div class="auth-err" id="login-err"></div>
@@ -6994,7 +6994,8 @@ document.addEventListener('keydown',function(e){
   };
 
   window.doLogin=async function(){
-    var email=(document.getElementById('auth-email').value||'').trim().toLowerCase();
+    var _raw=(document.getElementById('auth-email').value||'').trim().toLowerCase();
+    var email = _raw.indexOf('@')>=0 ? _raw : (_raw ? _raw+'@tpsxpert.com' : _raw);
     var pass=(document.getElementById('auth-pass').value||'').trim();
     var err=document.getElementById('login-err'), btn=document.getElementById('login-btn'); err.textContent='';
     if(!email||!pass){ err.textContent='Please enter email and password.'; return; }
