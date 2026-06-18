@@ -6957,6 +6957,7 @@ document.addEventListener('keydown',function(e){
   var SB = window.SB = window.supabase.createClient(SUPA_URL, SUPA_ANON, {auth:{persistSession:true, autoRefreshToken:true}});
   var RG_DEVICE=(function(){try{var d=localStorage.getItem('rg_device'); if(!d){d='dev_'+Math.random().toString(36).slice(2)+Date.now().toString(36); localStorage.setItem('rg_device',d);} return d;}catch(e){return 'dev_x';}})();
   var RG_DEVLABEL=((navigator.platform||'')+' · '+(navigator.userAgent||'').slice(0,70));
+  try{ window.initGoogleAuth=function(){}; window.handleGoogleCredential=function(){}; }catch(e){}
 
   function friendly(m){ m=(m||'').toLowerCase();
     if(m.indexOf('invalid login')>=0) return 'Incorrect email or password.';
