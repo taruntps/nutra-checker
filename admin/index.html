@@ -290,7 +290,7 @@ async function loadActivity(){
 }
 function renderActivity(){
   const q=($('a-search').value||'').toLowerCase();
-  const rows=ACTS.filter(a=>!q||[(a.email||''),(a.event||''),(a.detail||'')].join(' ').toLowerCase().includes(q));
+  const rows=ACTS.filter(a=>!q||[(a.email||''),(a.name||''),(a.event||''),(a.detail||'')].join(' ').toLowerCase().includes(q));
   $('a-count').textContent=rows.length+' events';
   $('a-body').innerHTML=rows.map(a=>'<tr>'+
     '<td class="muted" style="font-size:11px;white-space:nowrap">'+fdate(a.created_at)+'</td>'+
