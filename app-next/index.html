@@ -6995,11 +6995,15 @@ document.addEventListener('keydown',function(e){
 
   window.doLogin=async function(){
     var _raw=(document.getElementById('auth-email').value||'').trim().toLowerCase();
-    var email = _raw.indexOf('@')>=0 ? _raw : (_raw ? _raw+'@tpsxpert.com' : _raw);
     var pass=(document.getElementById('auth-pass').value||'').trim();
     var err=document.getElementById('login-err'), btn=document.getElementById('login-btn'); err.textContent='';
-    if(!email||!pass){ err.textContent='Please enter email and password.'; return; }
+    if(!_raw||!pass){ err.textContent='Please enter your email/username and password.'; return; }
     btn.disabled=true; btn.innerHTML='<i class="ti ti-loader"></i> Verifying...';
+    var email=_raw;
+    if(_raw.indexOf('@')<0){
+      try{ var rr=await SB.rpc('resolve_login',{p_login:_raw}); if(!rr.error && rr.data) email=rr.data; }catch(e){}
+      if(!email || email.indexOf('@')<0){ err.textContent='Unknown username — please use your email.'; btn.disabled=false; btn.innerHTML='<i class="ti ti-login"></i> Sign In'; return; }
+    }
     try{ var r=await SB.auth.signInWithPassword({email:email,password:pass});
       if(r.error){ err.textContent=friendly(r.error.message); }
       else if(r.data&&r.data.user){ await rgAfterAuth(r.data.user); }
