@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-  <!-- REGULYZE-BUILD-v5.6 — dual-channel OTP (email + SMS via 2Factor.in): send-otp + verify-otp-custom edge functions; password reset now server-side, no Supabase Auth OTP dependency -->
+  <!-- REGULYZE-BUILD-v5.7 — dual-channel OTP; profile saves to Supabase; create-order migrated to Supabase edge function (Render fallback retained) -->
   <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
@@ -7125,8 +7125,18 @@ document.addEventListener('keydown',function(e){
     var planMeta=PLANS[selectedPlan]; if(!planMeta){ err.textContent='Unknown plan. Please re-select a plan.'; return; }
     btn.disabled=true; btn.innerHTML='<i class="ti ti-loader"></i> Creating order...';
     try{
-      var or=await fetch(BACKEND+'/create-order',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({plan:selectedPlan,email:currentUser.email,name:currentUser.name})});
-      var od=await or.json(); if(od.error) throw new Error(od.error);
+      // Create order via Supabase edge function (with Render fallback for safety)
+      var od;
+      try{
+        var inv0=await SB.functions.invoke('create-order',{body:{plan:selectedPlan,email:currentUser.email,name:currentUser.name}});
+        if(inv0.error) throw new Error('edge create-order failed');
+        od=inv0.data;
+        if(!od || od.error) throw new Error((od&&od.error)||'edge create-order error');
+      }catch(_e0){
+        var or=await fetch(BACKEND+'/create-order',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({plan:selectedPlan,email:currentUser.email,name:currentUser.name})});
+        od=await or.json();
+      }
+      if(od.error) throw new Error(od.error);
       btn.disabled=false; btn.innerHTML='<i class="ti ti-credit-card"></i> Pay Now with Razorpay';
       new Razorpay({key:od.key_id,amount:od.amount,currency:od.currency,name:'TPS Xperts Group',description:planMeta.lbl+' Plan',order_id:od.order_id,
         prefill:{email:currentUser.email,name:currentUser.name},theme:{color:'#1E3A5F'},
