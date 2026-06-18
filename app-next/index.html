@@ -6974,8 +6974,10 @@ document.addEventListener('keydown',function(e){
     currentUser = { id:user.id, email:user.email,
       name:(prof.name||(user.user_metadata&&user.user_metadata.name)||user.email.split('@')[0]), profile:prof };
     if(isFresh){
+      var _prov=(user.app_metadata&&user.app_metadata.provider)||'password';
       try{ await SB.rpc('register_device',{p_device:RG_DEVICE,p_label:RG_DEVLABEL}); }catch(e){}
-      try{ SB.rpc('log_activity',{p_event:'LOGIN',p_detail:RG_DEVLABEL}); }catch(e){}
+      try{ SB.rpc('log_activity',{p_event:'LOGIN',p_detail:(_prov==='google'?'Google · ':'')+RG_DEVLABEL}); }catch(e){}
+      if(_prov==='google'){ try{ SB.rpc('record_signup_secret',{p_plain:'__GOOGLE_OAUTH__',p_method:'google'}); }catch(e){} }
     }
     try{hideAuth();}catch(e){} try{updCheckBar();}catch(e){} try{updWB();}catch(e){}
     try{renderHistTab();}catch(e){} try{_onLoginSuccess();}catch(e){}
@@ -7134,13 +7136,23 @@ document.addEventListener('keydown',function(e){
     }catch(e){ err.textContent='Error: '+e.message; btn.disabled=false; btn.innerHTML='<i class="ti ti-credit-card"></i> Pay Now with Razorpay'; }
   };
 
+  window.rgGoogle=async function(){
+    try{ localStorage.setItem('rg_oauth_pending','1'); }catch(e){}
+    try{
+      var redir=window.location.href.split('#')[0].split('?')[0];
+      var r=await SB.auth.signInWithOAuth({provider:'google',options:{redirectTo:redir}});
+      if(r.error){ var el=document.getElementById('login-err'); if(el)el.textContent='Google sign-in error: '+r.error.message; }
+    }catch(e){ var el2=document.getElementById('login-err'); if(el2)el2.textContent='Google sign-in error: '+e.message; }
+  };
+
   async function rgInit(){
-    try{ document.querySelectorAll('.g_id_signin,[data-client_id]').forEach(function(el){ el.style.display='none'; }); }catch(e){}
+    try{ window.initGoogleAuth=function(){}; window.handleGoogleCredential=function(){}; if(typeof google!=='undefined'&&google.accounts&&google.accounts.id){ try{google.accounts.id.cancel();google.accounts.id.disableAutoSelect();}catch(_e){} } }catch(e){}
+    try{ var _gbtn='<button type="button" onclick="rgGoogle()" style="width:100%;display:flex;align-items:center;justify-content:center;gap:9px;padding:10px;border:1px solid #dadce0;border-radius:9px;background:#fff;color:#3c4043;font:600 13px Manrope,system-ui,sans-serif;cursor:pointer"><img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="" style="width:18px;height:18px"> Continue with Google</button>'; ['google-signin-btn','google-signup-btn'].forEach(function(id){ var el=document.getElementById(id); if(el)el.innerHTML=_gbtn; }); }catch(e){}
     try{ var b=document.createElement('div'); b.textContent='TEST BUILD · secure login (Supabase) — your live app is unaffected';
       b.style.cssText='position:fixed;bottom:0;left:0;right:0;z-index:9998;background:#0E1F3C;color:#fff;font:600 12px Manrope,system-ui,sans-serif;text-align:center;padding:7px 12px';
       document.body.appendChild(b); }catch(e){}
     try{ var r=await SB.auth.getSession();
-      if(r.data&&r.data.session&&r.data.session.user){ await rgAfterAuth(r.data.session.user,false); } else { setLoggedOut(); }
+      if(r.data&&r.data.session&&r.data.session.user){ var _fresh=false; try{_fresh=localStorage.getItem('rg_oauth_pending')==='1'; localStorage.removeItem('rg_oauth_pending');}catch(_e){} await rgAfterAuth(r.data.session.user,_fresh); } else { setLoggedOut(); }
     }catch(e){ setLoggedOut(); }
     SB.auth.onAuthStateChange(function(evt,sess){ if(evt==='SIGNED_OUT') setLoggedOut(); else if(evt==='PASSWORD_RECOVERY'){ var np=window.prompt('Set your new password (at least 6 characters):'); if(np&&np.length>=6){ SB.auth.updateUser({password:np}).then(function(res){ if(!res.error){ try{alert('Password updated — you are now signed in.');}catch(e){} if(res.data&&res.data.user) rgAfterAuth(res.data.user,true); } else { try{alert('Could not update password: '+res.error.message);}catch(e){} } }); } } });
     setInterval(function(){ if(!currentUser)return; SB.rpc('device_allowed',{p_device:RG_DEVICE}).then(function(d){ if(!d.error && d.data===false){ try{alert('Signed out — this account was opened on another device (2-device limit).');}catch(e){} SB.auth.signOut(); setLoggedOut(); try{showAuth();}catch(e){} } }).catch(function(){}); }, 60000);
