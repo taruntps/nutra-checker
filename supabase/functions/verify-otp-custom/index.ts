@@ -1,9 +1,8 @@
 // Supabase Edge Function: verify-otp-custom
 // Validates the OTP from otp_sessions and (for reset) updates the user's password.
 //
-// SECURITY: per-session attempt counter — after MAX_ATTEMPTS wrong tries the
-// session is burned, defeating brute force of the 6-digit code.
-// Requires otp_sessions.attempts column (see migrations).
+// SECURITY: attempt counter is incremented atomically via otp_increment_attempt() RPC
+// (a single UPDATE ... RETURNING) so concurrent requests cannot race past MAX_ATTEMPTS.
 
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
@@ -39,26 +38,45 @@ Deno.serve(async (req) => {
     const inputHash = await sha256(otp.toString().replace(/\s+/g, "").trim());
     const admin = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
 
+    // 1. Find the live session
     const { data: session } = await admin.from("otp_sessions")
-      .select("id, otp_hash, attempts")
+      .select("id, otp_hash")
       .eq("email", norm).eq("purpose", purpose).eq("used", false)
       .gt("expires_at", new Date().toISOString())
       .order("created_at", { ascending: false }).limit(1).maybeSingle();
 
     if (!session) return j({ ok: false, error: "Invalid or expired code. Please request a new one." }, 400);
 
-    const attempts = (session.attempts ?? 0) + 1;
-    if (attempts > MAX_ATTEMPTS) {
+    // 2. Atomically claim one attempt slot.
+    //    Returns the new attempts count, or -1 if MAX_ATTEMPTS already reached.
+    //    Because it's a single UPDATE, two concurrent requests cannot both read
+    //    the same counter value — PostgreSQL serialises the increment.
+    const { data: newAttempts, error: slotErr } = await admin.rpc("otp_increment_attempt", {
+      p_id: session.id,
+      p_max: MAX_ATTEMPTS,
+    });
+
+    if (slotErr) {
+      console.error("otp_increment_attempt error", slotErr);
+      return j({ ok: false, error: "Server error. Please try again." }, 500);
+    }
+
+    if ((newAttempts as number) < 0) {
+      // Already at max before this request — burn the session for safety
       await admin.from("otp_sessions").update({ used: true }).eq("id", session.id);
       return j({ ok: false, error: "Too many incorrect attempts. Please request a new code." }, 429);
     }
 
+    // 3. Check the OTP
     if (session.otp_hash !== inputHash) {
-      await admin.from("otp_sessions").update({ attempts }).eq("id", session.id);
-      if (MAX_ATTEMPTS - attempts <= 0) await admin.from("otp_sessions").update({ used: true }).eq("id", session.id);
+      if ((newAttempts as number) >= MAX_ATTEMPTS) {
+        await admin.from("otp_sessions").update({ used: true }).eq("id", session.id);
+        return j({ ok: false, error: "Too many incorrect attempts. Please request a new code." }, 429);
+      }
       return j({ ok: false, error: "Incorrect code. Please try again." }, 400);
     }
 
+    // 4. Correct OTP — burn session
     await admin.from("otp_sessions").update({ used: true }).eq("id", session.id);
 
     if (purpose === "reset") {
