@@ -40,7 +40,7 @@ Deno.serve(async (req) => {
     const password = (b.password || "").trim();
     const username = (b.username || "").trim().toLowerCase() || null;
     if (!email || !password) return j({ ok: false, error: "email and password required" });
-    if (password.length < 6) return j({ ok: false, error: "password must be at least 6 characters" });
+    if (password.length < 8) return j({ ok: false, error: "password must be at least 8 characters" });
     const plan = (b.plan && PLAN_CHECKS[b.plan] != null) ? b.plan : "free";
 
     // 1) username must be free (pre-check so we fail before creating anything)
@@ -70,8 +70,10 @@ Deno.serve(async (req) => {
       return j({ ok: false, error: friendly });
     }
 
-    // 4) store the visible password for the admin
-    try { await admin.rpc("admin_set_credential", { p_user: uid, p_plain: password, p_method: "password" }); } catch (_e) { /* noop */ }
+    // 4) record the auth method WITHOUT storing the plaintext password.
+    //    The admin already knows the password they just typed; we never persist
+    //    it in cleartext. A marker lets the admin panel show "Password set".
+    try { await admin.rpc("admin_set_credential", { p_user: uid, p_plain: "__PASSWORD_SET__", p_method: "password" }); } catch (_e) { /* noop */ }
 
     return j({ ok: true, id: uid, email, plan, username });
   } catch (e) {

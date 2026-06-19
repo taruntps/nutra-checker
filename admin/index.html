@@ -264,7 +264,10 @@ async function openUser(id){
   $('m-name').textContent=u.name||u.email;
   let cred=null; try{const r=await SB.rpc('admin_get_credential',{p_user:id}); if(!r.error)cred=r.data;}catch(e){}
   let devs=[]; try{const dr=await SB.from('sessions').select('*').eq('user_id',id).order('last_seen',{ascending:false}); devs=dr.data||[];}catch(e){}
-  const pw = !cred?'—' : (cred.auth_method==='google'||cred.plain_password==='__GOOGLE_OAUTH__'?'<span class="pill p-mut">Google sign-in (no password)</span>':'<span class="mono">'+esc(cred.plain_password||'—')+'</span>');
+  const pw = !cred ? '—'
+    : (cred.auth_method==='google'||cred.plain_password==='__GOOGLE_OAUTH__'
+        ? '<span class="pill p-mut">Google sign-in (no password)</span>'
+        : '<span class="pill p-mut">Password set (hidden)</span>');
   $('m-info').innerHTML=
     '<div class="kv"><b>Email</b><span class="mono">'+esc(u.email||'')+'</span></div>'+
     '<div class="kv"><b>Username</b>'+esc(u.username||'—')+'</div>'+
@@ -341,7 +344,7 @@ async function submitAddUser(){
   const err=$('au-err'); err.textContent='';
   const email=($('au-email').value||'').trim().toLowerCase(), pass=($('au-pass').value||'').trim();
   if(!email||!pass){ err.style.color='#C0392B'; err.textContent='Email and password are required.'; return; }
-  if(pass.length<6){ err.style.color='#C0392B'; err.textContent='Password must be at least 6 characters.'; return; }
+  if(pass.length<8){ err.style.color='#C0392B'; err.textContent='Password must be at least 8 characters.'; return; }
   err.style.color='#566'; err.textContent='Creating…';
   const body={email:email,password:pass,name:($('au-name').value||'').trim(),username:($('au-username').value||'').trim().toLowerCase(),plan:$('au-plan').value,mobile:($('au-mobile').value||'').trim(),company:($('au-company').value||'').trim()};
   try{
