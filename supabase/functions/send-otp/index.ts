@@ -1,7 +1,9 @@
 // Supabase Edge Function: send-otp
-// Generates a 6-digit OTP, stores a SHA-256 hash, and sends the same code
-// to both email (Resend) and SMS (2Factor.in).
+// Generates a crypto-secure 6-digit OTP, stores a SHA-256 hash, and sends the
+// same code to both email (Resend) and SMS (2Factor.in).
+//
 // Required secrets: RESEND_API_KEY, TWOFACTOR_API_KEY
+// SECURITY: rate limited (max 3 requests per email per 10 min); crypto OTP.
 
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
@@ -13,9 +15,17 @@ const cors = {
 const j = (b: unknown, s = 200) =>
   new Response(JSON.stringify(b), { status: s, headers: { ...cors, "Content-Type": "application/json" } });
 
+const MAX_PER_WINDOW = 3;
+const WINDOW_MS = 10 * 60 * 1000;
+
+function genOtp(): string {
+  const arr = new Uint32Array(1);
+  crypto.getRandomValues(arr);
+  return (arr[0] % 1_000_000).toString().padStart(6, "0");
+}
 async function sha256(text: string): Promise<string> {
   const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(text));
-  return [...new Uint8Array(buf)].map(b => b.toString(16).padStart(2, "0")).join("");
+  return [...new Uint8Array(buf)].map((b) => b.toString(16).padStart(2, "0")).join("");
 }
 
 function emailHtml(otp: string, purpose: string, name: string): string {
@@ -53,37 +63,42 @@ function emailHtml(otp: string, purpose: string, name: string): string {
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { status: 204, headers: cors });
-  if (req.method !== "POST") return j({ ok: false, error: "method not allowed" });
+  if (req.method !== "POST") return j({ ok: false, error: "method not allowed" }, 405);
 
   try {
     const { email, purpose } = await req.json();
-    if (!email || !email.includes("@")) return j({ ok: false, error: "valid email required" });
-    if (purpose !== "reset" && purpose !== "signup") return j({ ok: false, error: "purpose must be reset or signup" });
+    if (!email || !email.includes("@")) return j({ ok: false, error: "valid email required" }, 400);
+    if (purpose !== "reset" && purpose !== "signup") return j({ ok: false, error: "purpose must be reset or signup" }, 400);
 
     const admin = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
     const norm = email.toLowerCase().trim();
 
-    // Get user profile for name + mobile
+    // Rate limit: at most MAX_PER_WINDOW sessions per email in the rolling window.
+    const since = new Date(Date.now() - WINDOW_MS).toISOString();
+    const { count } = await admin.from("otp_sessions")
+      .select("id", { count: "exact", head: true })
+      .eq("email", norm).gte("created_at", since);
+    if ((count ?? 0) >= MAX_PER_WINDOW) {
+      return j({ ok: false, error: "Too many requests. Please wait a few minutes and try again." }, 429);
+    }
+
+    // Look up profile for name + mobile (do NOT reveal whether it exists).
     const { data: prof } = await admin.from("profiles").select("name,mobile").eq("email", norm).maybeSingle();
     const name = prof?.name || "";
     const rawMobile = prof?.mobile || "";
 
-    // Generate 6-digit OTP
-    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    const otp = genOtp();
     const otpHash = await sha256(otp);
 
-    // Invalidate any prior unused sessions for same email+purpose
     await admin.from("otp_sessions").update({ used: true })
       .eq("email", norm).eq("purpose", purpose).eq("used", false);
 
-    // Store new session
     const { error: insErr } = await admin.from("otp_sessions").insert({
       email: norm, otp_hash: otpHash, purpose,
-      expires_at: new Date(Date.now() + 10 * 60 * 1000).toISOString(),
+      expires_at: new Date(Date.now() + WINDOW_MS).toISOString(),
     });
-    if (insErr) return j({ ok: false, error: "Failed to create OTP session" });
+    if (insErr) return j({ ok: false, error: "Failed to create OTP session" }, 500);
 
-    // Send email via Resend
     const RESEND_KEY = Deno.env.get("RESEND_API_KEY");
     if (RESEND_KEY) {
       const res = await fetch("https://api.resend.com/emails", {
@@ -99,7 +114,6 @@ Deno.serve(async (req) => {
       if (!res.ok) console.error("Resend error:", await res.text());
     }
 
-    // Send SMS via 2Factor.in (custom OTP — sends our generated code)
     const digits = rawMobile.replace(/\D/g, "");
     let mob10 = digits;
     if (mob10.startsWith("91") && mob10.length === 12) mob10 = mob10.slice(2);
@@ -113,9 +127,8 @@ Deno.serve(async (req) => {
       } catch (e) { console.error("SMS fetch failed:", e); }
     }
 
-    const smsSent = /^\d{10}$/.test(mob10);
-    return j({ ok: true, sms: smsSent });
+    return j({ ok: true, sms: /^\d{10}$/.test(mob10) });
   } catch (e) {
-    return j({ ok: false, error: String((e as Error)?.message || e) });
+    return j({ ok: false, error: String((e as Error)?.message || e) }, 500);
   }
 });

@@ -1,13 +1,14 @@
 // Supabase Edge Function: extract-ingredients
 // Reads a product label (image or PDF) and extracts the formulation as structured
-// text using Claude's vision. Replaces the Render /extract-ingredients endpoint.
+// text using Claude's vision.
 //
 // Request  (POST JSON): { fileData: base64, mediaType: string, isPDF: bool }
-// Response (JSON):      { text, rawText, passCount, warning?, error? }
-//   text     — one ingredient per line as "Name   Strength Unit" (2+ spaces before strength)
-//   rawText  — the same, returned for the "View raw OCR text" panel
+// Response (JSON):      { text, rawText, passCount, error? }
 //
 // Required secret: ANTHROPIC_API_KEY
+// SECURITY: requires a logged-in user + caps payload size.
+
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const cors = {
   "Access-Control-Allow-Origin": "*",
@@ -17,8 +18,19 @@ const cors = {
 const j = (b: unknown, s = 200) =>
   new Response(JSON.stringify(b), { status: s, headers: { ...cors, "Content-Type": "application/json" } });
 
-// Vision-capable, balanced cost/quality. "claude-opus-4-8" is the most capable.
+function adminClient() {
+  return createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!, { auth: { persistSession: false } });
+}
+async function getUser(req: Request, admin: ReturnType<typeof adminClient>) {
+  const jwt = (req.headers.get("Authorization") || "").replace(/^Bearer\s+/i, "").trim();
+  if (!jwt) return null;
+  try { const { data, error } = await admin.auth.getUser(jwt); return error ? null : (data?.user ?? null); }
+  catch { return null; }
+}
+
 const MODEL = "claude-sonnet-4-6";
+const MAX_BASE64 = 8 * 1024 * 1024; // ~6 MB decoded
+const ALLOWED_IMAGE = ["image/jpeg", "image/png", "image/gif", "image/webp"];
 
 const PROMPT =
   "You are reading a nutraceutical / health-supplement product label. Extract the ingredient " +
@@ -34,26 +46,30 @@ const PROMPT =
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { status: 204, headers: cors });
-  if (req.method !== "POST") return j({ error: "method not allowed" });
+  if (req.method !== "POST") return j({ error: "method not allowed" }, 405);
 
   try {
+    const admin = adminClient();
+    const user = await getUser(req, admin);
+    if (!user) return j({ error: "unauthorized" }, 401);
+
     const KEY = Deno.env.get("ANTHROPIC_API_KEY");
     if (!KEY) return j({ error: "anthropic key not configured" }, 500);
 
     const { fileData, mediaType, isPDF } = await req.json();
-    if (!fileData) return j({ error: "No file data received." });
+    if (!fileData || typeof fileData !== "string") return j({ error: "No file data received." }, 400);
+    if (fileData.length > MAX_BASE64) return j({ error: "File too large. Please upload a smaller image or PDF." }, 413);
+
+    const mt = String(mediaType || "image/jpeg");
+    if (!isPDF && !ALLOWED_IMAGE.includes(mt)) return j({ error: "Unsupported image type." }, 415);
 
     const source = isPDF
       ? { type: "document", source: { type: "base64", media_type: "application/pdf", data: fileData } }
-      : { type: "image", source: { type: "base64", media_type: mediaType || "image/jpeg", data: fileData } };
+      : { type: "image", source: { type: "base64", media_type: mt, data: fileData } };
 
     const resp = await fetch("https://api.anthropic.com/v1/messages", {
       method: "POST",
-      headers: {
-        "x-api-key": KEY,
-        "anthropic-version": "2023-06-01",
-        "content-type": "application/json",
-      },
+      headers: { "x-api-key": KEY, "anthropic-version": "2023-06-01", "content-type": "application/json" },
       body: JSON.stringify({
         model: MODEL,
         max_tokens: 2048,
@@ -62,15 +78,13 @@ Deno.serve(async (req) => {
     });
 
     if (!resp.ok) {
-      const errTxt = await resp.text();
-      console.error("anthropic error:", resp.status, errTxt);
+      console.error("anthropic error:", resp.status, await resp.text());
       return j({ error: "Could not analyse the label. Please try a clearer image." }, 502);
     }
 
     const data = await resp.json();
     const textBlock = (data.content || []).find((b: { type: string }) => b.type === "text");
     const text = (textBlock?.text || "").trim();
-
     if (!text) return j({ error: "Could not extract ingredients. Try a clearer photo or higher resolution PDF." });
 
     return j({ text, rawText: text, passCount: 1 });

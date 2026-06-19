@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-  <!-- REGULYZE-BUILD-v5.8 — AI assist (ai-suggest + extract-ingredients) migrated to Supabase edge functions via Claude API; Render fully retired (fallback retained) -->
+  <!-- REGULYZE-BUILD-v5.9 — Security hardening: edge-function auth on ai-suggest/extract-ingredients/create-order, payment replay guard, OTP brute-force lockout + rate limit, crypto OTP, history XSS fix, 8-char password minimum -->
   <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
@@ -5329,9 +5329,9 @@ async function renderHistTab(){
   if(!hist.length){c.innerHTML='<div style="text-align:center;padding:24px;color:#64748b"><i class="ti ti-history" style="font-size:28px;display:block;margin-bottom:7px;color:#C2D9F0"></i><p style="font-size:11px">No checks yet.</p></div>';return;}
   let h=`<table class="hist-tbl"><thead><tr><th>Date/Time</th><th>Formulation</th><th>Category</th><th>Action</th></tr></thead><tbody>`;
   hist.forEach((item,i)=>{
-    h+=`<tr><td style="font-size:9px;color:#64748b;white-space:nowrap">${item.date}</td>
-      <td style="font-size:10px;font-family:monospace;white-space:pre-wrap">${(item.formula||'').replace(/</g,'&lt;')}</td>
-      <td style="font-size:10px;color:#1E3A5F">${item.sum||''}</td>
+    h+=`<tr><td style="font-size:9px;color:#64748b;white-space:nowrap">${escHtml(item.date)}</td>
+      <td style="font-size:10px;font-family:monospace;white-space:pre-wrap">${escHtml(item.formula)}</td>
+      <td style="font-size:10px;color:#1E3A5F">${escHtml(item.sum)}</td>
       <td><button onclick="reloadHist(${i})" style="font-size:9px;padding:3px 6px;background:#E0ECF8;color:#1E3A5F;border:1px solid #C2D9F0;border-radius:5px;cursor:pointer;font-family:inherit">Re-check</button></td>
     </tr>`;
   });
@@ -6220,10 +6220,7 @@ const DEMO = (function(){
 (function init(){
   loadDB();
 
-  // Keep Render backend alive — ping every 10 minutes
-  setInterval(() => {
-    fetch(BACKEND + '/').catch(() => {});
-  }, 10 * 60 * 1000);
+  // (Render backend retired — no keep-alive ping needed.)
 
   // Restore session
   try{
@@ -7041,7 +7038,7 @@ document.addEventListener('keydown',function(e){
     var err=document.getElementById('signup-err'), btn=document.getElementById('signup-btn'); err.textContent='';
     if(!name||!email||!pass||!pass2){ err.textContent='Name, email and password are required.'; return; }
     if(!mobile){ err.textContent='Please enter your mobile number.'; return; }
-    if(pass.length<6){ err.textContent='Password must be at least 6 characters.'; return; }
+    if(pass.length<8){ err.textContent='Password must be at least 8 characters.'; return; }
     if(pass!==pass2){ err.textContent='Passwords do not match.'; return; }
     btn.disabled=true; btn.innerHTML='<i class="ti ti-loader"></i> Creating account...';
     try{ var r=await SB.auth.signUp({email:email,password:pass,options:{data:{name:name,company:company,mobile:mobile}}});
@@ -7094,7 +7091,7 @@ document.addEventListener('keydown',function(e){
       var np=(document.getElementById('fp-newpass').value||'').trim();
       var np2=(document.getElementById('fp-newpass2').value||'').trim();
       if(!otp){ err.style.color='#A32D2D'; err.textContent='Please enter the code.'; return; }
-      if(!np||np.length<6){ err.style.color='#A32D2D'; err.textContent='Password must be at least 6 characters.'; return; }
+      if(!np||np.length<8){ err.style.color='#A32D2D'; err.textContent='Password must be at least 8 characters.'; return; }
       if(np!==np2){ err.style.color='#A32D2D'; err.textContent='Passwords do not match.'; return; }
       btn.disabled=true; btn.innerHTML='<i class="ti ti-loader"></i> Resetting...';
       try{
