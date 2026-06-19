@@ -29,7 +29,7 @@ async function getUser(req: Request, admin: ReturnType<typeof adminClient>) {
 }
 
 const MODEL = "claude-sonnet-4-6";
-const MAX_BASE64 = 8 * 1024 * 1024; // ~6 MB decoded
+const MAX_BASE64 = 30 * 1024 * 1024; // ~22 MB decoded — stays under Anthropic's 32 MB request limit
 const ALLOWED_IMAGE = ["image/jpeg", "image/png", "image/gif", "image/webp"];
 
 const PROMPT =
