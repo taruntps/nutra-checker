@@ -243,14 +243,13 @@ function renderUsers(){
   }).join('')||'<tr><td colspan="9" class="center muted">No users</td></tr>';
 }
 async function setPlan(id,plan){
-  const checks=PLANS[plan]||5;
-  const upd={plan,plan_checks:checks,used:0};
-  upd.plan_expires_at = VALID_DAYS[plan] ? new Date(Date.now()+VALID_DAYS[plan]*864e5).toISOString() : null;
-  const {error}=await SB.from('profiles').update(upd).eq('id',id);
+  // Privileged columns are locked from the authenticated role — go through the
+  // is_admin()-guarded SECURITY DEFINER RPC instead of a direct table update.
+  const {error}=await SB.rpc('admin_set_plan',{p_user:id,p_plan:plan});
   if(error)alert('Failed: '+error.message); else loadUsers();
 }
 async function setStatus(id,status){
-  const {error}=await SB.from('profiles').update({status}).eq('id',id);
+  const {error}=await SB.rpc('admin_set_status',{p_user:id,p_status:status});
   if(error)alert('Failed: '+error.message); else loadUsers();
 }
 async function forceLogout(id){

@@ -75,16 +75,10 @@ Deno.serve(async (req) => {
       return j({ error: "invalid payment signature" }, 400);
     }
 
-    // 2. Replay guard — claim this payment_id atomically (PRIMARY KEY).
-    const { error: claimErr } = await admin.from("processed_payments").insert({
-      payment_id: razorpay_payment_id, order_id: razorpay_order_id, user_id: user.id, plan,
-    });
-    if (claimErr) {
-      console.error("replay/claim rejected", claimErr.code, claimErr.message);
-      return j({ error: "This payment has already been processed." }, 409);
-    }
-
-    // 3. Confirm amount + capture with Razorpay (prevents plan-swap & unpaid).
+    // 2. Confirm amount + capture with Razorpay BEFORE claiming the payment.
+    //    Validating first means a transient Razorpay error or a wrong-plan param
+    //    never burns the payment_id, so the user can always retry. (If the order
+    //    object itself carries the plan we trust that over the client's claim.)
     const orderResp = await fetch(`https://api.razorpay.com/v1/orders/${razorpay_order_id}`, {
       headers: { Authorization: "Basic " + btoa(`${KEY_ID}:${KEY_SECRET}`) },
     });
@@ -93,10 +87,14 @@ Deno.serve(async (req) => {
       return j({ error: "could not verify order with Razorpay" }, 502);
     }
     const order = await orderResp.json();
-    const expectedAmount = PRICE_PAISE[plan];
+
+    // Prefer the plan recorded on the order by create-order; fall back to the
+    // client-supplied plan only if the note is absent.
+    const effectivePlan = (order?.notes?.plan as string) || plan;
+    const expectedAmount = PRICE_PAISE[effectivePlan];
     if (!expectedAmount) return j({ error: "unknown plan" }, 400);
     if (order.amount !== expectedAmount) {
-      console.error("amount mismatch", { orderAmount: order.amount, expectedAmount, plan });
+      console.error("amount mismatch", { orderAmount: order.amount, expectedAmount, plan: effectivePlan });
       return j({ error: "payment amount does not match plan price" }, 400);
     }
     if (order.status !== "paid") {
@@ -104,19 +102,37 @@ Deno.serve(async (req) => {
       return j({ error: "payment not captured" }, 400);
     }
 
+    // 3. Replay guard — claim this payment_id only after it is fully validated.
+    //    A duplicate (genuine replay) hits the PRIMARY KEY and is rejected.
+    const { error: claimErr } = await admin.from("processed_payments").insert({
+      payment_id: razorpay_payment_id, order_id: razorpay_order_id, user_id: user.id, plan: effectivePlan,
+    });
+    if (claimErr) {
+      console.error("replay/claim rejected", claimErr.code, claimErr.message);
+      return j({ error: "This payment has already been processed." }, 409);
+    }
+
     // 4. Upgrade the authenticated user's plan.
-    const checks = PLAN_CHECKS[plan] ?? 5;
+    const checks = PLAN_CHECKS[effectivePlan];
+    if (checks == null) {
+      // Price matched but the checks map is missing this plan — a deploy desync.
+      // Fail loudly rather than silently granting free-tier checks for a paid plan.
+      console.error("PLAN_CHECKS missing entry", { plan: effectivePlan });
+      return j({ error: "plan misconfigured — please contact support" }, 500);
+    }
     const { error: updateErr } = await admin
       .from("profiles")
-      .update({ plan, plan_checks: checks, used: 0 })
+      .update({ plan: effectivePlan, plan_checks: checks, used: 0 })
       .eq("id", user.id);
     if (updateErr) {
+      // Release the claim so the user can retry rather than being locked out.
+      await admin.from("processed_payments").delete().eq("payment_id", razorpay_payment_id);
       console.error("profile update failed", updateErr);
       return j({ error: "plan upgrade failed: " + updateErr.message }, 500);
     }
 
-    console.log("plan upgraded", { userId: user.id, plan, checks });
-    return j({ ok: true, plan, checks });
+    console.log("plan upgraded", { userId: user.id, plan: effectivePlan, checks });
+    return j({ ok: true, plan: effectivePlan, checks });
   } catch (e) {
     return j({ error: String((e as Error)?.message || e) }, 500);
   }
