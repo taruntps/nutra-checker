@@ -1348,7 +1348,6 @@ select:focus{outline:none;border-color:var(--brand-500)}
   }
 })();
 const SHEET_ID = '1kTfaNwZHXHWxKvBb4ht1CSHOAcEjTimFnPDqm2ElzII';
-const BACKEND  = 'https://tps-xperts-backend.onrender.com';
 const SK       = 'tps_nutra_v2';
 const SOLID_ORAL = ['tablet','capsule','softgel','veg_softgel','pills'];
 
@@ -1811,7 +1810,7 @@ async function callAISuggestion(ingName) {
     // Send the logged-in user's JWT (ai-suggest requires an authenticated user).
     let _tok = (typeof SUPA_ANON!=='undefined')?SUPA_ANON:'';
     try{ const _s=await SB.auth.getSession(); if(_s&&_s.data&&_s.data.session&&_s.data.session.access_token) _tok=_s.data.session.access_token; }catch(e){}
-    const resp = await fetch((typeof SUPA_URL!=='undefined'?SUPA_URL+'/functions/v1/ai-suggest':BACKEND + '/ai-suggest'), {
+    const resp = await fetch(SUPA_URL+'/functions/v1/ai-suggest', {
       method:'POST',
       headers: _tok?{'Content-Type':'application/json','Authorization':'Bearer '+_tok}:{'Content-Type':'application/json'},
       body: JSON.stringify({ ingredient: ingName, dbList: dbList.slice(0,300) }),
@@ -5069,103 +5068,15 @@ function incUsed(email){
   const d=getUD(email);
   d.used=(d.used||0)+1;
   setUD(email,d);
-  // Silently sync to server — never blocks UI
-  fetch(BACKEND+'/use-check',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email})}).catch(()=>{});
 }
 function getAllowed(email){const d=getUD(email);if(d.plan_checks&&d.plan_checks>0)return d.plan_checks;return PLANS[d.plan||'free']?.checks||5;}
 function hasUnlimited(email){const d=getUD(email);return (d.plan_checks&&d.plan_checks>=9999)||d.plan==='unlimited'||d.plan==='enterprise'||d.plan==='monthly';}
 function applyPlan(email,plan,checks){const d=getUD(email);d.plan=plan;d.plan_checks=checks;d.used=0;setUD(email,d);}
 
 function _getHistLocal(email){try{return JSON.parse(localStorage.getItem('tps_h_'+email)||'[]')}catch(e){return[]}}
-async function getHist(email){
-  // Try backend first for persistent history (survives cache clear)
-  try{
-    const r=await fetch(BACKEND+'/get-history?email='+encodeURIComponent(email),{signal:AbortSignal.timeout(4000)});
-    if(r.ok){const d=await r.json();if(d.history&&d.history.length){localStorage.setItem('tps_h_'+email,JSON.stringify(d.history));return d.history;}}
-  }catch(e){}
-  return _getHistLocal(email);
-}
-async function saveHist(email,formula,sum){
-  const h=_getHistLocal(email);
-  h.unshift({date:new Date().toLocaleString('en-IN'),formula:formula.slice(0,200),sum});
-  const trimmed=h.slice(0,50);
-  localStorage.setItem('tps_h_'+email,JSON.stringify(trimmed));
-  // Sync to backend non-blocking
-  try{fetch(BACKEND+'/save-history',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,entries:trimmed}),signal:AbortSignal.timeout(4000)});}catch(e){}
-}
-
-async function doLogin() {
-  const email=(document.getElementById('auth-email').value||'').trim().toLowerCase();
-  const pass=(document.getElementById('auth-pass').value||'').trim();
-  const err=document.getElementById('login-err');
-  const btn=document.getElementById('login-btn');
-  err.textContent='';
-  if(!email||!pass){err.textContent='Please enter email and password.';return;}
-  btn.disabled=true; btn.innerHTML='<i class="ti ti-loader"></i> Verifying...';
-  // All admin auth handled via backend only
-  const eKey=email.toLowerCase(); const uKey=eKey.split('@')[0];
-  // (local credential block removed for security)
-  if(false){
-    hideAuth();updCheckBar();updWB();renderHistTab();
-    btn.disabled=false;btn.innerHTML='<i class="ti ti-login"></i> Sign In';
-    return;
-  }
-  // Try backend with 8s timeout
-  const ctrl=new AbortController();
-  const to=setTimeout(()=>ctrl.abort(),15000);
-  try{
-    const resp=await fetch(BACKEND+'/verify-user',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,password:pass}),signal:ctrl.signal});
-    clearTimeout(to);
-    const data=await resp.json();
-    if(data.error){err.textContent=data.error;btn.disabled=false;btn.innerHTML='<i class="ti ti-login"></i> Sign In';return;}
-    currentUser={email,name:data.name||email.split('@')[0]};
-    localStorage.setItem(SK,JSON.stringify(currentUser));
-    if(data.plan) applyPlan(email,data.plan,data.checks||5);
-    hideAuth();updCheckBar();updWB();renderHistTab();_onLoginSuccess();
-  }catch(e){
-    clearTimeout(to);
-    err.textContent='Invalid credentials. For access: +91 9115551545';
-  }
-  btn.disabled=false;btn.innerHTML='<i class="ti ti-login"></i> Sign In';
-}
 
 
-async function doSignup(){
-  const name=(document.getElementById('su-name').value||'').trim();
-  const email=(document.getElementById('su-email').value||'').trim().toLowerCase();
-  const company=(document.getElementById('su-company').value||'').trim();
-  const mobile=(document.getElementById('su-mobile').value||'').trim();
-  const pass=(document.getElementById('su-pass').value||'').trim();
-  const pass2=(document.getElementById('su-pass2').value||'').trim();
-  const err=document.getElementById('signup-err');
-  const btn=document.getElementById('signup-btn');
-  err.textContent='';
-  if(!name||!email||!pass||!pass2){err.textContent='Name, email and password are required.';return;}
-  if(!mobile){err.textContent='Please enter your mobile number.';return;}
-  if(pass.length<6){err.textContent='Password must be at least 6 characters.';return;}
-  if(pass!==pass2){err.textContent='Passwords do not match.';return;}
-  const emailRx=/^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  if(!emailRx.test(email)){err.textContent='Please enter a valid email address.';return;}
-  btn.disabled=true;btn.innerHTML='<i class="ti ti-loader"></i> Creating account...';
-  const ctrl=new AbortController();const to=setTimeout(()=>ctrl.abort(),10000);
 
-  try{
-    const resp=await fetch(BACKEND+'/register',{method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({name,email,password:pass,company,mobile}),signal:ctrl.signal});
-    clearTimeout(to);
-    const data=await resp.json();
-    if(data.error){err.textContent=data.error;btn.disabled=false;btn.innerHTML='<i class="ti ti-user-plus"></i> Create Account — 5 Free Checks';return;}
-    currentUser={email:data.email,name:data.name};
-    localStorage.setItem(SK,JSON.stringify(currentUser));
-    applyPlan(data.email,'free',5);
-    hideAuth();updCheckBar();updWB();renderHistTab();_onLoginSuccess();
-    btn.disabled=false;btn.innerHTML='<i class="ti ti-user-plus"></i> Create Account — 5 Free Checks';
-  }catch(e){
-    clearTimeout(to);
-    err.textContent='Connection error. Please try again or WhatsApp +91 9115551545';
-    btn.disabled=false;btn.innerHTML='<i class="ti ti-user-plus"></i> Create Account — 5 Free Checks';
-  }
-}
 
 function swAuthTab(tab,el){
   document.querySelectorAll('.auth-tab').forEach(t=>t.classList.remove('active'));
@@ -5180,10 +5091,7 @@ async function submitRequest(){
   const org=(document.getElementById('req-org').value||'').trim();
   const err=document.getElementById('signup-err');err.textContent='';
   if(!name||!contact){err.textContent='Please fill in name and contact.';return;}
-  try{
-    await fetch(BACKEND+'/log-activity',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({type:'ACCESS_REQUEST',name,contact:contact+(org?' | '+org:''),status:'pending'})});
-    document.getElementById('request-form').innerHTML='<div style="text-align:center;padding:12px;background:#E0ECF8;border-radius:9px"><div style="font-size:18px;margin-bottom:5px">✓</div><div style="font-size:12px;font-weight:600;color:#1E3A5F">Request sent!</div><div style="font-size:10px;color:#3B6D11;margin-top:3px;line-height:1.6">TPS Xperts will send credentials within 24 hours.</div></div>';
-  }catch(e){err.textContent='Could not send. WhatsApp: +91 9115551545';}
+  document.getElementById('request-form').innerHTML='<div style="text-align:center;padding:12px;background:#E0ECF8;border-radius:9px"><div style="font-size:18px;margin-bottom:5px">✓</div><div style="font-size:12px;font-weight:600;color:#1E3A5F">Request sent!</div><div style="font-size:10px;color:#3B6D11;margin-top:3px;line-height:1.6">TPS Xperts will send credentials within 24 hours.</div></div>';
 }
 
 function showAuth(){const el=document.getElementById('auth-overlay');if(el)el.style.display='flex';}
@@ -5257,30 +5165,6 @@ function swPayTab(tab,el){
   document.getElementById('pay-coupon-c').style.display=tab==='coupon'?'block':'none';
 }
 
-async function validateCoupon(code,errId){
-  const err=document.getElementById(errId);
-  if(!code){err.textContent='Please enter a code.';return false;}
-  if(!currentUser){err.textContent='Please sign in first.';return false;}
-  try{
-    const r=await fetch(BACKEND+'/validate-coupon',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({code:code.trim().toUpperCase(),email:currentUser.email||''})});
-    const d=await r.json();
-    if(d.error||!d.valid){err.textContent=d.error||'Invalid coupon code.';return false;}
-    // Apply plan
-    applyPlan(currentUser.email,d.plan,d.checks);
-    // Force save to session
-    const saved=JSON.parse(localStorage.getItem(SK)||'{}');
-    saved.plan=d.plan;saved.checks=d.checks;
-    localStorage.setItem(SK,JSON.stringify(saved));
-    hidePayModal();hidePlanGate();
-    updCheckBar();updWB();
-    const planLbl=PLANS[d.plan]?.lbl||d.plan||'Upgraded';
-    err.style.color='#166534';
-    err.textContent='✓ '+planLbl+' plan activated! '+d.checks+' checks available.';
-    showSt('✓ '+planLbl+' plan activated! '+d.checks+' checks available.','loading');
-    setTimeout(hideSt,5000);
-    return true;
-  }catch(e){err.textContent='Connection error: '+e.message;return false;}
-}
 
 async function doCoupon(){
   const code=document.getElementById('coupon-inp').value||'';
@@ -5297,32 +5181,6 @@ async function doCoupon2(){
   btn.disabled=false;btn.innerHTML='<i class="ti ti-check"></i> Activate Plan';
 }
 
-async function startRzp(){
-  const btn=document.getElementById('rzp-pay-btn');const err=document.getElementById('rzp-err');
-  err.textContent='';if(!selectedPlan||!currentUser){err.textContent='Select a plan and sign in first.';return;}
-  if(typeof Razorpay==='undefined'){err.textContent='Payment system not loaded. Please refresh and try again.';return;}
-  const planMeta=PLANS[selectedPlan];
-  if(!planMeta){err.textContent='Unknown plan. Please re-select a plan.';return;}
-  btn.disabled=true;btn.innerHTML='<i class="ti ti-loader"></i> Creating order...';
-  try{
-    const or=await fetch(BACKEND+'/create-order',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({plan:selectedPlan,email:currentUser.email,name:currentUser.name})});
-    const od=await or.json();if(od.error)throw new Error(od.error);
-    btn.disabled=false;btn.innerHTML='<i class="ti ti-credit-card"></i> Pay Now with Razorpay';
-    new Razorpay({key:od.key_id,amount:od.amount,currency:od.currency,name:'TPS Xperts Group',description:planMeta.lbl+' Plan',order_id:od.order_id,
-      prefill:{email:currentUser.email,name:currentUser.name},theme:{color:'#1E3A5F'},
-      handler:async(resp)=>{
-        btn.disabled=true;btn.innerHTML='<i class="ti ti-loader"></i> Activating...';
-        try{
-          const vr=await fetch(BACKEND+'/verify-payment',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({...resp,plan:selectedPlan,email:currentUser.email,name:currentUser.name})});
-          const vd=await vr.json();if(vd.error)throw new Error(vd.error);
-          applyPlan(currentUser.email,vd.plan,vd.checks);hidePayModal();hidePlanGate();updCheckBar();updWB();
-          showSt('🎉 Payment successful! '+vd.plan_label+' activated.','loading');setTimeout(hideSt,5000);
-          btn.disabled=false;btn.innerHTML='<i class="ti ti-credit-card"></i> Pay Now with Razorpay';
-        }catch(ve){err.textContent='Verification failed: '+ve.message;btn.disabled=false;btn.innerHTML='<i class="ti ti-credit-card"></i> Pay Now with Razorpay';}
-      }
-    }).open();
-  }catch(e){err.textContent='Error: '+e.message;btn.disabled=false;btn.innerHTML='<i class="ti ti-credit-card"></i> Pay Now with Razorpay';}
-}
 
 async function renderHistTab(){
   const c=document.getElementById('hist-content');if(!c)return;
@@ -5443,7 +5301,7 @@ async function handleFile(file){
     // Send the logged-in user's JWT (extract-ingredients requires an authenticated user).
     let _tok2=(typeof SUPA_ANON!=='undefined')?SUPA_ANON:'';
     try{ const _s2=await SB.auth.getSession(); if(_s2&&_s2.data&&_s2.data.session&&_s2.data.session.access_token) _tok2=_s2.data.session.access_token; }catch(e){}
-    const resp=await fetch((typeof SUPA_URL!=='undefined'?SUPA_URL+'/functions/v1/extract-ingredients':BACKEND+'/extract-ingredients'),{
+    const resp=await fetch(SUPA_URL+'/functions/v1/extract-ingredients',{
       method:'POST',headers:_tok2?{'Content-Type':'application/json','Authorization':'Bearer '+_tok2}:{'Content-Type':'application/json'},
       body:JSON.stringify({fileData:b64,mediaType:file.type,isPDF:file.type==='application/pdf'})
     });
@@ -5483,182 +5341,13 @@ function showForgotPassword() {
   document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
 }
 
-async function doForgotPassword() {
-  const btn = document.getElementById('fp-btn');
-  const err = document.getElementById('fp-err');
-  err.textContent = '';
-
-  if (!_fpOtpSent) {
-    // Step 1: Send OTP
-    const email = (document.getElementById('fp-email').value || '').trim().toLowerCase();
-    if (!email) { err.textContent = 'Please enter your email.'; return; }
-    btn.disabled = true; btn.innerHTML = '<i class="ti ti-loader"></i> Sending OTP...';
-    try {
-      const r = await fetch(BACKEND + '/send-otp', {
-        method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email })
-      });
-      const d = await r.json();
-      if (d.error) { err.textContent = d.error; btn.disabled = false; btn.innerHTML = '<i class="ti ti-mail"></i> Send OTP'; return; }
-      _fpOtpSent = true;
-      document.getElementById('fp-otp-section').style.display = 'block';
-      document.getElementById('fp-email').disabled = true;
-      btn.innerHTML = '<i class="ti ti-check"></i> Verify OTP & Reset';
-      btn.disabled = false;
-      err.style.color = '#166534';
-      err.textContent = 'OTP sent to ' + email + '. Check your inbox.';
-    } catch(e) {
-      err.textContent = 'Error sending OTP. Try WhatsApp +91 9115551545';
-      btn.disabled = false; btn.innerHTML = '<i class="ti ti-mail"></i> Send OTP';
-    }
-  } else {
-    // Step 2: Verify OTP + reset password
-    const email = (document.getElementById('fp-email').value || '').trim().toLowerCase();
-    const otp = (document.getElementById('fp-otp').value || '').trim();
-    const newpass = (document.getElementById('fp-newpass').value || '').trim();
-    const newpass2 = (document.getElementById('fp-newpass2').value || '').trim();
-    if (!otp) { err.textContent = 'Please enter the OTP.'; return; }
-    if (!newpass || newpass.length < 6) { err.textContent = 'Password must be at least 6 characters.'; return; }
-    if (newpass !== newpass2) { err.textContent = 'Passwords do not match.'; return; }
-    btn.disabled = true; btn.innerHTML = '<i class="ti ti-loader"></i> Resetting...';
-    try {
-      const r = await fetch(BACKEND + '/reset-password', {
-        method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, otp, newPassword: newpass })
-      });
-      const d = await r.json();
-      if (d.error) { err.style.color = '#A32D2D'; err.textContent = d.error; btn.disabled = false; btn.innerHTML = '<i class="ti ti-check"></i> Verify OTP & Reset'; return; }
-      err.style.color = '#166534';
-      err.textContent = 'Password reset successful! Signing you in...';
-      _fpOtpSent = false;
-      setTimeout(() => {
-        document.getElementById('forgot-form').style.display = 'none';
-        document.getElementById('signin-form').style.display = 'block';
-        document.getElementById('auth-email').value = email;
-        document.getElementById('tab-signin').classList.add('active');
-      }, 1500);
-    } catch(e) {
-      err.textContent = 'Error. Try again or WhatsApp +91 9115551545';
-      btn.disabled = false; btn.innerHTML = '<i class="ti ti-check"></i> Verify OTP & Reset';
-    }
-  }
-}
 
 // ═══════════════════════════════════════════════════════════════════
 // GOOGLE OAUTH
 // ═══════════════════════════════════════════════════════════════════
 const GOOGLE_CLIENT_ID = '476922219989-5ko0dcvcurut4qhpgn73aajd3887nch1.apps.googleusercontent.com';
 
-let _gsiRetries = 0;
-let _gsiInited = false;
-function initGoogleAuth() {
-  if (_gsiInited) return;
-  if (typeof google === 'undefined' || !google.accounts) {
-    if (++_gsiRetries > 30) { return; } // silenced: GSI may load slowly on some networks
-    setTimeout(initGoogleAuth, 500); return;
-  }
-  _gsiInited = true;
-  google.accounts.id.initialize({
-    client_id: GOOGLE_CLIENT_ID,
-    callback: handleGoogleCredential,
-    auto_select: false,
-  });
-  // Render buttons in both sign in and sign up
-  ['google-signin-btn','google-signup-btn'].forEach(id => {
-    const el = document.getElementById(id);
-    if (el) {
-      google.accounts.id.renderButton(el, {
-        theme: 'outline', size: 'large', width: 340,
-        text: id.includes('signup') ? 'signup_with' : 'signin_with',
-      });
-    }
-  });
-}
 
-async function handleGoogleCredential(response) {
-  try {
-    let payload;
-    try {
-      const parts = (response && response.credential || '').split('.');
-      if (parts.length < 3) throw new Error('Malformed credential');
-      payload = JSON.parse(atob(parts[1]));
-    } catch (jwtErr) {
-      console.error('JWT parse error:', jwtErr);
-      const el = document.getElementById('login-err');
-      if (el) el.textContent = 'Google sign-in failed: invalid token. Please try again.';
-      return;
-    }
-    const email = payload.email;
-    if (!email) {
-      const el = document.getElementById('login-err');
-      if (el) el.textContent = 'Google account did not return an email. Please try email/password.';
-      return;
-    }
-    const name = payload.name || email.split('@')[0];
-    let user = null;
-    let isNewUser = false;
-
-    // Step 1: Check if user already exists in backend
-    try {
-      const ctrl = new AbortController();
-      const to = setTimeout(() => ctrl.abort(), 15000);
-      const r = await fetch(BACKEND+'/verify-user', {
-        method:'POST', headers:{'Content-Type':'application/json'},
-        body: JSON.stringify({email, password:'__GOOGLE_OAUTH__'}), signal: ctrl.signal
-      });
-      clearTimeout(to);
-      const d = await r.json();
-      // Only treat as existing if backend confirms with email field
-      if (d.success && d.email) user = d;
-    } catch(e) {}
-
-    // Step 2: Not found — register as new user
-    if (!user) {
-      try {
-        const r2 = await fetch(BACKEND+'/register', {
-          method:'POST', headers:{'Content-Type':'application/json'},
-          body: JSON.stringify({name, email, password:'__GOOGLE_OAUTH__', company:'', mobile:'', auth_type:'google'})
-        });
-        const d2 = await r2.json();
-        if (d2.email || d2.success) {
-          // Genuinely new user registered successfully
-          user = d2;
-          isNewUser = true;
-          fetch(BACKEND+'/log-activity', {
-            method:'POST', headers:{'Content-Type':'application/json'},
-            body: JSON.stringify({type:'SIGNUP_GOOGLE', contact:email, name, status:'new'})
-          }).catch(()=>{});
-        } else if (d2.error && d2.error.includes('already registered')) {
-          // User exists but Google OAuth wasn't their original login method
-          // Fetch their actual plan data
-          try {
-            const r3 = await fetch(BACKEND+'/verify-user', {
-              method:'POST', headers:{'Content-Type':'application/json'},
-              body: JSON.stringify({email, password:'__GOOGLE_OAUTH__'})
-            });
-            const d3 = await r3.json();
-            if (d3.success && d3.email) user = d3;
-          } catch(e) {}
-        }
-      } catch(e) {}
-    }
-
-    // Step 3: Log in regardless
-    currentUser = {email, name};
-    localStorage.setItem(SK, JSON.stringify(currentUser));
-    if (user && user.plan) applyPlan(email, user.plan, user.checks || 5);
-    else applyPlan(email, 'free', 5);
-    hideAuth(); updCheckBar(); updWB(); renderHistTab(); _onLoginSuccess();
-
-    if (isNewUser) {
-      showSt('✓ Account created! Welcome, '+name+'. You have 5 free compliance checks.','loading');
-      setTimeout(hideSt, 4000);
-    }
-  } catch(e) {
-    console.error('Google auth error:', e);
-    document.getElementById('login-err').textContent = 'Google sign-in failed. Please try email/password.';
-  }
-}
 
 // ═══════════════════════════════════════════════════════════════════
 // COUNTRY / STATE / CITY DROPDOWNS
@@ -5724,22 +5413,6 @@ function onStateChange() {
   });
 }
 
-// ── Refresh plan from server on session restore ──────────────────────
-function refreshPlanFromServer(email) {
-  fetch(BACKEND+'/verify-user', {
-    method:'POST',
-    headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({email, password:'__SESSION_REFRESH__'})
-  })
-  .then(r=>r.json())
-  .then(data=>{
-    if(data.plan){
-      applyPlan(email, data.plan, data.checks||5);
-      updCheckBar(); updWB();
-    }
-  })
-  .catch(e=>console.log('Plan refresh failed:',e.message));
-}
 
 function clearAll(){
   document.getElementById('prod-name').value='';
@@ -6247,7 +5920,6 @@ const DEMO = (function(){
         const dbBtn=document.getElementById('nav-dashboard-btn');if(dbBtn)dbBtn.style.display='';
         const accBtn=document.getElementById('nav-account-btn');if(accBtn)accBtn.style.display='';
         setTimeout(()=>{goTab(5);renderDashboard();},150);
-        refreshPlanFromServer(currentUser.email);
         initGoogleAuth();
         // initCountryDropdown(); // removed: no CSC dropdowns in form
         setTimeout(()=>{
@@ -7128,17 +6800,11 @@ document.addEventListener('keydown',function(e){
     var planMeta=PLANS[selectedPlan]; if(!planMeta){ err.textContent='Unknown plan. Please re-select a plan.'; return; }
     btn.disabled=true; btn.innerHTML='<i class="ti ti-loader"></i> Creating order...';
     try{
-      // Create order via Supabase edge function (with Render fallback for safety)
-      var od;
-      try{
-        var inv0=await SB.functions.invoke('create-order',{body:{plan:selectedPlan,email:currentUser.email,name:currentUser.name}});
-        if(inv0.error) throw new Error('edge create-order failed');
-        od=inv0.data;
-        if(!od || od.error) throw new Error((od&&od.error)||'edge create-order error');
-      }catch(_e0){
-        var or=await fetch(BACKEND+'/create-order',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({plan:selectedPlan,email:currentUser.email,name:currentUser.name})});
-        od=await or.json();
-      }
+      // Create order via Supabase edge function
+      var inv0=await SB.functions.invoke('create-order',{body:{plan:selectedPlan,email:currentUser.email,name:currentUser.name}});
+      if(inv0.error) throw new Error((inv0.error&&inv0.error.message)||'Could not create order. Please try again.');
+      var od=inv0.data;
+      if(!od || od.error) throw new Error((od&&od.error)||'Could not create order. Please try again.');
       if(od.error) throw new Error(od.error);
       btn.disabled=false; btn.innerHTML='<i class="ti ti-credit-card"></i> Pay Now with Razorpay';
       new Razorpay({key:od.key_id,amount:od.amount,currency:od.currency,name:'TPS Xperts Group',description:planMeta.lbl+' Plan',order_id:od.order_id,
