@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-  <!-- REGULYZE-BUILD-v5.12 — Review fixes: admin plan/status via SECURITY DEFINER RPCs (column lockdown no longer breaks admin), verify-payment validates with Razorpay before claiming payment_id (no lockout on transient failure), plan bound to order note, fail-loud on plan misconfig -->
+  <!-- REGULYZE-BUILD-v5.13 — Security hardening: atomic OTP attempt counter via otp_increment_attempt() RPC, removed all dead Render backend code (doLogin/doSignup/startRzp/validateCoupon/handleGoogleCredential and 8 other functions), BACKEND constant removed, ai-suggest and extract-ingredients now call Supabase directly -->
   <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
