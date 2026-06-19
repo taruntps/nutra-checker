@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-  <!-- REGULYZE-BUILD-v5.9 — Security hardening: edge-function auth on ai-suggest/extract-ingredients/create-order, payment replay guard, OTP brute-force lockout + rate limit, crypto OTP, history XSS fix, 8-char password minimum -->
+  <!-- REGULYZE-BUILD-v5.10 — Security hardening: edge-function auth on ai-suggest/extract-ingredients/create-order, payment replay guard, OTP brute-force lockout + rate limit, crypto OTP, history XSS fix, 8-char password minimum; ai-suggest/extract-ingredients now send the user JWT -->
   <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
@@ -1808,9 +1808,12 @@ async function callAISuggestion(ingName) {
   const to = setTimeout(() => ctrl.abort(), AI_FETCH_TIMEOUT_MS);
 
   try {
+    // Send the logged-in user's JWT (ai-suggest requires an authenticated user).
+    let _tok = (typeof SUPA_ANON!=='undefined')?SUPA_ANON:'';
+    try{ const _s=await SB.auth.getSession(); if(_s&&_s.data&&_s.data.session&&_s.data.session.access_token) _tok=_s.data.session.access_token; }catch(e){}
     const resp = await fetch((typeof SUPA_URL!=='undefined'?SUPA_URL+'/functions/v1/ai-suggest':BACKEND + '/ai-suggest'), {
       method:'POST',
-      headers: (typeof SUPA_ANON!=='undefined'?{'Content-Type':'application/json','Authorization':'Bearer '+SUPA_ANON}:{'Content-Type':'application/json'}),
+      headers: _tok?{'Content-Type':'application/json','Authorization':'Bearer '+_tok}:{'Content-Type':'application/json'},
       body: JSON.stringify({ ingredient: ingName, dbList: dbList.slice(0,300) }),
       signal: ctrl.signal
     });
@@ -5437,8 +5440,11 @@ async function handleFile(file){
       if(s.innerHTML.includes('Analysing'))
         s.innerHTML='<div style="display:flex;gap:8px;align-items:center;color:#1E3A5F;font-size:11px"><div class="spinner"></div> ✨ Almost done — building your formula...</div>';
     },2200);
+    // Send the logged-in user's JWT (extract-ingredients requires an authenticated user).
+    let _tok2=(typeof SUPA_ANON!=='undefined')?SUPA_ANON:'';
+    try{ const _s2=await SB.auth.getSession(); if(_s2&&_s2.data&&_s2.data.session&&_s2.data.session.access_token) _tok2=_s2.data.session.access_token; }catch(e){}
     const resp=await fetch((typeof SUPA_URL!=='undefined'?SUPA_URL+'/functions/v1/extract-ingredients':BACKEND+'/extract-ingredients'),{
-      method:'POST',headers:(typeof SUPA_ANON!=='undefined'?{'Content-Type':'application/json','Authorization':'Bearer '+SUPA_ANON}:{'Content-Type':'application/json'}),
+      method:'POST',headers:_tok2?{'Content-Type':'application/json','Authorization':'Bearer '+_tok2}:{'Content-Type':'application/json'},
       body:JSON.stringify({fileData:b64,mediaType:file.type,isPDF:file.type==='application/pdf'})
     });
     clearTimeout(stepTimer);
