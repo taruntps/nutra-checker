@@ -15,7 +15,18 @@ alter table public.processed_payments enable row level security;
 -- No policies => only the service role (edge functions) can read/write. Clients
 -- with the anon key get nothing, which is exactly what we want.
 
--- 2) OTP brute-force counter ---------------------------------------------------
+-- 2) OTP sessions table (create if it does not already exist) ------------------
+create table if not exists public.otp_sessions (
+  id          uuid primary key default gen_random_uuid(),
+  email       text not null,
+  otp_hash    text not null,
+  purpose     text not null check (purpose in ('reset','signup')),
+  expires_at  timestamptz not null,
+  used        boolean not null default false,
+  created_at  timestamptz not null default now()
+);
+
+-- OTP brute-force counter
 alter table public.otp_sessions
   add column if not exists attempts integer not null default 0;
 
