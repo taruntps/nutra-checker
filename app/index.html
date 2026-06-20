@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-  <!-- REGULYZE-BUILD-v5.15 — Vitamin E IU↔mg conversion corrected to exact ICMR 2020 factor (1mg=1.5IU d-alpha-tocopherol; was approximated as 1.49/0.67). v5.14: guard load-time initGoogleAuth() calls. -->
+  <!-- REGULYZE-BUILD-v5.16 — rdcSyncFactors() now skips IU-potency sheet factors (mg_to_IU/mcg_to_IU) so Vitamin E ester forms keep their salt_to_elemental factors instead of misapplying IU factors as elemental fractions (was 100%/121% instead of 67.1%/81.2%). v5.15: Vit E IU↔mg = exact ICMR 1.5. -->
   <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
@@ -6444,7 +6444,13 @@ function rdcSyncFactors() {
         if (REG.vitamin_conv && REG.vitamin_conv[key]) e = REG.vitamin_conv[key];
         else if (REG.mineral_conv && REG.mineral_conv[key]) e = REG.mineral_conv[key][ing.k] || REG.mineral_conv[key]._first;
       }
-      if (e && typeof e.factor === 'number' && e.factor > 0 && isFinite(e.factor)) ing.f = e.factor;
+      // Only adopt sheet factors that express an ELEMENTAL fraction (mg-elemental per
+      // mg-salt). Vitamin E rows store mg→IU potency factors, which rdcElemental would
+      // misapply as an elemental fraction (e.g. 1.0 → 100% instead of 67.1%). Skip any
+      // IU-potency convType and keep the built-in salt_to_elemental factor.
+      const ct = (e && (e.convType || '')).toLowerCase();
+      const isIuFactor = ct.indexOf('iu') >= 0; // mg_to_iu, mcg_to_iu, mg→iu, …
+      if (e && !isIuFactor && typeof e.factor === 'number' && e.factor > 0 && isFinite(e.factor)) ing.f = e.factor;
     });
   } catch (err) { console.warn('rdcSyncFactors skipped:', err && err.message); }
 }
