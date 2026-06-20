@@ -48,7 +48,9 @@ var REGULATION_TABS = [
 
 // ── Per-edit trigger (debounced ~30 seconds) ─────────────────
 // Installed automatically by setupTriggers(). Do not rename.
+// NOTE: Do NOT run this from the editor — it only works when a real sheet edit fires it.
 function onEditTrigger(e) {
+  if (!e || !e.range) return; // guard: called without event (e.g. manual Run)
   var tabName = e.range.getSheet().getName();
   if (REGULATION_TABS.indexOf(tabName) < 0) return; // ignore non-regulation tabs
 
