@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-  <!-- REGULYZE-BUILD-v5.14 — Hotfix: guard load-time initGoogleAuth() calls (init IIFE threw ReferenceError after dead-code removal, breaking RDA checker + CE handlers). Google init is owned by rgGoogleInit(). -->
+  <!-- REGULYZE-BUILD-v5.15 — Vitamin E IU↔mg conversion corrected to exact ICMR 2020 factor (1mg=1.5IU d-alpha-tocopherol; was approximated as 1.49/0.67). v5.14: guard load-time initGoogleAuth() calls. -->
   <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
@@ -3811,7 +3811,7 @@ function convToRdaUnit(val,unit,rdaKey) {
     // mg/mcg/g → IU conversions
     if(rdaKey==='vitamin_d'||rdaKey==='vitamin_d3'||rdaKey==='vitamin_d2') return toMg(val,u)*40000; // 1mg=40,000IU
     if(rdaKey==='vitamin_a') return toMg(val,u)*3333;   // 1mg retinol=3333IU
-    if(rdaKey==='vitamin_e') return toMg(val,u)*1.49;   // 1mg=1.49IU
+    if(rdaKey==='vitamin_e') return toMg(val,u)*1.5;    // ICMR 2020: 1mg=1.5IU (d-alpha-tocopherol)
     return toMg(val,u)*1000; // generic fallback
   }
   // If ingredient RDA is in mcg/mg but user entered IU
@@ -3825,7 +3825,7 @@ function convToRdaUnit(val,unit,rdaKey) {
       return rdaUom==='mcg'?inMcg:inMcg*0.001;
     }
     if(rdaKey==='vitamin_e'){
-      const inMg=val*0.67; // 1IU=0.67mg
+      const inMg=val/1.5; // ICMR 2020: 1mg=1.5IU d-alpha-tocopherol → 1IU=0.667mg
       return rdaUom==='mg'?inMg:inMg*1000;
     }
   }
