@@ -2,7 +2,17 @@
 -- Returns the NEW attempts count after increment, or -1 if already at max
 -- (meaning the session was not incremented and should be rejected).
 -- Using a single UPDATE avoids the read-then-write race in application code.
+--
+-- Self-sufficient: also ensures the otp_sessions.attempts column exists, so
+-- verify-otp-custom never hits "Server error" because the column is missing.
 
+-- 1. Ensure the attempts column exists (NOT NULL, defaults to 0).
+alter table public.otp_sessions add column if not exists attempts integer not null default 0;
+
+-- 2. Backfill any pre-existing NULLs (in case the column was added nullable earlier).
+update public.otp_sessions set attempts = 0 where attempts is null;
+
+-- 3. (Re)create the atomic increment function.
 create or replace function public.otp_increment_attempt(p_id uuid, p_max integer)
 returns integer
 language plpgsql
