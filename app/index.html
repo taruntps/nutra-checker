@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-  <!-- REGULYZE-BUILD-v5.18 — Regulation data: fetchSheet() tries Supabase regulation_data table first (fast, no CORS proxies); falls back to Google Sheet. Populated by Google Apps Script on every edit. v5.17: discount coupons at checkout. -->
+  <!-- REGULYZE-BUILD-v5.19 — Fix: dashboard shows correct plan label after payment/coupon (applyPlan syncs tps_u_ localStorage after loadProfile). v5.18: Supabase regulation data. -->
   <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
@@ -6832,7 +6832,7 @@ document.addEventListener('keydown',function(e){
           }});
           var vd=inv.data;
           if(inv.error || !vd || !vd.ok) throw new Error((vd&&vd.error)||(inv.error&&inv.error.message)||'Payment could not be verified.');
-          if(currentUser){ var pr=await loadProfile(currentUser.id); if(pr) currentUser.profile=pr; }
+          if(currentUser){ var pr=await loadProfile(currentUser.id); if(pr){ currentUser.profile=pr; try{applyPlan(currentUser.email,pr.plan,pr.plan_checks);}catch(e){} } }
           try{hidePayModal();}catch(e){} try{hidePlanGate();}catch(e){} try{updCheckBar();updWB();}catch(e){}
           try{ showSt('🎉 Payment successful! '+((PLANS[vd.plan]&&PLANS[vd.plan].lbl)||vd.plan)+' plan activated.','loading'); setTimeout(hideSt,5000);}catch(e){}
         }catch(ve){ if(err)err.textContent='Verification failed: '+ve.message; }
@@ -6881,7 +6881,7 @@ document.addEventListener('keydown',function(e){
       var r=await SB.rpc('redeem_grant_coupon',{p_code:c});
       if(!r.error && r.data && r.data.ok){
         var d=r.data;
-        try{ var pr=await loadProfile(currentUser.id); if(pr) currentUser.profile=pr; }catch(e){}
+        try{ var pr=await loadProfile(currentUser.id); if(pr){ currentUser.profile=pr; try{applyPlan(currentUser.email,pr.plan,pr.plan_checks);}catch(e){} } }catch(e){}
         try{hidePayModal();}catch(e){} try{hidePlanGate();}catch(e){} try{updCheckBar();updWB();}catch(e){}
         var lbl=(PLANS[d.plan]&&PLANS[d.plan].lbl)||d.plan||'Upgraded';
         if(err){ err.style.color='#166534'; err.textContent='✓ '+lbl+' plan activated!'; }
