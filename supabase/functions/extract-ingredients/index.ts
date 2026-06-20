@@ -31,7 +31,7 @@ async function getUser(req: Request, admin: ReturnType<typeof adminClient>) {
 
 // Daily extract call limits by plan. Keep in sync with ai-suggest.
 const EXTRACT_LIMITS: Record<string, number> = {
-  free: 2, basic: 5, pro: 10, monthly: 20, unlimited: 50,
+  free: 5, basic: 10, pro: 10, monthly: 20, unlimited: 50,
 };
 
 const MODEL = "claude-sonnet-4-6";
