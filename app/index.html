@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-  <!-- REGULYZE-BUILD-v5.13 — Security hardening: atomic OTP attempt counter via otp_increment_attempt() RPC, removed all dead Render backend code (doLogin/doSignup/startRzp/validateCoupon/handleGoogleCredential and 8 other functions), BACKEND constant removed, ai-suggest and extract-ingredients now call Supabase directly -->
+  <!-- REGULYZE-BUILD-v5.14 — Hotfix: guard load-time initGoogleAuth() calls (init IIFE threw ReferenceError after dead-code removal, breaking RDA checker + CE handlers). Google init is owned by rgGoogleInit(). -->
   <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
@@ -5920,7 +5920,7 @@ const DEMO = (function(){
         const dbBtn=document.getElementById('nav-dashboard-btn');if(dbBtn)dbBtn.style.display='';
         const accBtn=document.getElementById('nav-account-btn');if(accBtn)accBtn.style.display='';
         setTimeout(()=>{goTab(5);renderDashboard();},150);
-        initGoogleAuth();
+        if(typeof initGoogleAuth==='function')initGoogleAuth(); // Google init now owned by rgGoogleInit(); guard avoids ReferenceError
         // initCountryDropdown(); // removed: no CSC dropdowns in form
         setTimeout(()=>{
           const ce=document.getElementById('fml-ce');
@@ -5932,7 +5932,7 @@ const DEMO = (function(){
   }catch(e){localStorage.removeItem(SK);}
 
   // ── No session ──────────────────────────────────────────────
-  initGoogleAuth();
+  if(typeof initGoogleAuth==='function')initGoogleAuth(); // Google init now owned by rgGoogleInit(); guard avoids ReferenceError
   setTimeout(()=>{
     const ce=document.getElementById('fml-ce');
     if(ce){ ce.addEventListener('blur',onCEBlur); ce.addEventListener('paste',onCEPaste); ce.addEventListener('input',onCEInput); updCEHint(); _showConfirmIfDirty(); }
