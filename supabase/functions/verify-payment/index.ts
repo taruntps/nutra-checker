@@ -36,6 +36,23 @@ const PRICE_PAISE: Record<string, number> = {
 const PLAN_CHECKS: Record<string, number> = {
   basic: 10, pro: 50, monthly: 99999, unlimited: 99999,
 };
+const MIN_PAISE = 100; // Razorpay minimum order is ₹1
+
+// Re-derive the discounted price for a coupon. MUST match create-order's
+// applyDiscount logic exactly, so the amount the user actually paid is the
+// amount we independently expect. Returns the base price unchanged if no coupon.
+async function expectedPaise(
+  admin: ReturnType<typeof adminClient>, basePaise: number, plan: string, code: string | null,
+): Promise<number> {
+  if (!code) return basePaise;
+  const { data: c } = await admin.from("coupons").select("*").eq("code", code.toUpperCase()).maybeSingle();
+  if (!c || c.status !== "active" || c.kind !== "discount") return basePaise; // coupon vanished → expect full price (will mismatch & reject)
+  let amount = basePaise;
+  const val = Number(c.discount_value) || 0;
+  if (c.discount_type === "percent") amount = Math.round(basePaise * (1 - Math.min(Math.max(val, 0), 100) / 100));
+  else amount = basePaise - Math.round(val * 100);
+  return amount < MIN_PAISE ? MIN_PAISE : amount;
+}
 
 async function hmacSHA256(secret: string, message: string): Promise<string> {
   const enc = new TextEncoder();
@@ -88,14 +105,17 @@ Deno.serve(async (req) => {
     }
     const order = await orderResp.json();
 
-    // Prefer the plan recorded on the order by create-order; fall back to the
-    // client-supplied plan only if the note is absent.
+    // Prefer the plan + coupon recorded on the order by create-order; fall back
+    // to the client-supplied plan only if the note is absent.
     const effectivePlan = (order?.notes?.plan as string) || plan;
-    const expectedAmount = PRICE_PAISE[effectivePlan];
-    if (!expectedAmount) return j({ error: "unknown plan" }, 400);
+    const couponCode = (order?.notes?.coupon as string) || null;
+    const basePaise = PRICE_PAISE[effectivePlan];
+    if (!basePaise) return j({ error: "unknown plan" }, 400);
+    // Re-derive the amount we expect — including any discount coupon — server-side.
+    const expectedAmount = await expectedPaise(admin, basePaise, effectivePlan, couponCode);
     if (order.amount !== expectedAmount) {
-      console.error("amount mismatch", { orderAmount: order.amount, expectedAmount, plan: effectivePlan });
-      return j({ error: "payment amount does not match plan price" }, 400);
+      console.error("amount mismatch", { orderAmount: order.amount, expectedAmount, plan: effectivePlan, coupon: couponCode });
+      return j({ error: "payment amount does not match expected price" }, 400);
     }
     if (order.status !== "paid") {
       console.error("order not paid", { order: razorpay_order_id, status: order.status });
@@ -131,7 +151,15 @@ Deno.serve(async (req) => {
       return j({ error: "plan upgrade failed: " + updateErr.message }, 500);
     }
 
-    console.log("plan upgraded", { userId: user.id, plan: effectivePlan, checks });
+    // 5. Mark the discount coupon used (best-effort; never block the upgrade).
+    if (couponCode) {
+      try {
+        const { data: c } = await admin.from("coupons").select("used_count").eq("code", couponCode.toUpperCase()).maybeSingle();
+        await admin.from("coupons").update({ used_count: ((c?.used_count as number) || 0) + 1 }).eq("code", couponCode.toUpperCase());
+      } catch (_e) { /* coupon usage tracking is non-critical */ }
+    }
+
+    console.log("plan upgraded", { userId: user.id, plan: effectivePlan, checks, coupon: couponCode });
     return j({ ok: true, plan: effectivePlan, checks });
   } catch (e) {
     return j({ error: String((e as Error)?.message || e) }, 500);

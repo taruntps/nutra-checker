@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-  <!-- REGULYZE-BUILD-v5.16 — rdcSyncFactors() now skips IU-potency sheet factors (mg_to_IU/mcg_to_IU) so Vitamin E ester forms keep their salt_to_elemental factors instead of misapplying IU factors as elemental fractions (was 100%/121% instead of 67.1%/81.2%). v5.15: Vit E IU↔mg = exact ICMR 1.5. -->
+  <!-- REGULYZE-BUILD-v5.17 — Coupons: support discount-at-checkout. create-order applies a discount coupon server-side and prices the Razorpay order accordingly; verify-payment re-derives the discounted amount from order notes + marks the coupon used. Coupon tab tries grant (free) first, then discount (pay reduced amount). v5.16: rdcSyncFactors IU guard. -->
   <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
@@ -864,8 +864,9 @@ select:focus{outline:none;border-color:var(--brand-500)}
       <div class="auth-err" id="rzp-err"></div>
     </div>
     <div id="pay-coupon-c" style="display:none">
-      <div class="auth-fld"><label>Activation Code</label><input type="text" id="coupon-inp2" placeholder="Enter your activation code"></div>
-      <button class="auth-btn" onclick="doCoupon2()"><i class="ti ti-check"></i> Activate Plan</button>
+      <div class="auth-fld"><label>Coupon / Activation Code</label><input type="text" id="coupon-inp2" placeholder="Enter coupon or activation code"></div>
+      <button class="auth-btn" onclick="doCoupon2()"><i class="ti ti-check"></i> Apply Coupon</button>
+      <div style="font-size:9px;color:var(--text-muted);margin-top:6px;line-height:1.6">Free codes activate instantly. Discount codes apply to the selected plan and open secure payment for the reduced amount.</div>
       <div class="auth-err" id="coupon-err2"></div>
     </div>
   </div>
@@ -6798,7 +6799,34 @@ document.addEventListener('keydown',function(e){
   };
 
 
-  // ----- Secure payment verification via Supabase Edge Function -----
+  // ----- Secure payment via Supabase Edge Function (shared open + verify) -----
+  // Opens Razorpay for an order returned by create-order (already priced server-side,
+  // discount applied if a coupon was passed). verify-payment re-derives the amount
+  // and any coupon from the order notes — the client never sets the price.
+  function _openRzpForOrder(od){
+    var planMeta=PLANS[selectedPlan]||{lbl:selectedPlan};
+    var err=document.getElementById('rzp-err');
+    var desc=planMeta.lbl+' Plan'+(od.discounted?(' · coupon '+od.coupon):'');
+    new Razorpay({key:od.key_id,amount:od.amount,currency:od.currency,name:'TPS Xperts Group',description:desc,order_id:od.order_id,
+      prefill:{email:currentUser.email,name:currentUser.name},theme:{color:'#1E3A5F'},
+      handler:async function(resp){
+        try{
+          var inv=await SB.functions.invoke('verify-payment',{body:{
+            plan:selectedPlan,
+            razorpay_order_id:resp.razorpay_order_id,
+            razorpay_payment_id:resp.razorpay_payment_id,
+            razorpay_signature:resp.razorpay_signature
+          }});
+          var vd=inv.data;
+          if(inv.error || !vd || !vd.ok) throw new Error((vd&&vd.error)||(inv.error&&inv.error.message)||'Payment could not be verified.');
+          if(currentUser){ var pr=await loadProfile(currentUser.id); if(pr) currentUser.profile=pr; }
+          try{hidePayModal();}catch(e){} try{hidePlanGate();}catch(e){} try{updCheckBar();updWB();}catch(e){}
+          try{ showSt('🎉 Payment successful! '+((PLANS[vd.plan]&&PLANS[vd.plan].lbl)||vd.plan)+' plan activated.','loading'); setTimeout(hideSt,5000);}catch(e){}
+        }catch(ve){ if(err)err.textContent='Verification failed: '+ve.message; }
+      }
+    }).open();
+  }
+
   window.startRzp=async function(){
     var btn=document.getElementById('rzp-pay-btn'), err=document.getElementById('rzp-err'); err.textContent='';
     if(!selectedPlan||!currentUser){ err.textContent='Select a plan and sign in first.'; return; }
@@ -6806,34 +6834,12 @@ document.addEventListener('keydown',function(e){
     var planMeta=PLANS[selectedPlan]; if(!planMeta){ err.textContent='Unknown plan. Please re-select a plan.'; return; }
     btn.disabled=true; btn.innerHTML='<i class="ti ti-loader"></i> Creating order...';
     try{
-      // Create order via Supabase edge function
-      var inv0=await SB.functions.invoke('create-order',{body:{plan:selectedPlan,email:currentUser.email,name:currentUser.name}});
+      var inv0=await SB.functions.invoke('create-order',{body:{plan:selectedPlan}});
       if(inv0.error) throw new Error((inv0.error&&inv0.error.message)||'Could not create order. Please try again.');
       var od=inv0.data;
       if(!od || od.error) throw new Error((od&&od.error)||'Could not create order. Please try again.');
-      if(od.error) throw new Error(od.error);
       btn.disabled=false; btn.innerHTML='<i class="ti ti-credit-card"></i> Pay Now with Razorpay';
-      new Razorpay({key:od.key_id,amount:od.amount,currency:od.currency,name:'TPS Xperts Group',description:planMeta.lbl+' Plan',order_id:od.order_id,
-        prefill:{email:currentUser.email,name:currentUser.name},theme:{color:'#1E3A5F'},
-        handler:async function(resp){
-          btn.disabled=true; btn.innerHTML='<i class="ti ti-loader"></i> Verifying payment...';
-          try{
-            var inv=await SB.functions.invoke('verify-payment',{body:{
-              plan:selectedPlan,
-              razorpay_order_id:resp.razorpay_order_id,
-              razorpay_payment_id:resp.razorpay_payment_id,
-              razorpay_signature:resp.razorpay_signature
-            }});
-            if(inv.error) throw new Error((inv.error&&inv.error.message)||'verification failed');
-            var vd=inv.data;
-            if(!vd||!vd.ok) throw new Error((vd&&vd.error)||'Payment could not be verified.');
-            if(currentUser){ var pr=await loadProfile(currentUser.id); if(pr) currentUser.profile=pr; }
-            try{hidePayModal();}catch(e){} try{hidePlanGate();}catch(e){} try{updCheckBar();updWB();}catch(e){}
-            try{ showSt('🎉 Payment successful! '+((PLANS[vd.plan]&&PLANS[vd.plan].lbl)||vd.plan)+' plan activated.','loading'); setTimeout(hideSt,5000);}catch(e){}
-            btn.disabled=false; btn.innerHTML='<i class="ti ti-credit-card"></i> Pay Now with Razorpay';
-          }catch(ve){ err.textContent='Verification failed: '+ve.message; btn.disabled=false; btn.innerHTML='<i class="ti ti-credit-card"></i> Pay Now with Razorpay'; }
-        }
-      }).open();
+      _openRzpForOrder(od);
     }catch(e){ err.textContent='Error: '+e.message; btn.disabled=false; btn.innerHTML='<i class="ti ti-credit-card"></i> Pay Now with Razorpay'; }
   };
 
@@ -6846,24 +6852,42 @@ document.addEventListener('keydown',function(e){
     }catch(e){ var el2=document.getElementById('login-err'); if(el2)el2.textContent='Google sign-in error: '+e.message; }
   };
 
-  // ----- Coupon redeem via Supabase grant codes (replaces Render /validate-coupon) -----
+  // ----- Coupon redeem: GRANT (free activation) or DISCOUNT (reduced payment) ----
+  // A grant coupon activates a plan immediately for free. A discount coupon needs
+  // a selected plan; create-order applies the discount server-side and the customer
+  // pays the reduced amount via Razorpay. We try grant first, then discount.
   window.validateCoupon=async function(code,errId){
     var err=document.getElementById(errId);
-    if(!code||!code.trim()){ if(err)err.textContent='Please enter a code.'; return false; }
+    var c=(code||'').trim();
+    if(!c){ if(err)err.textContent='Please enter a code.'; return false; }
     if(!currentUser){ if(err)err.textContent='Please sign in first.'; return false; }
     if(err){ err.style.color=''; err.textContent='Checking…'; }
+
+    // 1) Grant coupon → free activation.
     try{
-      var r=await SB.rpc('redeem_grant_coupon',{p_code:code.trim()});
-      if(r.error){ if(err){err.style.color='';err.textContent='Could not redeem: '+r.error.message;} return false; }
-      var d=r.data;
-      if(!d || !d.ok){ if(err){err.style.color='';err.textContent=(d&&d.error)||'Invalid code.';} return false; }
-      try{ var pr=await loadProfile(currentUser.id); if(pr) currentUser.profile=pr; }catch(e){}
-      try{hidePayModal();}catch(e){} try{hidePlanGate();}catch(e){} try{updCheckBar();updWB();}catch(e){}
-      var lbl=(PLANS[d.plan]&&PLANS[d.plan].lbl)||d.plan||'Upgraded';
-      if(err){ err.style.color='#166534'; err.textContent='✓ '+lbl+' plan activated!'; }
-      try{ showSt('✓ '+lbl+' plan activated!','loading'); setTimeout(hideSt,5000); }catch(e){}
+      var r=await SB.rpc('redeem_grant_coupon',{p_code:c});
+      if(!r.error && r.data && r.data.ok){
+        var d=r.data;
+        try{ var pr=await loadProfile(currentUser.id); if(pr) currentUser.profile=pr; }catch(e){}
+        try{hidePayModal();}catch(e){} try{hidePlanGate();}catch(e){} try{updCheckBar();updWB();}catch(e){}
+        var lbl=(PLANS[d.plan]&&PLANS[d.plan].lbl)||d.plan||'Upgraded';
+        if(err){ err.style.color='#166534'; err.textContent='✓ '+lbl+' plan activated!'; }
+        try{ showSt('✓ '+lbl+' plan activated!','loading'); setTimeout(hideSt,5000); }catch(e){}
+        return true;
+      }
+    }catch(e){ /* not a grant code or RPC unavailable — fall through to discount */ }
+
+    // 2) Discount coupon → must have a plan selected; pay the reduced amount.
+    if(!selectedPlan){ if(err){err.style.color='#A32D2D';err.textContent='Pick a plan above first, then apply your discount code.';} return false; }
+    if(typeof Razorpay==='undefined'){ if(err){err.style.color='#A32D2D';err.textContent='Payment system not loaded. Please refresh and try again.';} return false; }
+    try{
+      var inv=await SB.functions.invoke('create-order',{body:{plan:selectedPlan,coupon:c}});
+      var od=inv.data;
+      if(inv.error || !od || od.error || !od.order_id){ if(err){err.style.color='#A32D2D';err.textContent=(od&&od.error)||'Invalid or expired coupon code.';} return false; }
+      if(err){ err.style.color='#166534'; err.textContent='✓ Coupon applied — pay ₹'+(od.amount/100).toFixed(2)+(od.base_amount?(' (was ₹'+(od.base_amount/100).toFixed(0)+')'):''); }
+      _openRzpForOrder(od);
       return true;
-    }catch(e){ if(err)err.textContent='Connection error: '+e.message; return false; }
+    }catch(e){ if(err){err.style.color='#A32D2D';err.textContent='Connection error: '+e.message;} return false; }
   };
 
   function rgGoogleInit(){
