@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-  <!-- REGULYZE-BUILD-v5.17 — Coupons: support discount-at-checkout. create-order applies a discount coupon server-side and prices the Razorpay order accordingly; verify-payment re-derives the discounted amount from order notes + marks the coupon used. Coupon tab tries grant (free) first, then discount (pay reduced amount). v5.16: rdcSyncFactors IU guard. -->
+  <!-- REGULYZE-BUILD-v5.18 — Regulation data: fetchSheet() tries Supabase regulation_data table first (fast, no CORS proxies); falls back to Google Sheet. Populated by Google Apps Script on every edit. v5.17: discount coupons at checkout. -->
   <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
@@ -1954,7 +1954,20 @@ function _markCacheFresh() {
 
 // ═══════════════════════════════════════════════════════════════════
 async function fetchSheet(tab) {
-  // tq=select * forces all rows regardless of any standard filter applied to the sheet
+  // Primary: Supabase regulation_data table (fast, no CORS proxies, always fresh).
+  // Populated by Google Apps Script on every sheet edit (see google-apps-script/sync-regulations.gs).
+  if (window.SB) {
+    try {
+      const { data, error } = await window.SB
+        .from('regulation_data')
+        .select('data')
+        .eq('tab_name', tab)
+        .order('row_index');
+      if (!error && data && data.length > 0) return data.map(r => r.data);
+    } catch(_e) { /* fall through to Google Sheet */ }
+  }
+
+  // Fallback: Google Sheet via gviz (original path, unchanged).
   const _cb   = _forceRefresh ? `&_cb=${Date.now()}` : '';
   const _cm   = _forceRefresh ? 'reload' : 'no-cache';
   const base  = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&tq=${encodeURIComponent('select *')}&sheet=`;
