@@ -159,6 +159,19 @@ Deno.serve(async (req) => {
       } catch (_e) { /* coupon usage tracking is non-critical */ }
     }
 
+    // 6. Log the upgrade to the activity table (best-effort; never block the response).
+    try {
+      const { data: prof } = await admin.from("profiles").select("name, email").eq("id", user.id).maybeSingle();
+      await admin.from("activity").insert({
+        user_id: user.id,
+        email: prof?.email || user.email,
+        name: prof?.name || (user.email || "").split("@")[0],
+        event: "PLAN_UPGRADE",
+        detail: `${effectivePlan} · ${razorpay_payment_id}${couponCode ? " · coupon:" + couponCode : ""}`,
+        status: "success",
+      });
+    } catch (_e) { /* activity log is non-critical */ }
+
     console.log("plan upgraded", { userId: user.id, plan: effectivePlan, checks, coupon: couponCode });
     return j({ ok: true, plan: effectivePlan, checks });
   } catch (e) {

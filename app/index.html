@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-  <!-- REGULYZE-BUILD-v5.19 — Fix: dashboard shows correct plan label after payment/coupon (applyPlan syncs tps_u_ localStorage after loadProfile). v5.18: Supabase regulation data. -->
+  <!-- REGULYZE-BUILD-v5.20 — Fix: plan label persists after refresh (applyPlan in rgAfterAuth syncs tps_u_ on every login/reload). verify-payment logs PLAN_UPGRADE to activity table. v5.19: plan label fix post-payment. -->
   <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
@@ -6673,6 +6673,8 @@ document.addEventListener('keydown',function(e){
     var prof = await loadProfile(user.id) || {plan:'free',plan_checks:5,used:0,name:null};
     currentUser = { id:user.id, email:user.email,
       name:(prof.name||(user.user_metadata&&user.user_metadata.name)||user.email.split('@')[0]), profile:prof };
+    // Sync plan into legacy tps_u_ localStorage so renderDashboard() shows correct plan label.
+    try{ if(prof.plan) applyPlan(user.email, prof.plan, prof.plan_checks||5); }catch(e){}
     if(isFresh){
       var _prov=(user.app_metadata&&user.app_metadata.provider)||'password';
       try{ await SB.rpc('register_device',{p_device:RG_DEVICE,p_label:RG_DEVLABEL}); }catch(e){}
