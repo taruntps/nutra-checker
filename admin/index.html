@@ -350,6 +350,9 @@ async function submitAddUser(){
     const r=await SB.functions.invoke('admin-create-user',{body:body});
     if(r.error) throw new Error((r.error&&r.error.message)||'failed');
     if(!r.data||!r.data.ok) throw new Error((r.data&&r.data.error)||'failed');
+    // Record an Activity row so admin-created users are visible in the audit trail.
+    // Logged under the admin's session (valid JWT); new user's email goes in detail.
+    try{ await SB.rpc('log_activity',{p_event:'USER_CREATED',p_detail:email+(body.plan?(' · '+body.plan):'')}); }catch(e){}
     err.style.color='#0F9D58'; err.textContent='User created!';
     setTimeout(function(){ closeAdd(); loadUsers(); },700);
   }catch(e){ err.style.color='#C0392B'; err.textContent='Failed: '+e.message; }
