@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-  <!-- REGULYZE-BUILD-v5.20 — Fix: plan label persists after refresh (applyPlan in rgAfterAuth syncs tps_u_ on every login/reload). verify-payment logs PLAN_UPGRADE to activity table. v5.19: plan label fix post-payment. -->
+  <!-- REGULYZE-BUILD-v5.21 — Card/UPI Online tab now has an optional discount-coupon field: enter a code and pay the reduced amount in one place (create-order applies it server-side). v5.20: plan label persists after refresh + payment logged to activity. -->
   <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
@@ -860,7 +860,9 @@ select:focus{outline:none;border-color:var(--brand-500)}
       <div class="auth-err" id="coupon-err"></div>
     </div>
     <div id="pay-rzp-c" style="display:none">
+      <div class="auth-fld"><label>Discount Coupon (optional)</label><input type="text" id="rzp-coupon-inp" placeholder="Have a discount code? Enter it here" oninput="this.value=this.value.toUpperCase()"></div>
       <button class="auth-btn" id="rzp-pay-btn" onclick="startRzp()"><i class="ti ti-credit-card"></i> Pay Now with Razorpay</button>
+      <div style="font-size:9px;color:var(--text-muted);margin-top:6px;line-height:1.6">Enter a discount code to pay the reduced amount. Leave blank to pay full price.</div>
       <div class="auth-err" id="rzp-err"></div>
     </div>
     <div id="pay-coupon-c" style="display:none">
@@ -6843,19 +6845,23 @@ document.addEventListener('keydown',function(e){
   }
 
   window.startRzp=async function(){
-    var btn=document.getElementById('rzp-pay-btn'), err=document.getElementById('rzp-err'); err.textContent='';
+    var btn=document.getElementById('rzp-pay-btn'), err=document.getElementById('rzp-err'); err.textContent=''; err.style.color='';
     if(!selectedPlan||!currentUser){ err.textContent='Select a plan and sign in first.'; return; }
     if(typeof Razorpay==='undefined'){ err.textContent='Payment system not loaded. Please refresh and try again.'; return; }
     var planMeta=PLANS[selectedPlan]; if(!planMeta){ err.textContent='Unknown plan. Please re-select a plan.'; return; }
     btn.disabled=true; btn.innerHTML='<i class="ti ti-loader"></i> Creating order...';
     try{
-      var inv0=await SB.functions.invoke('create-order',{body:{plan:selectedPlan}});
+      // Optional discount coupon entered on the Card/UPI Online tab.
+      var rzpCpEl=document.getElementById('rzp-coupon-inp');
+      var rzpCoupon=(rzpCpEl&&rzpCpEl.value||'').trim();
+      var inv0=await SB.functions.invoke('create-order',{body:rzpCoupon?{plan:selectedPlan,coupon:rzpCoupon}:{plan:selectedPlan}});
       if(inv0.error) throw new Error((inv0.error&&inv0.error.message)||'Could not create order. Please try again.');
       var od=inv0.data;
       if(!od || od.error) throw new Error((od&&od.error)||'Could not create order. Please try again.');
       btn.disabled=false; btn.innerHTML='<i class="ti ti-credit-card"></i> Pay Now with Razorpay';
+      if(rzpCoupon && od.discounted){ err.style.color='#166534'; err.textContent='✓ Coupon applied — pay ₹'+(od.amount/100).toFixed(2)+(od.base_amount?(' (was ₹'+(od.base_amount/100).toFixed(0)+')'):''); }
       _openRzpForOrder(od);
-    }catch(e){ err.textContent='Error: '+e.message; btn.disabled=false; btn.innerHTML='<i class="ti ti-credit-card"></i> Pay Now with Razorpay'; }
+    }catch(e){ err.style.color=''; err.textContent='Error: '+e.message; btn.disabled=false; btn.innerHTML='<i class="ti ti-credit-card"></i> Pay Now with Razorpay'; }
   };
 
   window.rgGoogle=async function(){
