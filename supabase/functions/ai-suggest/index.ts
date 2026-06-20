@@ -6,6 +6,7 @@
 //
 // Required secret: ANTHROPIC_API_KEY
 // SECURITY: requires a logged-in user (prevents anonymous Claude credit drain).
+// RATE LIMIT: per-user daily cap enforced via ai_usage table (increment_ai_usage RPC).
 
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
@@ -20,13 +21,17 @@ const j = (b: unknown, s = 200) =>
 function adminClient() {
   return createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!, { auth: { persistSession: false } });
 }
-// Resolve the bearer JWT to a real user. Rejects the public anon key.
 async function getUser(req: Request, admin: ReturnType<typeof adminClient>) {
   const jwt = (req.headers.get("Authorization") || "").replace(/^Bearer\s+/i, "").trim();
   if (!jwt) return null;
   try { const { data, error } = await admin.auth.getUser(jwt); return error ? null : (data?.user ?? null); }
   catch { return null; }
 }
+
+// Daily AI-suggest call limits by plan. Keep in sync with extract-ingredients.
+const SUGGEST_LIMITS: Record<string, number> = {
+  free: 10, basic: 30, pro: 100, monthly: 200, unlimited: 500,
+};
 
 const MODEL = "claude-sonnet-4-6";
 
@@ -62,6 +67,17 @@ Deno.serve(async (req) => {
     const { ingredient, dbList } = await req.json();
     if (!ingredient || typeof ingredient !== "string") return j({ found: false, error: "ingredient required" }, 400);
     if (ingredient.length > 200) return j({ found: false, error: "ingredient too long" }, 400);
+
+    // Rate limit: check + increment before calling Anthropic.
+    const { data: profile } = await admin.from("profiles").select("plan").eq("id", user.id).maybeSingle();
+    const plan = (profile?.plan as string) || "free";
+    const limit = SUGGEST_LIMITS[plan] ?? SUGGEST_LIMITS.free;
+    try {
+      const { data: newCount, error: rlErr } = await admin.rpc("increment_ai_usage", { p_user_id: user.id, p_kind: "suggest" });
+      if (!rlErr && typeof newCount === "number" && newCount > limit) {
+        return j({ found: false, error: `Daily AI suggestion limit reached (${limit}/day on ${plan} plan). Upgrade your plan for more.` }, 429);
+      }
+    } catch (_e) { /* non-fatal: allow call if tracking fails */ }
 
     const list = Array.isArray(dbList) ? dbList.slice(0, 300).map(String) : [];
 

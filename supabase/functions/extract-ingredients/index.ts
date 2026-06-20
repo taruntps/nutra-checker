@@ -7,6 +7,7 @@
 //
 // Required secret: ANTHROPIC_API_KEY
 // SECURITY: requires a logged-in user + caps payload size.
+// RATE LIMIT: per-user daily cap enforced via ai_usage table (increment_ai_usage RPC).
 
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
@@ -27,6 +28,11 @@ async function getUser(req: Request, admin: ReturnType<typeof adminClient>) {
   try { const { data, error } = await admin.auth.getUser(jwt); return error ? null : (data?.user ?? null); }
   catch { return null; }
 }
+
+// Daily extract call limits by plan. Keep in sync with ai-suggest.
+const EXTRACT_LIMITS: Record<string, number> = {
+  free: 2, basic: 5, pro: 10, monthly: 20, unlimited: 50,
+};
 
 const MODEL = "claude-sonnet-4-6";
 const MAX_BASE64 = 30 * 1024 * 1024; // ~22 MB decoded — stays under Anthropic's 32 MB request limit
@@ -55,6 +61,17 @@ Deno.serve(async (req) => {
 
     const KEY = Deno.env.get("ANTHROPIC_API_KEY");
     if (!KEY) return j({ error: "anthropic key not configured" }, 500);
+
+    // Rate limit: check + increment before calling Anthropic.
+    const { data: profile } = await admin.from("profiles").select("plan").eq("id", user.id).maybeSingle();
+    const plan = (profile?.plan as string) || "free";
+    const limit = EXTRACT_LIMITS[plan] ?? EXTRACT_LIMITS.free;
+    try {
+      const { data: newCount, error: rlErr } = await admin.rpc("increment_ai_usage", { p_user_id: user.id, p_kind: "extract" });
+      if (!rlErr && typeof newCount === "number" && newCount > limit) {
+        return j({ error: `Daily label scan limit reached (${limit}/day on ${plan} plan). Upgrade your plan for more.` }, 429);
+      }
+    } catch (_e) { /* non-fatal: allow call if tracking fails */ }
 
     const { fileData, mediaType, isPDF } = await req.json();
     if (!fileData || typeof fileData !== "string") return j({ error: "No file data received." }, 400);
