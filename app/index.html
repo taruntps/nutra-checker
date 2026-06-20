@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-  <!-- REGULYZE-BUILD-v5.22 — Re-theme to neon-editorial palette (teal/emerald + cream, Fraunces/Inter/IBM Plex Mono) to match the landing. Design tokens + hardcoded navy remapped; no content/text/link/logic changes. v5.21: discount coupon on Card/UPI tab. -->
+  <!-- REGULYZE-BUILD-v5.23 — Download PDF now opens a preview tab (browser PDF viewer) instead of saving directly, so the user can review then save. v5.22: neon-editorial re-theme. -->
   <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
@@ -4734,6 +4734,11 @@ async function downloadPDF() {
   const btn = document.querySelector('.btn[onclick*="downloadPDF"]');
   if (btn) { btn.disabled = true; btn.innerHTML = '<i class="ti ti-loader"></i> Generating PDF…'; }
 
+  // Open a preview tab during the user click (so it isn't popup-blocked); the
+  // generated PDF is loaded into it for preview — the user can then Save/Download.
+  const pdfWin = window.open('', '_blank');
+  if (pdfWin) { try { pdfWin.document.write('<!doctype html><title>Generating preview…</title><body style="margin:0;font-family:Inter,system-ui,sans-serif;color:#16241F;background:#F7F4EC"><p style="padding:28px">Generating your compliance report preview…</p></body>'); } catch(_e){} }
+
   const titleEl = reportEl.querySelector('.report-title');
   const titleText = (titleEl ? titleEl.textContent : 'Compliance-Report').trim().replace(/\s+/g, '-');
   const now = new Date();
@@ -4783,9 +4788,14 @@ async function downloadPDF() {
   };
 
   try {
-    await html2pdf().set(opt).from(wrapper).save();
+    // Generate the PDF, then show it in the preview tab instead of saving directly.
+    const pdf = await html2pdf().set(opt).from(wrapper).toPdf().get('pdf');
+    const blobUrl = pdf.output('bloburl');
+    if (pdfWin) { pdfWin.location.href = blobUrl; }
+    else { window.open(blobUrl, '_blank'); }
   } catch(e) {
     console.error('PDF error:', e);
+    if (pdfWin) { try { pdfWin.close(); } catch(_e){} }
     alert('PDF generation failed. Please try again.');
   } finally {
     if (btn) { btn.disabled = false; btn.innerHTML = '<i class="ti ti-download"></i> Download PDF'; }
