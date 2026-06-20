@@ -101,11 +101,15 @@ Deno.serve(async (req) => {
     }
 
     // Bind the order to the authenticated user — email comes from the token.
+    // notes[base_amount] is the canonical pre-discount price: verify-payment reads
+    // it back from the order so the price lives in ONE place (this function) and the
+    // two functions can never drift out of sync.
     const noteFields: Record<string, string> = {
       amount: String(amount),
       currency: "INR",
       receipt: `rg_${plan}_${Date.now()}`,
       "notes[plan]": plan,
+      "notes[base_amount]": String(basePaise),
       "notes[user_id]": user.id,
       "notes[email]": user.email || "",
     };

@@ -28,10 +28,10 @@ async function getUser(req: Request, admin: ReturnType<typeof adminClient>) {
   catch { return null; }
 }
 
-// Keep in sync with create-order
-const PRICE_PAISE: Record<string, number> = {
-  basic: 49900, pro: 149900, monthly: 299900, unlimited: 999900,
-};
+// Price is NOT defined here — it is read back from the order's notes[base_amount],
+// which create-order set authoritatively. This guarantees the charge price and the
+// verify price are the same number (single source of truth in create-order).
+//
 // Checks granted per plan — keep in sync with PLANS in index.html
 const PLAN_CHECKS: Record<string, number> = {
   basic: 10, pro: 50, monthly: 99999, unlimited: 99999,
@@ -109,8 +109,13 @@ Deno.serve(async (req) => {
     // to the client-supplied plan only if the note is absent.
     const effectivePlan = (order?.notes?.plan as string) || plan;
     const couponCode = (order?.notes?.coupon as string) || null;
-    const basePaise = PRICE_PAISE[effectivePlan];
-    if (!basePaise) return j({ error: "unknown plan" }, 400);
+    // Canonical price comes from the order itself (set by create-order). This is the
+    // single source of truth — verify-payment never hardcodes the price.
+    const basePaise = Number(order?.notes?.base_amount);
+    if (!basePaise || basePaise < MIN_PAISE) {
+      console.error("order missing base_amount", { order: razorpay_order_id, notes: order?.notes });
+      return j({ error: "could not determine order price — please contact support" }, 400);
+    }
     // Re-derive the amount we expect — including any discount coupon — server-side.
     const expectedAmount = await expectedPaise(admin, basePaise, effectivePlan, couponCode);
     if (order.amount !== expectedAmount) {
