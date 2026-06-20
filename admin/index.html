@@ -5,16 +5,17 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Regulyze — Admin Console</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=DM+Mono&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&family=DM+Mono&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.1.0/dist/tabler-icons.min.css">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-:root{--navy:#0E1F3C;--navy2:#1E3A5F;--blue:#235690;--ink:#11161F;--muted:#566; --line:#E5E9F0;--bg:#F5F8FB;
-  --ok:#0F9D58;--okbg:#E6F4EA;--warn:#B45309;--warnbg:#FEF3C7;--fail:#C0392B;--failbg:#FDECEA}
-body{font-family:'Manrope',system-ui,sans-serif;background:var(--bg);color:var(--ink);font-size:14px}
+:root{--navy:#06231C;--navy2:#0F7A6A;--blue:#14906F;--ink:#16241F;--muted:#6A7168; --line:#E2DCCB;--bg:#F7F4EC;
+  --ok:#0F7A6A;--okbg:#E6F4EF;--warn:#8A6420;--warnbg:#F6EAD2;--fail:#9A2B3E;--failbg:#F7E3E6}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--ink);font-size:14px}
+h1,h2,h3,header b{font-family:'Fraunces',Georgia,serif}
 a{color:var(--blue);text-decoration:none}
-.mono{font-family:'DM Mono',monospace}
+.mono{font-family:'IBM Plex Mono','DM Mono',monospace}
 header{background:linear-gradient(120deg,var(--navy),var(--navy2));color:#fff;padding:14px 24px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:10}
 header b{font-size:18px;font-weight:800}
 header .sp{margin-left:auto;display:flex;gap:12px;align-items:center;font-size:13px}
