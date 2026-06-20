@@ -69,7 +69,7 @@ section{padding:92px 0;position:relative}
 @keyframes beam{0%{left:-40%}55%{left:130%}100%{left:130%}}
 .hero-inner{position:relative;z-index:1;text-align:center;padding:78px 0 56px;max-width:880px;margin:0 auto}
 .hero .chip{display:inline-flex;align-items:center;gap:7px;font-size:13px;font-weight:600;color:var(--emerald);background:rgba(63,216,163,.1);border:1px solid rgba(63,216,163,.25);padding:7px 15px;border-radius:var(--r-pill);margin-bottom:24px}
-.hero h1{font-size:clamp(46px,7vw,84px);font-weight:600;margin-bottom:22px}
+.hero h1{font-size:clamp(36px,5vw,62px);font-weight:600;margin-bottom:22px}
 .hero h1 em{font-style:italic;background:linear-gradient(100deg,var(--teal-l),var(--emerald) 55%,var(--gold));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;text-shadow:0 0 50px rgba(63,216,163,.3)}
 .hero .lead{font-size:18px;color:rgba(247,244,236,.78);max-width:620px;margin:0 auto 30px}
 .hero-actions{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-bottom:30px}
@@ -145,7 +145,7 @@ section{padding:92px 0;position:relative}
 .foot-col h4{color:var(--cream);font-size:14px;margin-bottom:14px;font-family:'Fraunces';font-weight:600}
 .foot-col a{display:block;font-size:13.5px;margin-bottom:9px;color:#909C90}.foot-col a:hover{color:var(--teal-l)}
 .foot-bottom{border-top:1px solid rgba(255,255,255,.1);padding-top:22px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;font-size:12.5px;color:#73806F}
-@media (max-width:900px){.feat-grid,.steps,.price-grid{grid-template-columns:1fr}.stats-grid{grid-template-columns:1fr 1fr}.price-card,.stat{border-right:0;border-bottom:1px solid var(--line)}.foot-grid{grid-template-columns:1fr 1fr}.nav-links{display:none}.hero h1{font-size:46px}}
+@media (max-width:900px){.feat-grid,.steps,.price-grid{grid-template-columns:1fr}.stats-grid{grid-template-columns:1fr 1fr}.price-card,.stat{border-right:0;border-bottom:1px solid var(--line)}.foot-grid{grid-template-columns:1fr 1fr}.nav-links{display:none}.hero h1{font-size:36px}}
 </style>
 </head>
 <body>
@@ -153,8 +153,8 @@ section{padding:92px 0;position:relative}
 <header class="site-head">
   <div class="container"><div class="head-inner">
     <a class="brand" href="/"><span class="logo-badge"><img src="design-system/assets/logo-mark.png" alt="Regulyze"></span> Regulyze</a>
-    <nav class="nav-links"><a href="#features">Features</a><a href="#how">How it works</a><a href="#pricing">Pricing</a><a href="#customers">Customers</a></nav>
-    <a href="app/?auth=signup" class="btn btn-dark" style="padding:11px 22px;font-size:14px">Start free</a>
+    <nav class="nav-links"><a href="#features">Features</a><a href="#how">How it works</a><a href="#customers">Customers</a></nav>
+    <a href="app/?auth=signup" class="btn btn-dark" style="padding:11px 22px;font-size:14px">Start free / Sign in</a>
   </div></div>
 </header>
 
@@ -232,15 +232,6 @@ section{padding:92px 0;position:relative}
   </div>
 </div></section>
 
-<section id="pricing" class="reveal"><div class="container">
-  <div class="sec-head center"><span class="eyebrow">Pricing</span><h2>Start free. Upgrade when you scale.</h2></div>
-  <div class="price-grid">
-    <div class="price-card"><div class="price-label">Starter</div><div class="price-name">Free</div><div class="price-amt">₹0</div><div class="price-per">forever</div><div class="price-desc">For trying Regulyze on a real formulation.</div><ul class="price-ul"><li class="price-li"><i class="ti ti-check"></i> 5 compliance checks</li><li class="price-li"><i class="ti ti-check"></i> Full schedule validation</li><li class="price-li"><i class="ti ti-check"></i> Label checklist</li><li class="price-li"><i class="ti ti-check"></i> PDF export</li></ul><a href="app/?auth=signup" class="btn btn-outline btn-block btn-lg">Start free</a></div>
-    <div class="price-card pop"><div class="price-label">Professional</div><div class="price-name">Pro</div><div class="price-amt">₹2,499</div><div class="price-per">per month</div><div class="price-desc">For active formulators and brands.</div><ul class="price-ul"><li class="price-li"><i class="ti ti-check"></i> Unlimited checks</li><li class="price-li"><i class="ti ti-check"></i> AI ingredient assist</li><li class="price-li"><i class="ti ti-check"></i> Full history &amp; audit log</li><li class="price-li"><i class="ti ti-check"></i> Priority support</li></ul><a href="app/?auth=signup" class="btn btn-cream btn-block btn-lg">Choose Professional</a></div>
-    <div class="price-card"><div class="price-label">Enterprise</div><div class="price-name">Custom</div><div class="price-amt" style="font-size:34px">Custom</div><div class="price-per">for your team</div><div class="price-desc">For CMOs &amp; regulatory consultancies.</div><ul class="price-ul"><li class="price-li"><i class="ti ti-check"></i> Team seats &amp; roles</li><li class="price-li"><i class="ti ti-check"></i> API access</li><li class="price-li"><i class="ti ti-check"></i> Custom regulatory data</li><li class="price-li"><i class="ti ti-check"></i> SLA &amp; onboarding</li></ul><a href="app/?auth=signup" class="btn btn-outline btn-block btn-lg">Talk to sales</a></div>
-  </div>
-</div></section>
-
 <section class="reveal"><div class="container">
   <div class="cta-band"><span class="beam"></span><h2>Check your first formulation today.</h2><p>Join the teams shipping compliant nutraceuticals faster. Five free checks, no credit card required.</p><a href="app/?auth=signup" class="btn btn-glow btn-lg"><i class="ti ti-bolt"></i> Get started free</a></div>
 </div></section>
@@ -248,7 +239,7 @@ section{padding:92px 0;position:relative}
 <footer class="site-foot"><div class="container">
   <div class="foot-grid">
     <div class="foot-brand"><a class="brand" href="/" style="color:var(--cream)"><span class="logo-badge"><img src="design-system/assets/logo-mark.png" alt="Regulyze"></span> Regulyze</a><p>FSSAI nutraceutical compliance engine by TPS Xperts Group. Analyze smarter. Comply faster.</p></div>
-    <div class="foot-col"><h4>Product</h4><a href="#features">Features</a><a href="#pricing">Pricing</a><a href="sample-report/">Sample report</a></div>
+    <div class="foot-col"><h4>Product</h4><a href="#features">Features</a><a href="#how">How it works</a><a href="sample-report/">Sample report</a></div>
     <div class="foot-col"><h4>Company</h4><a href="#customers">Customers</a><a href="#">About</a><a href="#">Contact</a></div>
     <div class="foot-col"><h4>Legal</h4><a href="#">Privacy</a><a href="#">Terms</a><a href="#">Disclaimer</a></div>
   </div>
