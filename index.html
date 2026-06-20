@@ -51,8 +51,7 @@ section{padding:92px 0;position:relative}
 .site-head{position:sticky;top:0;z-index:60;background:rgba(247,244,236,.88);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
 .head-inner{display:flex;align-items:center;justify-content:space-between;height:74px}
 .brand{display:flex;align-items:center;gap:11px;font-family:'Fraunces';font-weight:600;font-size:23px;color:var(--ink)}
-.logo-badge{display:inline-grid;place-items:center;width:44px;height:44px;border-radius:12px;background:#fff;border:1px solid var(--line);box-shadow:0 2px 8px rgba(16,42,40,.06)}
-.logo-badge img{width:30px;height:30px}
+.brand-ico{width:36px;height:36px;object-fit:contain}
 .nav-links{display:flex;gap:30px}
 .nav-links a{font-size:14.5px;font-weight:500;color:var(--ink-2)}
 .nav-links a:hover{color:var(--teal)}
@@ -139,20 +138,43 @@ section{padding:92px 0;position:relative}
 .cta-band h2{font-size:clamp(36px,5vw,58px);margin-bottom:16px;color:var(--cream);font-style:italic;font-weight:500;position:relative}
 .cta-band p{color:rgba(247,244,236,.82);font-size:18px;max-width:520px;margin:0 auto 30px;position:relative}
 .cta-band .btn{position:relative}
+/* dark timeline (How it works) */
+.how-dark{background:var(--night);color:var(--cream);position:relative;overflow:hidden}
+.how-dark .sec-head h2{color:var(--cream)}
+.how-dark .sec-head p{color:rgba(247,244,236,.7)}
+.how-dark .eyebrow{color:var(--gold)}
+.timeline{position:relative;max-width:1000px;margin:56px auto 0}
+.timeline::before{content:'';position:absolute;left:50%;top:0;bottom:0;width:1px;background:rgba(255,255,255,.1);transform:translateX(-50%)}
+.tstep{position:relative;display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:center;margin-bottom:74px}
+.tstep:last-child{margin-bottom:0}
+.tstep:nth-child(even) .t-txt{order:2}
+.tstep:nth-child(even) .t-vis{order:1}
+.tnum{font-family:'IBM Plex Mono';font-size:46px;font-weight:700;color:rgba(63,216,163,.22);margin-bottom:14px;transition:.3s}
+.tstep:hover .tnum{color:var(--emerald)}
+.tstep h3{font-size:27px;color:var(--cream);margin-bottom:12px}
+.tstep .t-txt p{color:rgba(247,244,236,.7);font-size:15px}
+.tdot{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:16px;height:16px;border-radius:50%;background:var(--emerald);border:4px solid var(--night);z-index:2}
+.vis-card{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:14px;padding:18px;backdrop-filter:blur(8px)}
+.vis-skel{height:120px;border-radius:10px;background:rgba(255,255,255,.05);padding:20px;display:flex;flex-direction:column;gap:11px;justify-content:center}
+.vis-skel span{height:8px;border-radius:4px;background:rgba(255,255,255,.18)}
+.vis-an .anh{display:flex;align-items:center;gap:10px;margin-bottom:14px;font-family:'IBM Plex Mono';font-size:12px;color:var(--emerald);letter-spacing:.05em}
+.vis-an .anh .d{width:8px;height:8px;border-radius:50%;background:var(--emerald)}
+.vis-an .row{display:flex;justify-content:space-between;font-family:'IBM Plex Mono';font-size:11px;padding:6px 0;color:rgba(247,244,236,.85)}
+.vis-an .row .pass{color:var(--emerald)}.vis-an .row .fail{color:#F7A0AE}
 .site-foot{background:#081512;color:#AEB9AE;padding:58px 0 28px}
 .foot-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:32px;margin-bottom:36px}
 .foot-brand .brand{color:var(--cream);margin-bottom:14px}.foot-brand p{font-size:13.5px;max-width:280px}
 .foot-col h4{color:var(--cream);font-size:14px;margin-bottom:14px;font-family:'Fraunces';font-weight:600}
 .foot-col a{display:block;font-size:13.5px;margin-bottom:9px;color:#909C90}.foot-col a:hover{color:var(--teal-l)}
 .foot-bottom{border-top:1px solid rgba(255,255,255,.1);padding-top:22px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;font-size:12.5px;color:#73806F}
-@media (max-width:900px){.feat-grid,.steps,.price-grid{grid-template-columns:1fr}.stats-grid{grid-template-columns:1fr 1fr}.price-card,.stat{border-right:0;border-bottom:1px solid var(--line)}.foot-grid{grid-template-columns:1fr 1fr}.nav-links{display:none}.hero h1{font-size:36px}}
+@media (max-width:900px){.feat-grid{grid-template-columns:1fr}.stats-grid{grid-template-columns:1fr 1fr}.stat{border-right:0;border-bottom:1px solid var(--line)}.foot-grid{grid-template-columns:1fr 1fr}.nav-links{display:none}.hero h1{font-size:36px}.tstep{grid-template-columns:1fr;gap:18px}.timeline::before,.tdot{display:none}.tstep:nth-child(even) .t-txt{order:0}.tstep:nth-child(even) .t-vis{order:0}}
 </style>
 </head>
 <body>
 
 <header class="site-head">
   <div class="container"><div class="head-inner">
-    <a class="brand" href="/"><span class="logo-badge"><img src="design-system/assets/logo-mark.png" alt="Regulyze"></span> Regulyze</a>
+    <a class="brand" href="/"><img class="brand-ico" src="design-system/assets/logo-mark.png" alt="Regulyze"> Regulyze</a>
     <nav class="nav-links"><a href="#features">Features</a><a href="#how">How it works</a><a href="#customers">Customers</a></nav>
     <a href="app/?auth=signup" class="btn btn-dark" style="padding:11px 22px;font-size:14px">Start free / Sign in</a>
   </div></div>
@@ -194,11 +216,7 @@ section{padding:92px 0;position:relative}
     </div>
   </div>
   <div class="clients-dark" id="customers">
-    <div class="container"><p class="lbl">Trusted by nutraceutical brands &amp; contract manufacturers</p></div>
-    <div class="cmarquee"><div class="cmq-track">
-      <span class="cmq-item"><i class="ti ti-leaf"></i> NutriVeda</span><span class="cmq-item"><i class="ti ti-droplet"></i> PureForm</span><span class="cmq-item"><i class="ti ti-flask"></i> Axiom Labs</span><span class="cmq-item"><i class="ti ti-plant-2"></i> HerbaScience</span><span class="cmq-item"><i class="ti ti-heartbeat"></i> VitaCore</span><span class="cmq-item"><i class="ti ti-microscope"></i> ProBio Naturals</span><span class="cmq-item"><i class="ti ti-shield-plus"></i> Wellnest</span><span class="cmq-item"><i class="ti ti-atom"></i> ZenithNutra</span>
-      <span class="cmq-item"><i class="ti ti-leaf"></i> NutriVeda</span><span class="cmq-item"><i class="ti ti-droplet"></i> PureForm</span><span class="cmq-item"><i class="ti ti-flask"></i> Axiom Labs</span><span class="cmq-item"><i class="ti ti-plant-2"></i> HerbaScience</span><span class="cmq-item"><i class="ti ti-heartbeat"></i> VitaCore</span><span class="cmq-item"><i class="ti ti-microscope"></i> ProBio Naturals</span><span class="cmq-item"><i class="ti ti-shield-plus"></i> Wellnest</span><span class="cmq-item"><i class="ti ti-atom"></i> ZenithNutra</span>
-    </div></div>
+    <div class="container"><p class="lbl" style="margin-bottom:0">Built for India's nutraceutical formulators &amp; contract manufacturers</p></div>
   </div>
 </section>
 
@@ -212,25 +230,40 @@ section{padding:92px 0;position:relative}
 </div></section>
 
 <section id="features" class="reveal" style="padding-top:30px"><div class="container">
-  <div class="sec-head"><span class="eyebrow">The platform</span><h2>A complete regulatory check, in one pass.</h2></div>
+  <div class="sec-head"><span class="eyebrow">Platform capabilities</span><h2>A complete regulatory check.</h2></div>
   <div class="feat-grid">
-    <div class="feat-card glowborder"><div style="padding:28px"><div class="feat-num">01 <i class="ti ti-list-search"></i></div><h3>Schedule I–IV checks</h3><p>Vitamins, minerals, amino acids, botanicals and pre/probiotics — validated against every FSSR schedule with the exact citation.</p></div></div>
-    <div class="feat-card glowborder"><div style="padding:28px"><div class="feat-num">02 <i class="ti ti-test-pipe"></i></div><h3>Additive &amp; NSF screening</h3><p>Cross-checks GMP/Codex additive lists and NSF approved/rejected closures so nothing slips through.</p></div></div>
-    <div class="feat-card glowborder"><div style="padding:28px"><div class="feat-num">03 <i class="ti ti-gauge"></i></div><h3>RDA 2020 limits</h3><p>Compares dosages to ICMR-NIN RDA by target group and flags overages and tolerable upper limits.</p></div></div>
-    <div class="feat-card glowborder"><div style="padding:28px"><div class="feat-num">04 <i class="ti ti-sparkles"></i></div><h3>AI ingredient assist</h3><p>Resolves trade names and unknown actives against the regulatory database automatically.</p></div></div>
-    <div class="feat-card glowborder"><div style="padding:28px"><div class="feat-num">05 <i class="ti ti-checklist"></i></div><h3>Label checklist</h3><p>Generates the mandatory label declarations and warnings required for your product class.</p></div></div>
-    <div class="feat-card glowborder"><div style="padding:28px"><div class="feat-num">06 <i class="ti ti-file-certificate"></i></div><h3>Audit-ready PDF</h3><p>One click exports a branded, cited compliance report and keeps a timestamped history.</p></div></div>
+    <div class="feat-card glowborder"><div style="padding:28px"><div class="feat-num">01 <i class="ti ti-shield-check"></i></div><h3>FSSR Schedule Validation</h3><p>Automatic cross-referencing against Schedule I (Vitamins/Minerals), Schedule II (Amino Acids), and more.</p></div></div>
+    <div class="feat-card glowborder"><div style="padding:28px"><div class="feat-num">02 <i class="ti ti-alert-triangle"></i></div><h3>Banned Substance Detection</h3><p>Instant alerts for ingredients flagged under Schedule IV or latest FSSAI gazette notifications.</p></div></div>
+    <div class="feat-card glowborder"><div style="padding:28px"><div class="feat-num">03 <i class="ti ti-chart-bar"></i></div><h3>RDA Overdose Alerts</h3><p>Precise calculation of daily intakes compared against Indian RDA limits for specific age groups.</p></div></div>
+    <div class="feat-card glowborder"><div style="padding:28px"><div class="feat-num">04 <i class="ti ti-file-description"></i></div><h3>Audit-Ready Reporting</h3><p>Generate comprehensive technical dossiers suitable for FSSAI licensing and inspection audits.</p></div></div>
+    <div class="feat-card glowborder"><div style="padding:28px"><div class="feat-num">05 <i class="ti ti-history"></i></div><h3>Regulation Versioning</h3><p>Stay updated with historical regulation changes and see how they impact your existing product line.</p></div></div>
+    <div class="feat-card glowborder"><div style="padding:28px"><div class="feat-num">06 <i class="ti ti-api"></i></div><h3>Seamless API Access</h3><p>Integrate Regulyze directly into your ERP or R&amp;D software for automated batch compliance.</p></div></div>
   </div>
 </div></section>
 
-<section id="how" class="reveal" style="background:var(--cream-2)"><div class="container">
-  <div class="sec-head center"><span class="eyebrow">How it works</span><h2>From formulation to defensible report.</h2></div>
-  <div class="steps">
-    <div class="step"><h3>Enter your formulation</h3><p>Type, paste, or upload a spec sheet. AI resolves trade names and unknown actives for you.</p></div>
-    <div class="step"><h3>Regulyze runs the checks</h3><p>Every ingredient is validated against the live regulatory database across all four schedules.</p></div>
-    <div class="step"><h3>Export &amp; defend</h3><p>Review verdicts, fix flagged items, generate the label checklist and download the cited PDF.</p></div>
+<section id="how" class="how-dark">
+  <div class="hero-bg" style="opacity:.55"><div class="grid-tex"></div></div>
+  <div class="container" style="position:relative;z-index:1">
+  <div class="sec-head center reveal" style="margin-left:auto;margin-right:auto"><span class="eyebrow">How it works</span><h2>Three steps to verification.</h2><p>From raw ingredients to a final compliance score in under 60 seconds.</p></div>
+  <div class="timeline">
+    <div class="tstep reveal">
+      <div class="t-txt"><div class="tnum">01</div><h3>Import Formulation</h3><p>Upload your Excel sheets, PDFs, or manually enter the ingredient list with dosages per serving.</p></div>
+      <span class="tdot"></span>
+      <div class="t-vis"><div class="vis-card"><div class="vis-skel"><span style="width:72%"></span><span style="width:50%"></span><span style="width:84%"></span></div></div></div>
+    </div>
+    <div class="tstep reveal">
+      <div class="t-txt"><div class="tnum">02</div><h3>Neural Regulatory Mapping</h3><p>Our engine maps every synonym to its scientific counterpart and checks it against active FSSAI schedules.</p></div>
+      <span class="tdot"></span>
+      <div class="t-vis"><div class="vis-card vis-an"><div class="anh"><span class="d"></span> ANALYZING…</div><div class="row"><span>Schedule I Check</span><span class="pass">PASSED</span></div><div class="row"><span>Banned List Scan</span><span class="pass">PASSED</span></div><div class="row"><span>RDA Calc</span><span class="fail">EXCEEDED</span></div></div></div>
+    </div>
+    <div class="tstep reveal">
+      <div class="t-txt"><div class="tnum">03</div><h3>Export Audit Trail</h3><p>Download a stamped PDF report detailing every reference, limit, and safety score for your compliance team.</p></div>
+      <span class="tdot"></span>
+      <div class="t-vis"><a href="app/?auth=signup" class="btn btn-glow btn-lg"><i class="ti ti-download"></i> Generate report</a></div>
+    </div>
   </div>
-</div></section>
+  </div>
+</section>
 
 <section class="reveal"><div class="container">
   <div class="cta-band"><span class="beam"></span><h2>Check your first formulation today.</h2><p>Join the teams shipping compliant nutraceuticals faster. Five free checks, no credit card required.</p><a href="app/?auth=signup" class="btn btn-glow btn-lg"><i class="ti ti-bolt"></i> Get started free</a></div>
@@ -238,7 +271,7 @@ section{padding:92px 0;position:relative}
 
 <footer class="site-foot"><div class="container">
   <div class="foot-grid">
-    <div class="foot-brand"><a class="brand" href="/" style="color:var(--cream)"><span class="logo-badge"><img src="design-system/assets/logo-mark.png" alt="Regulyze"></span> Regulyze</a><p>FSSAI nutraceutical compliance engine by TPS Xperts Group. Analyze smarter. Comply faster.</p></div>
+    <div class="foot-brand"><a class="brand" href="/" style="color:var(--cream)"><img class="brand-ico" src="design-system/assets/logo-white.png" alt="Regulyze"> Regulyze</a><p>FSSAI nutraceutical compliance engine by TPS Xperts Group. Analyze smarter. Comply faster.</p></div>
     <div class="foot-col"><h4>Product</h4><a href="#features">Features</a><a href="#how">How it works</a><a href="sample-report/">Sample report</a></div>
     <div class="foot-col"><h4>Company</h4><a href="#customers">Customers</a><a href="#">About</a><a href="#">Contact</a></div>
     <div class="foot-col"><h4>Legal</h4><a href="#">Privacy</a><a href="#">Terms</a><a href="#">Disclaimer</a></div>
