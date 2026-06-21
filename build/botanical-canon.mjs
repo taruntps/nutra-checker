@@ -143,12 +143,12 @@ export const BOTANICAL_CANON = {
   "ocimum-tenuiflorumsanctum-aerial-partsseed-extract": {
     english: "Tulsi (Holy Basil)",
     alsoCalled: ["Holy Basil", "Tulasi", "Surasa", "Ocimum sanctum"],
-    related: ["tulasi-surasa", "vriddha-tulasi-ram-tulasi", "barbari-bhavari-tulsi", "guduchi-giloy-giloya"],
+    related: ["vriddha-tulasi-ram-tulasi", "barbari-bhavari-tulsi", "guduchi-giloy-giloya", "ashwagandha-asgandh-nagauri", "amalaki-anwala-amla", "adrakh-shunti"],
   },
   "tulasi-surasa": {
     english: "Tulsi (Holy Basil)",
     alsoCalled: ["Holy Basil", "Surasa", "Ocimum sanctum"],
-    related: ["ocimum-tenuiflorumsanctum-aerial-partsseed-extract", "vriddha-tulasi-ram-tulasi", "barbari-bhavari-tulsi"],
+    related: ["vriddha-tulasi-ram-tulasi", "barbari-bhavari-tulsi", "guduchi-giloy-giloya", "ashwagandha-asgandh-nagauri", "amalaki-anwala-amla", "adrakh-shunti"],
   },
   "vriddha-tulasi-ram-tulasi": {
     english: "Ram Tulsi",
@@ -280,12 +280,12 @@ export const BOTANICAL_CANON = {
   "shallaki-salai-guggal": {
     english: "Boswellia (Shallaki)",
     alsoCalled: ["Boswellia serrata", "Salai Guggul", "Indian Frankincense"],
-    related: ["boswellia-serrata-gum-resin-extract", "curcuma-longa-rhizome-powderextract-standardized"],
+    related: ["curcuma-longa-rhizome-powderextract-standardized", "adrakh-shunti", "ashwagandha-asgandh-nagauri", "arjun-parth", "gandiva-pathachoor", "guduchi-giloy-giloya"],
   },
   "boswellia-serrata-gum-resin-extract": {
     english: "Boswellia (Shallaki)",
     alsoCalled: ["Boswellia serrata", "Salai Guggul", "Shallaki", "AKBA"],
-    related: ["shallaki-salai-guggal", "curcuma-longa-rhizome-powderextract-standardized"],
+    related: ["curcuma-longa-rhizome-powderextract-standardized", "adrakh-shunti", "ashwagandha-asgandh-nagauri", "arjun-parth", "gandiva-pathachoor", "guduchi-giloy-giloya"],
   },
   "manjishta-manjeeth": {
     english: "Manjistha",

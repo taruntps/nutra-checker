@@ -366,25 +366,43 @@ export function enrichBotanicals(list) {
   for (const k of Object.keys(bySchedule)) sortByName(bySchedule[k]);
 
   const slugSet = new Set(list.map((e) => e.slug));
+  const bySlug = Object.fromEntries(list.map((e) => [e.slug, e]));
+  const dispOf = (s) => (bySlug[s] && (bySlug[s].displayName || bySlug[s].name)) || s;
+  const hasSci = (s) => !!(bySlug[s] && bySlug[s].botanical && bySlug[s].botanical.scientificName);
   for (const e of list) {
     if (e.category !== "botanical") {
       e.related = (byCat[e.category] || []).filter((s) => s !== e.slug).slice(0, 6);
       continue;
     }
     const out = [];
-    const push = (s) => { if (s && s !== e.slug && slugSet.has(s) && !out.includes(s)) out.push(s); };
+    // Dedupe by display name AND by scientific name, so the same herb listed under
+    // two schedules (identical English name, or identical binomial like two
+    // "Curcuma longa" entries) never appears twice — while distinct species that
+    // share a common name (e.g. the three Asparagus "Shatavari" species) are kept.
+    const sciKey = (s) => (bySlug[s] && bySlug[s].botanical && bySlug[s].botanical.scientificName || "").toLowerCase();
+    const seenNames = new Set([(e.displayName || e.name).toLowerCase()]);
+    const seenSci = new Set([sciKey(e.slug)].filter(Boolean));
+    // skipIsolates: in fallback tiers, keep links herb-to-herb (drop isolated
+    // compounds that share a schedule but have no botanical/scientific name).
+    const push = (s, skipIsolates) => {
+      if (!s || s === e.slug || !slugSet.has(s) || out.includes(s)) return;
+      const n = dispOf(s).toLowerCase(), sk = sciKey(s);
+      if (seenNames.has(n) || (sk && seenSci.has(sk))) return;
+      if (skipIsolates && !hasSci(s)) return;
+      seenNames.add(n); if (sk) seenSci.add(sk); out.push(s);
+    };
     // 1. curated relationships
-    for (const s of (e._curatedRelated || [])) { push(s); if (out.length >= 6) break; }
+    for (const s of (e._curatedRelated || [])) { push(s, false); if (out.length >= 6) break; }
     // 2. same genus/family
     if (out.length < 6 && e.genus)
-      for (const s of (byGenus[e.genus.toLowerCase()] || [])) { push(s); if (out.length >= 6) break; }
-    // 3. same regulatory grouping (schedule/tab)
+      for (const s of (byGenus[e.genus.toLowerCase()] || [])) { push(s, false); if (out.length >= 6) break; }
+    // 3. same regulatory grouping (schedule/tab) — herb-to-herb only
     if (out.length < 6)
       for (const t of e.provenance.source_tabs)
-        for (const s of (bySchedule[t] || [])) { push(s); if (out.length >= 6) break; }
-    // 4. alphabetical fallback within category
+        for (const s of (bySchedule[t] || [])) { push(s, true); if (out.length >= 6) break; }
+    // 4. alphabetical fallback within category — herb-to-herb only
     if (out.length < 6)
-      for (const s of (byCat[e.category] || [])) { push(s); if (out.length >= 6) break; }
+      for (const s of (byCat[e.category] || [])) { push(s, true); if (out.length >= 6) break; }
     e.related = out.slice(0, 6);
     delete e._curatedRelated;
   }
