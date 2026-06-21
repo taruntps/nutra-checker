@@ -116,6 +116,8 @@ ${preview ? '<meta name="robots" content="noindex,nofollow">' : `<link rel="cano
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/design-system/assets/ingredients.css">
 ${jsonld ? `<script type="application/ld+json">${jeval(jsonld)}</script>` : ""}
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-5EV0X8LPMN"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-5EV0X8LPMN');</script>
 </head><body>${preview ? '<div class="pvbar">PREVIEW · Ingredient-page template for approval · noindex (not the live tree)</div>' : ""}`;
 }
 function header(root) {
