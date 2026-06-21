@@ -7,7 +7,7 @@ import { fetchRegulationData } from "./lib/fetch.mjs";
 import { normalize } from "./lib/normalize.mjs";
 import { validate } from "./lib/validate.mjs";
 import { buildReport } from "./lib/report.mjs";
-import { renderHub, renderCategory, renderIngredient, renderDirectory, renderSearch, CAT_PLURAL } from "./lib/render.mjs";
+import { renderHub, renderCategory, renderIngredient, renderDirectory, renderSearch, displayLabel, searchTerms, CAT_PLURAL } from "./lib/render.mjs";
 import { buildSitemap } from "./lib/sitemap.mjs";
 import { PUBLISH_CATEGORIES } from "./config.mjs";
 
@@ -45,6 +45,11 @@ async function main() {
   const counts = {};
   for (const e of entities) if (PUBLISH_CATEGORIES.includes(e.category)) counts[e.category] = (counts[e.category] || 0) + 1;
 
+  // Slug → display label, so related-ingredient links read cleanly (e.g. the
+  // curated English name for botanicals) instead of the raw slug.
+  const nameOf = {};
+  for (const e of entities) nameOf[e.slug] = displayLabel(e);
+
   const urls = [];
   await mkdir("ingredients", { recursive: true });
   await writeFile("ingredients/index.html", renderHub(counts, {}));
@@ -60,7 +65,7 @@ async function main() {
     pageCount++;
     for (const e of list) {
       await mkdir(`ingredients/${e.slug}`, { recursive: true });
-      await writeFile(`ingredients/${e.slug}/index.html`, renderIngredient(e, {}));
+      await writeFile(`ingredients/${e.slug}/index.html`, renderIngredient(e, { nameOf }));
       urls.push({ loc: `/ingredients/${e.slug}/`, priority: "0.6", changefreq: "monthly" });
       pageCount++;
     }
@@ -76,7 +81,7 @@ async function main() {
   await writeFile("ingredients/search/index.html", renderSearch({}));
   urls.push({ loc: "/ingredients/search/", priority: "0.5", changefreq: "monthly" });
   await writeFile("ingredients/ingredients-index.json", JSON.stringify(
-    published.map((e) => ({ slug: e.slug, n: e.name, c: CAT_PLURAL[e.category] || e.category, s: e.synonyms.slice(0, 4) }))));
+    published.map((e) => ({ slug: e.slug, n: displayLabel(e), c: CAT_PLURAL[e.category] || e.category, s: searchTerms(e) }))));
   console.log(`      directory + search + index (${published.length} entities)`);
 
   await writeFile("sitemap.xml", buildSitemap(urls));

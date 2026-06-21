@@ -17,6 +17,22 @@ const esc = (s) => String(s == null ? "" : s)
 const jeval = (o) => JSON.stringify(o).replace(/</g, "\\u003c");
 
 function fssaiOf(e) { return e.status.find((s) => s.framework === "india-fssai"); }
+// Display name = curated/common English name when present (botanicals), else the
+// regulatory name. The original regulatory name is always available as e.name.
+function dispName(e) { return e.displayName || e.name; }
+function sciName(e) { return e.botanical && e.botanical.scientificName ? e.botanical.scientificName : ""; }
+// Public display label (slug listings, search index, related lookups).
+export function displayLabel(e) { return dispName(e); }
+// Search terms for the client-side index: display name + regulatory name +
+// scientific name + alternate names (so FSSAI/transliterated names still match).
+export function searchTerms(e) {
+  const t = new Set();
+  if (e.regulatoryName && e.regulatoryName !== dispName(e)) t.add(e.regulatoryName);
+  const sci = sciName(e); if (sci) t.add(sci);
+  for (const a of (e.altNames || e.synonyms || [])) t.add(a);
+  t.delete(dispName(e));
+  return [...t].filter(Boolean).slice(0, 6);
+}
 function statusWord(s) {
   if (!s) return "tracked";
   return s.status === "permitted" ? "permitted for use"
@@ -34,30 +50,51 @@ function badge(status) {
 export function genSummary(e) {
   const f = fssaiOf(e);
   const cat = CAT_SINGULAR[e.category] || "ingredient";
-  const syn = e.synonyms.length ? ` (also known as ${e.synonyms.slice(0, 2).map(esc).join(", ")})` : "";
+  const name = dispName(e);
+  const sci = sciName(e);
+  // Botanicals lead with the English/common name + scientific name in parentheses.
+  const ident = sci
+    ? (name.includes("(") ? `, ${esc(sci)},` : ` (${esc(sci)})`)
+    : (e.synonyms.length ? ` (also known as ${e.synonyms.slice(0, 2).map(esc).join(", ")})` : "");
   const lim = f && f.limit ? `, with a permitted limit of ${esc(f.limit)}` : "";
-  return `${esc(e.name)}${syn} is a ${cat} ${statusWord(f)} in nutraceuticals and health supplements under India's FSSAI framework${lim}. `
+  return `${esc(name)}${ident} is a ${cat} ${statusWord(f)} in nutraceuticals and health supplements under India's FSSAI framework${lim}. `
     + `Regulyze tracks its regulatory status, limits and label requirements across regulatory frameworks.`;
 }
 export function genFAQ(e) {
   const f = fssaiOf(e);
+  const name = dispName(e);
+  const sci = sciName(e);
+  const reg = e.regulatoryName && e.regulatoryName !== name ? ` (listed in the regulation as “${esc(e.regulatoryName)}”)` : "";
   const cats = [CAT_PLURAL[e.category], ...((e.categories || []).filter((c) => c !== e.category).map((c) => CAT_PLURAL[c]))]
     .filter(Boolean).join(", ");
   const faq = [
-    { q: `Is ${e.name} permitted in nutraceuticals under FSSAI (India)?`,
-      a: `${e.name} is currently ${statusWord(f)} in health supplements and nutraceuticals under India's FSSAI framework, per ${esc((f && f.source_ref) || "the applicable regulation")}. Always verify against the current official regulation for your product and market.` },
-    { q: `What is the permitted limit of ${e.name}?`,
-      a: f && f.limit ? `The permitted limit recorded for ${e.name} is ${esc(f.limit)}. Limits can vary by product type and market — confirm against the current regulation.`
-        : `No single numeric limit is listed in the source for ${e.name}; permitted use is at GMP or as specified. Confirm against the current regulation.` },
-    { q: `What product category does ${e.name} belong to?`, a: `${e.name} is classified under: ${esc(cats)}.` },
+    { q: `Is ${name} permitted in nutraceuticals under FSSAI (India)?`,
+      a: `${esc(name)}${sci ? ` (${esc(sci)})` : ""}${reg} is currently ${statusWord(f)} in health supplements and nutraceuticals under India's FSSAI framework, per ${esc((f && f.source_ref) || "the applicable regulation")}. Always verify against the current official regulation for your product and market.` },
+    { q: `What is the permitted dosage of ${name}?`,
+      a: f && f.limit ? `The permitted level recorded for ${esc(name)} is ${esc(f.limit)}. Limits can vary by product type and market — confirm against the current regulation.`
+        : `No single numeric limit is listed in the source for ${esc(name)}; permitted use is at GMP or as specified. Confirm against the current regulation.` },
+    { q: `What product category does ${name} belong to?`, a: `${esc(name)} is classified under: ${esc(cats)}.` },
   ];
+  if (sci) faq.push({ q: `What is the botanical (scientific) name of ${name}?`,
+    a: `${esc(name)} corresponds to ${esc(sci)}${e.botanical && e.botanical.part ? `, with the ${esc(e.botanical.part.toLowerCase())} used in nutraceutical preparations` : ""}.` });
   if (e.rda && e.rda.groups && e.rda.groups.length) {
     const a = e.rda.groups.find((g) => /adult man/i.test(g.label)) || e.rda.groups[0];
     const u = e.rda.unit ? ` ${e.rda.unit}` : "";
-    faq.push({ q: `What is the recommended daily allowance (RDA) of ${e.name} in India?`,
-      a: `Per ICMR-NIN (2020), the RDA of ${e.name} for ${a.label.toLowerCase()} is ${esc(a.value)}${esc(u)}. RDA is a dietary reference intake and is distinct from the maximum permitted supplement limit.` });
+    faq.push({ q: `What is the recommended daily allowance (RDA) of ${name} in India?`,
+      a: `Per ICMR-NIN (2020), the RDA of ${esc(name)} for ${a.label.toLowerCase()} is ${esc(a.value)}${esc(u)}. RDA is a dietary reference intake and is distinct from the maximum permitted supplement limit.` });
   }
   return faq;
+}
+// Structured dosage table for botanicals with labelled forms (Root/Powder/Extract…).
+// Only renders when there are 2+ labelled forms — a single flat limit stays in the
+// regulatory status table to avoid duplication.
+function dosageSection(e) {
+  const rows = (e.dosageForms || []).filter((r) => r.form);
+  if (rows.length < 2) return "";
+  const body = rows.map((r) => `<tr><td><strong>${esc(r.form)}</strong></td><td>${esc(r.dose)}</td></tr>`).join("");
+  return `<div class="section"><h2>Permitted dosage by form</h2>
+    <table class="stbl"><thead><tr><th>Preparation / form</th><th>Permitted daily quantity</th></tr></thead><tbody>${body}</tbody></table>
+    <p class="prov" style="border:0;margin-top:8px;padding-top:4px">Per India's FSSAI Schedule listing for ${esc(dispName(e))}. Quantities are per-day permitted ranges for the stated form — confirm against the current official regulation for your product.</p></div>`;
 }
 function rdaSection(e) {
   if (!e.rda || !e.rda.groups || !e.rda.groups.length) return "";
@@ -99,13 +136,22 @@ const crumb = (parts) => `<div class="wrap"><nav class="crumb">${parts.map((p, i
   .join(" › ")}</nav></div>`;
 
 // ── Ingredient page ──────────────────────────────────────────────────────────
-export function renderIngredient(e, { root = "/ingredients", preview = false } = {}) {
+export function renderIngredient(e, { root = "/ingredients", preview = false, nameOf = null } = {}) {
   const url = `${SITE}${root}/${e.slug}/`;
   const f = fssaiOf(e);
+  const name = dispName(e);
+  const sci = sciName(e);
+  const part = e.botanical && e.botanical.part ? e.botanical.part : "";
+  const isBot = e.category === "botanical";
+  const regName = e.regulatoryName || e.name;
+  const labelOf = (s) => (nameOf && nameOf[s]) || s.replace(/-/g, " ");
   const summary = genSummary(e);
   const faq = genFAQ(e);
   const catLabel = CAT_PLURAL[e.category] || "Ingredients";
   const secondary = (e.categories || []).filter((c) => c !== e.category);
+  // "Also known as": botanicals use the curated/common alternate-name set; others
+  // keep the synonym list.
+  const aka = (isBot && e.altNames && e.altNames.length ? e.altNames : e.synonyms) || [];
 
   const statusRows = e.status.map((s) => `<tr>
     <td><strong>${esc(s.framework_label)}</strong></td>
@@ -114,27 +160,36 @@ export function renderIngredient(e, { root = "/ingredients", preview = false } =
     <td>${esc(s.source_ref || "—")}</td>
     <td>${esc(s.last_reviewed || "—")}</td></tr>`).join("");
 
+  const definedTerm = { "@type": "DefinedTerm", "@id": url + "#term", name, url,
+    description: summary.replace(/<[^>]+>/g, ""), termCode: e.slug,
+    inDefinedTermSet: `${SITE}${root}/#set` };
+  if (aka.length) definedTerm.alternateName = aka.slice(0, 8);
   const jsonld = { "@context": "https://schema.org", "@graph": [
-    { "@type": "DefinedTerm", "@id": url + "#term", name: e.name, url,
-      description: summary.replace(/<[^>]+>/g, ""), termCode: e.slug,
-      inDefinedTermSet: `${SITE}${root}/#set` },
+    definedTerm,
     { "@type": "BreadcrumbList", itemListElement: [
       { "@type": "ListItem", position: 1, name: "Home", item: SITE + "/" },
       { "@type": "ListItem", position: 2, name: "Ingredients", item: `${SITE}${root}/` },
       { "@type": "ListItem", position: 3, name: catLabel, item: `${SITE}${root}/category/${e.category}/` },
-      { "@type": "ListItem", position: 4, name: e.name, item: url } ] },
+      { "@type": "ListItem", position: 4, name, item: url } ] },
     { "@type": "FAQPage", mainEntity: faq.map((q) => ({ "@type": "Question", name: q.q,
       acceptedAnswer: { "@type": "Answer", text: q.a.replace(/<[^>]+>/g, "") } })) },
   ] };
 
-  const title = `${e.name} — Regulatory status, limits & compliance | Regulyze`;
+  // SEO title/meta lead with the English/common name (+ scientific name for
+  // botanicals), per the approved spec.
+  const title = isBot && sci
+    ? (name.includes("(")
+        ? `${name} — ${sci}: FSSAI dosage & compliance | Regulyze`
+        : `${name} (${sci}) — FSSAI status, dosage & compliance | Regulyze`)
+    : `${name} — Regulatory status, limits & compliance | Regulyze`;
   const desc = summary.replace(/<[^>]+>/g, "").slice(0, 155);
 
   return head({ title, desc, canonical: url, jsonld, preview }) + header(root) +
     crumb([{ label: "Home", href: "/" }, { label: "Ingredients", href: `${root}/` },
-      { label: catLabel, href: `${root}/category/${e.category}/` }, { label: e.name }]) +
+      { label: catLabel, href: `${root}/category/${e.category}/` }, { label: name }]) +
   `<main class="wrap"><span class="eyebrow">Ingredient intelligence</span>
-   <h1 class="page-h1">${esc(e.name)}</h1>
+   <h1 class="page-h1">${esc(name)}</h1>
+   ${sci ? `<p class="sci-sub"><em>${esc(sci)}</em>${part ? ` · ${esc(part)}` : ""}</p>` : ""}
    <p class="answer">${summary}</p>
    <div class="tags"><span class="tag primary">${esc(catLabel)}</span>${secondary.map((c) => `<span class="tag">${esc(CAT_PLURAL[c] || c)}</span>`).join("")}</div>
    <div class="cols">
@@ -144,9 +199,10 @@ export function renderIngredient(e, { root = "/ingredients", preview = false } =
         <tbody>${statusRows}</tbody></table>
         <p class="prov" style="border:0;margin-top:10px;padding-top:6px">Coverage for the USA (FDA), EU (EFSA), UK, GCC and ASEAN is being added — this page updates automatically as frameworks are assessed.</p>
       </div>
+      ${dosageSection(e)}
       ${rdaSection(e)}
-      <div class="section"><h2>About ${esc(e.name)}</h2>
-        <p>${esc(e.name)} is tracked in the Regulyze Ingredient Intelligence database as a ${esc(CAT_SINGULAR[e.category] || "ingredient")}${e.identity.common_name ? `, also referred to as ${esc(e.identity.common_name)}` : ""}. The regulatory details on this page are generated from Regulyze's structured regulatory dataset and are reviewed against the cited source.</p>
+      <div class="section"><h2>About ${esc(name)}</h2>
+        <p>${esc(name)} is tracked in the Regulyze Ingredient Intelligence database as a ${esc(CAT_SINGULAR[e.category] || "ingredient")}${sci ? ` (<em>${esc(sci)}</em>)` : ""}${isBot && regName !== name ? `. It is listed in India's FSSAI schedules under the regulatory name <strong>${esc(regName)}</strong>` : ""}. The regulatory details on this page are generated from Regulyze's structured regulatory dataset and are reviewed against the cited source.</p>
       </div>
       <div class="section faq"><h2>Frequently asked questions</h2>
         ${faq.map((q) => `<details><summary>${esc(q.q)}</summary><p>${q.a}</p></details>`).join("")}
@@ -155,12 +211,15 @@ export function renderIngredient(e, { root = "/ingredients", preview = false } =
     <aside class="aside">
       <div class="card"><h3>Identity</h3>
         <div class="kv"><span class="k">Primary category</span><span class="v">${esc(catLabel)}</span></div>
-        ${e.identity.common_name ? `<div class="kv"><span class="k">Common name</span><span class="v">${esc(e.identity.common_name)}</span></div>` : ""}
-        ${e.synonyms.length ? `<div class="kv"><span class="k">Also known as</span><span class="v">${esc(e.synonyms.slice(0, 4).join(", "))}</span></div>` : ""}
+        ${sci ? `<div class="kv"><span class="k">Scientific name</span><span class="v"><em>${esc(sci)}</em></span></div>` : ""}
+        ${part ? `<div class="kv"><span class="k">Plant part</span><span class="v">${esc(part)}</span></div>` : ""}
+        ${isBot && regName !== name ? `<div class="kv"><span class="k">Regulatory name</span><span class="v">${esc(regName)}</span></div>` : ""}
+        ${!isBot && e.identity.common_name ? `<div class="kv"><span class="k">Common name</span><span class="v">${esc(e.identity.common_name)}</span></div>` : ""}
+        ${aka.length ? `<div class="kv"><span class="k">Also known as</span><span class="v">${esc(aka.slice(0, 4).join(", "))}</span></div>` : ""}
         <div class="kv"><span class="k">Regulatory source</span><span class="v">${esc((f && f.source_ref) || "—")}</span></div>
       </div>
-      ${e.related && e.related.length ? `<div class="card rel"><h3>Related ingredients</h3>${e.related.map((s) => `<a href="${root}/${s}/">${esc(s.replace(/-/g, " "))}</a>`).join("")}</div>` : ""}
-      <div class="cta-card"><h3>Using ${esc(e.name)} in a product?</h3><p>Check your full formulation against regulatory requirements in seconds — free.</p><a class="ibtn" href="/app/?auth=signup">Check a formulation free</a></div>
+      ${e.related && e.related.length ? `<div class="card rel"><h3>Related ingredients</h3>${e.related.map((s) => `<a href="${root}/${s}/">${esc(labelOf(s))}</a>`).join("")}</div>` : ""}
+      <div class="cta-card"><h3>Using ${esc(name)} in a product?</h3><p>Check your full formulation against regulatory requirements in seconds — free.</p><a class="ibtn" href="/app/?auth=signup">Check a formulation free</a></div>
     </aside>
    </div>
    <p class="prov wrap" style="max-width:none;padding:0">Source: ${esc((f && f.source_ref) || "—")} · Last reviewed: ${esc((f && f.last_reviewed) || "—")} · Data version: ${esc((f && f.version) || "—")}. Indicative only — verify against the current official regulation before use.</p>
@@ -171,7 +230,7 @@ export function renderIngredient(e, { root = "/ingredients", preview = false } =
 export function renderCategory(category, entities, { root = "/ingredients", preview = false } = {}) {
   const label = CAT_PLURAL[category] || category;
   const url = `${SITE}${root}/category/${category}/`;
-  const list = entities.filter((e) => e.category === category).sort((a, b) => a.name.localeCompare(b.name));
+  const list = entities.filter((e) => e.category === category).sort((a, b) => dispName(a).localeCompare(dispName(b)));
   const jsonld = { "@context": "https://schema.org", "@graph": [
     { "@type": "CollectionPage", "@id": url, name: `${label} — Ingredient Intelligence`, url },
     { "@type": "BreadcrumbList", itemListElement: [
@@ -186,7 +245,7 @@ export function renderCategory(category, entities, { root = "/ingredients", prev
    <h1 class="page-h1">${esc(label)}</h1>
    <p class="answer">${list.length} ${esc(label.toLowerCase())} tracked for nutraceutical &amp; supplement compliance — each with regulatory status, permitted limits and synonyms, starting with India (FSSAI) and expanding to other frameworks.</p>
    <div class="grid ilist">
-   ${list.map((e) => { const f = fssaiOf(e); return `<a class="gcard" href="${root}/${e.slug}/"><span><span class="gname" style="font-size:16px">${esc(e.name)}</span><span class="gmeta">${esc(f && f.limit ? f.limit : "As specified / GMP")}</span></span>${badge(f && f.status)}</a>`; }).join("")}
+   ${list.map((e) => { const f = fssaiOf(e); const sci = sciName(e); return `<a class="gcard" href="${root}/${e.slug}/"><span><span class="gname" style="font-size:16px">${esc(dispName(e))}</span><span class="gmeta">${sci ? `<em>${esc(sci)}</em> · ` : ""}${esc(f && f.limit ? f.limit : "As specified / GMP")}</span></span>${badge(f && f.status)}</a>`; }).join("")}
    </div></main>` + footer(root);
 }
 
@@ -218,17 +277,17 @@ export function renderHub(categoryCounts, { root = "/ingredients", preview = fal
 // ── Directory page (A–Z, all live ingredients) ───────────────────────────────
 export function renderDirectory(entities, { root = "/ingredients", preview = false } = {}) {
   const url = `${SITE}${root}/all/`;
-  const list = entities.slice().sort((a, b) => a.name.localeCompare(b.name));
+  const list = entities.slice().sort((a, b) => dispName(a).localeCompare(dispName(b)));
   const groups = {};
   for (const e of list) {
-    let L = (e.name[0] || "#").toUpperCase();
+    let L = (dispName(e)[0] || "#").toUpperCase();
     if (!/[A-Z]/.test(L)) L = "#";
     (groups[L] ||= []).push(e);
   }
   const letters = Object.keys(groups).sort();
   const nav = letters.map((L) => `<a href="#L${L}">${L}</a>`).join("");
   const sections = letters.map((L) => `<section id="L${L}" class="dir-sec"><h2>${L}</h2><div class="dir-grid">${
-    groups[L].map((e) => `<a href="${root}/${e.slug}/">${esc(e.name)} <span class="dir-cat">${esc(CAT_PLURAL[e.category] || e.category)}</span></a>`).join("")
+    groups[L].map((e) => `<a href="${root}/${e.slug}/">${esc(dispName(e))} <span class="dir-cat">${esc(CAT_PLURAL[e.category] || e.category)}</span></a>`).join("")
   }</div></section>`).join("");
   const jsonld = { "@context": "https://schema.org", "@graph": [
     { "@type": "CollectionPage", "@id": url, name: "Ingredient Directory — Regulyze", url },
