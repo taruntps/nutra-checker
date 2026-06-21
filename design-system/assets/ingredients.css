@@ -25,7 +25,8 @@ h1,h2,h3{font-family:'Fraunces',Georgia,serif;color:var(--ink);letter-spacing:-.
 .crumb a{color:var(--muted)}.crumb a:hover{color:var(--teal)}.crumb span{color:var(--ink-2)}
 /* hero / answer */
 .eyebrow{font-family:'Fraunces';font-style:italic;font-size:17px;color:var(--gold);margin-bottom:6px;display:block}
-.page-h1{font-size:clamp(32px,5vw,46px);margin:6px 0 14px}
+.page-h1{font-size:clamp(32px,5vw,46px);margin:6px 0 6px}
+.sci-sub{font-size:17px;color:var(--muted);margin:0 0 14px}.sci-sub em{font-style:italic;color:var(--ink-2)}
 .answer{font-size:18px;color:var(--ink);background:#fff;border:1px solid var(--line);border-left:3px solid var(--teal);border-radius:12px;padding:16px 18px;margin:8px 0 26px}
 .tags{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:22px}
 .tag{font-size:12px;font-weight:700;padding:5px 12px;border-radius:var(--r-pill);background:var(--cream-2);color:var(--ink-2)}
