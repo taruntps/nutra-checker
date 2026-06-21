@@ -1,6 +1,6 @@
 # Regulyze — Ingredient Normalization Report (Phase 2.0)
 
-_Generated: 2026-06-21T04:17:29.838Z · DB rows fetched: 2455_
+_Generated: 2026-06-21T04:33:34.491Z · DB rows fetched: 2455_
 
 > Review-only. **No ingredient pages have been generated.** Approve this dataset before Phase 2.1 rendering.
 
