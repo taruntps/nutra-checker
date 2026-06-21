@@ -1,0 +1,10 @@
+# Regulyze — robots.txt
+User-agent: *
+Allow: /
+
+# Application & admin are gated tools, not for search indexing
+Disallow: /app/
+Disallow: /app.html
+Disallow: /admin/
+
+Sitemap: https://regulyze.in/sitemap.xml
