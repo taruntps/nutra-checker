@@ -1,0 +1,35 @@
+<!DOCTYPE html><html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Search Ingredients — regulatory status &amp; compliance | Regulyze</title>
+<meta name="description" content="Search the Regulyze Ingredient Intelligence database by name or synonym for regulatory status, limits and compliance.">
+<link rel="canonical" href="https://regulyze.in/ingredients/search/"/>
+<meta name="robots" content="index,follow,max-image-preview:large">
+<link rel="icon" type="image/png" href="/design-system/assets/logo-mark.png"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/design-system/assets/ingredients.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebPage","@id":"https://regulyze.in/ingredients/search/","name":"Search Ingredients — Regulyze","url":"https://regulyze.in/ingredients/search/"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://regulyze.in/"},{"@type":"ListItem","position":2,"name":"Ingredients","item":"https://regulyze.in/ingredients/"},{"@type":"ListItem","position":3,"name":"Search","item":"https://regulyze.in/ingredients/search/"}]}]}</script>
+</head><body><header class="ihead"><div class="ihead-in">
+<a class="brand" href="/"><img src="/design-system/assets/logo-mark.png" alt="Regulyze"> Regulyze</a>
+<nav class="inav"><a href="/#features">Platform</a><a href="/ingredients/">Ingredients</a><a href="/#how">How it works</a></nav>
+<a class="ibtn" href="/app/?auth=signup">Check a formulation</a>
+</div></header><div class="wrap"><nav class="crumb"><a href="/">Home</a> › <a href="/ingredients/">Ingredients</a> › <span>Search</span></nav></div><main class="wrap"><span class="eyebrow">Ingredient intelligence</span>
+   <h1 class="page-h1">Search ingredients</h1>
+   <input id="q" class="search-box" type="search" placeholder="Search by name or synonym — e.g. ascorbic acid, calcium, ashwagandha" autocomplete="off" autofocus>
+   <div class="search-meta" id="meta">Loading index…</div>
+   <div id="results"></div></main>
+   <script>
+   (function(){
+     var q=document.getElementById('q'),res=document.getElementById('results'),meta=document.getElementById('meta'),idx=[];
+     function draw(t){t=(t||'').trim().toLowerCase();
+       var items = !t ? idx.slice(0,60) : idx.filter(function(x){return x.n.toLowerCase().indexOf(t)>=0 || (x.s||[]).some(function(s){return s.toLowerCase().indexOf(t)>=0;});}).slice(0,80);
+       meta.textContent = idx.length ? (t? (items.length+' match'+(items.length===1?'':'es')) : (idx.length+' ingredients · type to filter')) : '';
+       res.innerHTML = items.map(function(x){return '<a href="/ingredients/'+x.slug+'/">'+x.n+' <span>'+x.c+'</span></a>';}).join('') || '<p style="color:var(--muted)">No matches.</p>';
+     }
+     fetch('/ingredients/ingredients-index.json').then(function(r){return r.json();}).then(function(d){idx=d;var p=new URLSearchParams(location.search).get('q');if(p)q.value=p;draw(q.value);});
+     q.addEventListener('input',function(){draw(q.value);});
+   })();
+   </script><footer class="ifoot"><div class="ifoot-in">
+<span>© 2026 TPS Xperts Group · regulyze.in · Indicative only — not a substitute for legal/regulatory advice.</span>
+<span><a href="/ingredients/">Ingredients</a> · <a href="/ingredients/all/">Directory</a> · <a href="/ingredients/search/">Search</a> · <a href="/terms/">Terms</a> · <a href="/privacy/">Privacy</a></span>
+</div></footer></body></html>
