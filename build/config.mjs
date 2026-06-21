@@ -97,6 +97,9 @@ export const QUALITY = {
   rejectNumericNames: true,
 };
 
-// Categories to render into the live /ingredients/ tree this run.
-// Vitamins only for the Phase 2.1 vertical slice; grows as categories are approved.
-export const PUBLISH_CATEGORIES = (process.env.PUBLISH || "vitamin").split(",").map((s) => s.trim()).filter(Boolean);
+// Categories that are LIVE in /ingredients/. A plain rebuild regenerates this
+// full set — so any new ingredient added to a mapped Supabase tab in one of these
+// categories appears automatically (and the hub + sitemap stay complete) with no
+// code/template/manual changes. Add a category here only after its rollout is approved.
+const LIVE_CATEGORIES = "vitamin,mineral,amino-acid,probiotic,prebiotic"; // botanical, additive: gated
+export const PUBLISH_CATEGORIES = (process.env.PUBLISH || LIVE_CATEGORIES).split(",").map((s) => s.trim()).filter(Boolean);

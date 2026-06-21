@@ -6,9 +6,9 @@ on:
   workflow_dispatch:
     inputs:
       publish:
-        description: "Comma-separated categories to render into /ingredients/"
+        description: "Comma-separated categories to render (blank = all live categories)"
         required: false
-        default: "vitamin"
+        default: "vitamin,mineral,amino-acid,probiotic,prebiotic"
   # Optional future cadence (left off so nothing runs unattended):
   # schedule: [{ cron: "0 3 * * 1" }]
 
