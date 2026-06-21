@@ -7,7 +7,7 @@ import { fetchRegulationData } from "./lib/fetch.mjs";
 import { normalize } from "./lib/normalize.mjs";
 import { validate } from "./lib/validate.mjs";
 import { buildReport } from "./lib/report.mjs";
-import { renderHub, renderCategory, renderIngredient } from "./lib/render.mjs";
+import { renderHub, renderCategory, renderIngredient, renderDirectory, renderSearch, CAT_PLURAL } from "./lib/render.mjs";
 import { buildSitemap } from "./lib/sitemap.mjs";
 import { PUBLISH_CATEGORIES } from "./config.mjs";
 
@@ -67,8 +67,20 @@ async function main() {
     console.log(`      ${cat}: ${list.length} ingredient pages`);
   }
 
+  // Directory + Search + client-side search index (published entities only)
+  const published = entities.filter((e) => PUBLISH_CATEGORIES.includes(e.category));
+  await mkdir("ingredients/all", { recursive: true });
+  await writeFile("ingredients/all/index.html", renderDirectory(published, {}));
+  urls.push({ loc: "/ingredients/all/", priority: "0.7", changefreq: "weekly" });
+  await mkdir("ingredients/search", { recursive: true });
+  await writeFile("ingredients/search/index.html", renderSearch({}));
+  urls.push({ loc: "/ingredients/search/", priority: "0.5", changefreq: "monthly" });
+  await writeFile("ingredients/ingredients-index.json", JSON.stringify(
+    published.map((e) => ({ slug: e.slug, n: e.name, c: CAT_PLURAL[e.category] || e.category, s: e.synonyms.slice(0, 4) }))));
+  console.log(`      directory + search + index (${published.length} entities)`);
+
   await writeFile("sitemap.xml", buildSitemap(urls));
-  console.log(`\n✓ Done. Rendered ${pageCount} pages + sitemap (${urls.length + 4} URLs).`);
+  console.log(`\n✓ Done. Rendered ${pageCount + 2} pages + sitemap (${urls.length + 4} URLs).`);
 }
 
 main().catch((e) => { console.error("Pipeline failed:", e.message); process.exit(1); });

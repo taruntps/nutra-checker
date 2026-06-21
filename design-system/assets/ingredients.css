@@ -82,3 +82,23 @@ h1,h2,h3{font-family:'Fraunces',Georgia,serif;color:var(--ink);letter-spacing:-.
   .stbl{display:block;overflow-x:auto;white-space:nowrap}
   .page-h1{font-size:30px}
 }
+
+/* ── Directory ── */
+.dir-nav{position:sticky;top:74px;background:rgba(247,244,236,.95);backdrop-filter:blur(8px);padding:12px 0;display:flex;flex-wrap:wrap;gap:6px;border-bottom:1px solid var(--line);z-index:5;margin-bottom:8px}
+.dir-nav a{font-weight:700;color:var(--teal-d);padding:4px 10px;border:1px solid var(--line);border-radius:8px;font-size:13px}
+.dir-nav a:hover{background:var(--teal);color:#fff;text-decoration:none}
+.dir-sec{padding:18px 0;border-bottom:1px solid var(--line)}
+.dir-sec h2{font-size:26px;color:var(--teal-d);margin-bottom:10px}
+.dir-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:2px 18px}
+.dir-grid a{padding:8px 4px;font-size:14px;font-weight:600;color:var(--ink);display:flex;justify-content:space-between;gap:8px;border-bottom:1px solid var(--line)}
+.dir-grid a:hover{color:var(--teal);text-decoration:none}
+.dir-cat{font-size:11px;color:var(--muted);font-weight:600;white-space:nowrap}
+/* ── Search ── */
+.search-box{width:100%;font-size:18px;padding:14px 18px;border:1px solid var(--line);border-radius:12px;font-family:inherit;background:#fff;margin:6px 0 16px}
+.search-box:focus{outline:none;border-color:var(--teal);box-shadow:0 0 0 3px rgba(15,122,106,.12)}
+.search-meta{font-size:13px;color:var(--muted);margin-bottom:14px}
+#results{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:8px;padding-bottom:50px}
+#results a{padding:11px 14px;background:#fff;border:1px solid var(--line);border-radius:10px;font-size:14px;font-weight:600;color:var(--ink);display:flex;justify-content:space-between;gap:8px}
+#results a:hover{border-color:var(--teal);color:var(--teal);text-decoration:none}
+#results a span{font-size:11px;color:var(--muted);white-space:nowrap}
+.util-links{display:flex;gap:10px;flex-wrap:wrap;margin:0 0 24px}

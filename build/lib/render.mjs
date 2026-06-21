@@ -88,10 +88,10 @@ function header(root) {
 <a class="ibtn" href="/app/?auth=signup">Check a formulation</a>
 </div></header>`;
 }
-function footer() {
+function footer(root = "/ingredients") {
   return `<footer class="ifoot"><div class="ifoot-in">
 <span>© 2026 TPS Xperts Group · regulyze.in · Indicative only — not a substitute for legal/regulatory advice.</span>
-<span><a href="/terms/">Terms</a> · <a href="/privacy/">Privacy</a></span>
+<span><a href="${root}/">Ingredients</a> · <a href="${root}/all/">Directory</a> · <a href="${root}/search/">Search</a> · <a href="/terms/">Terms</a> · <a href="/privacy/">Privacy</a></span>
 </div></footer></body></html>`;
 }
 const crumb = (parts) => `<div class="wrap"><nav class="crumb">${parts.map((p, i) =>
@@ -164,7 +164,7 @@ export function renderIngredient(e, { root = "/ingredients", preview = false } =
     </aside>
    </div>
    <p class="prov wrap" style="max-width:none;padding:0">Source: ${esc((f && f.source_ref) || "—")} · Last reviewed: ${esc((f && f.last_reviewed) || "—")} · Data version: ${esc((f && f.version) || "—")}. Indicative only — verify against the current official regulation before use.</p>
-   </main>` + footer();
+   </main>` + footer(root);
 }
 
 // ── Category page ────────────────────────────────────────────────────────────
@@ -187,7 +187,7 @@ export function renderCategory(category, entities, { root = "/ingredients", prev
    <p class="answer">${list.length} ${esc(label.toLowerCase())} tracked for nutraceutical &amp; supplement compliance — each with regulatory status, permitted limits and synonyms, starting with India (FSSAI) and expanding to other frameworks.</p>
    <div class="grid ilist">
    ${list.map((e) => { const f = fssaiOf(e); return `<a class="gcard" href="${root}/${e.slug}/"><span><span class="gname" style="font-size:16px">${esc(e.name)}</span><span class="gmeta">${esc(f && f.limit ? f.limit : "As specified / GMP")}</span></span>${badge(f && f.status)}</a>`; }).join("")}
-   </div></main>` + footer();
+   </div></main>` + footer(root);
 }
 
 // ── Hub page ─────────────────────────────────────────────────────────────────
@@ -209,7 +209,71 @@ export function renderHub(categoryCounts, { root = "/ingredients", preview = fal
   `<main class="wrap"><span class="eyebrow">Regulatory intelligence</span>
    <h1 class="page-h1">Ingredient Intelligence Database</h1>
    <p class="answer">Regulatory status, permitted limits, synonyms and compliance for <strong>${total}+</strong> nutraceutical &amp; supplement ingredients — starting with India (FSSAI) and expanding to FDA, EFSA, UK, GCC and ASEAN.</p>
+   <div class="util-links"><a class="ibtn" href="${root}/search/">🔍 Search ingredients</a><a class="ibtn" style="background:var(--cream-2);color:var(--teal-d)" href="${root}/all/">Browse A–Z directory</a></div>
    <div class="grid">
    ${cats.map((c) => `<a class="gcard" href="${root}/category/${c}/"><span class="gname">${esc(CAT_PLURAL[c])}</span><div class="gmeta"><span class="gcount">${categoryCounts[c]}</span> ingredients</div></a>`).join("")}
-   </div></main>` + footer();
+   </div></main>` + footer(root);
+}
+
+// ── Directory page (A–Z, all live ingredients) ───────────────────────────────
+export function renderDirectory(entities, { root = "/ingredients", preview = false } = {}) {
+  const url = `${SITE}${root}/all/`;
+  const list = entities.slice().sort((a, b) => a.name.localeCompare(b.name));
+  const groups = {};
+  for (const e of list) {
+    let L = (e.name[0] || "#").toUpperCase();
+    if (!/[A-Z]/.test(L)) L = "#";
+    (groups[L] ||= []).push(e);
+  }
+  const letters = Object.keys(groups).sort();
+  const nav = letters.map((L) => `<a href="#L${L}">${L}</a>`).join("");
+  const sections = letters.map((L) => `<section id="L${L}" class="dir-sec"><h2>${L}</h2><div class="dir-grid">${
+    groups[L].map((e) => `<a href="${root}/${e.slug}/">${esc(e.name)} <span class="dir-cat">${esc(CAT_PLURAL[e.category] || e.category)}</span></a>`).join("")
+  }</div></section>`).join("");
+  const jsonld = { "@context": "https://schema.org", "@graph": [
+    { "@type": "CollectionPage", "@id": url, name: "Ingredient Directory — Regulyze", url },
+    { "@type": "BreadcrumbList", itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: SITE + "/" },
+      { "@type": "ListItem", position: 2, name: "Ingredients", item: `${SITE}${root}/` },
+      { "@type": "ListItem", position: 3, name: "Directory", item: url } ] } ] };
+  const title = "Ingredient Directory (A–Z) — regulatory status & compliance | Regulyze";
+  const desc = `Browse all ${list.length} ingredients in the Regulyze Ingredient Intelligence database alphabetically — regulatory status, limits and compliance.`;
+  return head({ title, desc, canonical: url, jsonld, preview }) + header(root) +
+    crumb([{ label: "Home", href: "/" }, { label: "Ingredients", href: `${root}/` }, { label: "Directory" }]) +
+  `<main class="wrap"><span class="eyebrow">Ingredient intelligence</span>
+   <h1 class="page-h1">Ingredient Directory</h1>
+   <p class="answer">All ${list.length} ingredients tracked across the live categories — alphabetical. Use <a href="${root}/search/">search</a> to find one fast.</p>
+   <div class="dir-nav">${nav}</div>${sections}</main>` + footer(root);
+}
+
+// ── Search page (client-side, static JSON index — stays decoupled) ───────────
+export function renderSearch({ root = "/ingredients", preview = false } = {}) {
+  const url = `${SITE}${root}/search/`;
+  const jsonld = { "@context": "https://schema.org", "@graph": [
+    { "@type": "WebPage", "@id": url, name: "Search Ingredients — Regulyze", url },
+    { "@type": "BreadcrumbList", itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: SITE + "/" },
+      { "@type": "ListItem", position: 2, name: "Ingredients", item: `${SITE}${root}/` },
+      { "@type": "ListItem", position: 3, name: "Search", item: url } ] } ] };
+  const title = "Search Ingredients — regulatory status & compliance | Regulyze";
+  const desc = "Search the Regulyze Ingredient Intelligence database by name or synonym for regulatory status, limits and compliance.";
+  return head({ title, desc, canonical: url, jsonld, preview }) + header(root) +
+    crumb([{ label: "Home", href: "/" }, { label: "Ingredients", href: `${root}/` }, { label: "Search" }]) +
+  `<main class="wrap"><span class="eyebrow">Ingredient intelligence</span>
+   <h1 class="page-h1">Search ingredients</h1>
+   <input id="q" class="search-box" type="search" placeholder="Search by name or synonym — e.g. ascorbic acid, calcium, ashwagandha" autocomplete="off" autofocus>
+   <div class="search-meta" id="meta">Loading index…</div>
+   <div id="results"></div></main>
+   <script>
+   (function(){
+     var q=document.getElementById('q'),res=document.getElementById('results'),meta=document.getElementById('meta'),idx=[];
+     function draw(t){t=(t||'').trim().toLowerCase();
+       var items = !t ? idx.slice(0,60) : idx.filter(function(x){return x.n.toLowerCase().indexOf(t)>=0 || (x.s||[]).some(function(s){return s.toLowerCase().indexOf(t)>=0;});}).slice(0,80);
+       meta.textContent = idx.length ? (t? (items.length+' match'+(items.length===1?'':'es')) : (idx.length+' ingredients · type to filter')) : '';
+       res.innerHTML = items.map(function(x){return '<a href="${root}/'+x.slug+'/">'+x.n+' <span>'+x.c+'</span></a>';}).join('') || '<p style="color:var(--muted)">No matches.</p>';
+     }
+     fetch('${root}/ingredients-index.json').then(function(r){return r.json();}).then(function(d){idx=d;var p=new URLSearchParams(location.search).get('q');if(p)q.value=p;draw(q.value);});
+     q.addEventListener('input',function(){draw(q.value);});
+   })();
+   </script>` + footer(root);
 }
