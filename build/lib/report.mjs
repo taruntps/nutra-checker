@@ -16,7 +16,7 @@ export function buildReport({ snapshot, normalized, validation }) {
     .map(([c, n]) => `| ${c} | ${n} |`).join("\n");
 
   const tabRows = Object.entries(tabColumns)
-    .map(([t, m]) => `| ${t} | ${m.role} | ${m.detectedNameKey || "—"} | ${m.columns.join(", ")} |`)
+    .map(([t, m]) => `| ${t} | ${m.role} | ${m.nameKey || "—"} | ${m.columns.join(", ")} |`)
     .join("\n");
 
   const anomalyRows = anomalies.slice(0, 40)

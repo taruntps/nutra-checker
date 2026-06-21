@@ -1,7 +1,8 @@
 // Normalize raw tab data → ingredient entity model.
-// Evergreen, framework-extensible, data-driven. No page rendering here.
+// Evergreen, framework-extensible, data-driven, EXPLICIT field mapping.
 import {
-  TAB_ROLES, NAME_KEY_PATTERNS, FRAMEWORKS, PRIMARY_FRAMEWORK, QUALITY,
+  TAB_ROLES, FIELD_MAP, ENRICH_MAP, NAME_KEY_PATTERNS, SERIAL_PATTERNS,
+  FRAMEWORKS, PRIMARY_FRAMEWORK, QUALITY,
 } from "../config.mjs";
 
 export function slugify(s) {
@@ -9,84 +10,111 @@ export function slugify(s) {
     .trim().replace(/\s+/g, "-").replace(/-+/g, "-").slice(0, 80);
 }
 const norm = (s) => String(s == null ? "" : s).trim();
+const isNumeric = (s) => /^[\d.]+$/.test(norm(s));
 
-// Pick the most likely "name" column from a row's keys.
+// Fallback name detection (only if a tab has no explicit FIELD_MAP entry).
 export function detectNameKey(keys) {
+  const usable = keys.filter((k) => k && !SERIAL_PATTERNS.some((p) => p.test(k)));
   for (const pat of NAME_KEY_PATTERNS) {
-    const hit = keys.find((k) => pat.test(k));
+    const hit = usable.find((k) => pat.test(k));
     if (hit) return hit;
   }
-  // fallback: first key that isn't an obvious serial/number column
-  return keys.find((k) => !/^s[_\s]?no$|^sr|^#|^id$/i.test(k)) || keys[0];
+  return usable[0] || keys[0];
+}
+function nameKeyFor(tab, keys) {
+  return FIELD_MAP[tab]?.name && keys.includes(FIELD_MAP[tab].name)
+    ? FIELD_MAP[tab].name : detectNameKey(keys);
 }
 
-// Build a synonym → canonical-name map from Trade_Name_Mapper + conversion tabs.
+function splitList(v) {
+  return norm(v).split(/[;,]/).map((x) => x.trim()).filter(Boolean);
+}
+
+// Synonym index: canonicalNameLower -> Set(synonyms), from conversions + Trade_Name_Mapper.
 function buildSynonymIndex(tabs) {
-  const synonyms = {}; // canonicalNameLower -> Set(synonyms)
-  const add = (canonical, syn) => {
-    const c = norm(canonical); const s = norm(syn);
-    if (!c || !s || c.toLowerCase() === s.toLowerCase()) return;
-    (synonyms[c.toLowerCase()] ||= new Set()).add(s);
+  const syn = {};
+  const add = (canonical, s) => {
+    const c = norm(canonical), v = norm(s);
+    if (!c || !v || c.toLowerCase() === v.toLowerCase()) return;
+    (syn[c.toLowerCase()] ||= new Set()).add(v);
   };
   for (const [tab, meta] of Object.entries(TAB_ROLES)) {
     const rows = tabs[tab]?.rows || [];
     if (meta.role === "synonym") {
       for (const r of rows) {
-        const generic = r.Generic_Name || r.generic || "";
-        const brand = r.Trade_Brand_Name || r.trade_name || "";
-        const extra = (r.Synonyms || "").split(";").map((x) => x.trim()).filter(Boolean);
-        if (generic) { add(generic, brand); extra.forEach((e) => add(generic, e)); }
+        const g = r.Generic_Name || "";
+        if (!g) continue;
+        if (r.Trade_Brand_Name) add(g, r.Trade_Brand_Name);
+        splitList(r.Synonyms).forEach((e) => add(g, e));
       }
     }
     if (meta.role === "enrichment" && meta.kind === "conversion") {
-      for (const r of rows) {
-        const parent = r.Parent_Nutrient || "";
-        const salt = r.Salt_Form_As_In_Schedule || r.Salt_Form_Or_Source || r.Salt_Form || "";
-        if (parent && salt) add(parent, salt);
-      }
+      const m = ENRICH_MAP.conversion;
+      for (const r of rows) if (r[m.parent] && r[m.salt]) add(r[m.parent], r[m.salt]);
     }
   }
-  return synonyms;
+  return syn;
 }
 
-// Build a prohibited-name set from status tabs.
+// Prohibited names from Not_Permitted_Ingredients.
 function buildProhibited(tabs) {
-  const set = new Map(); // nameLower -> {note, tab}
+  const set = new Map();
   for (const [tab, meta] of Object.entries(TAB_ROLES)) {
     if (meta.role !== "status") continue;
     for (const r of (tabs[tab]?.rows || [])) {
-      const keys = Object.keys(r);
-      const nameKey = detectNameKey(keys);
-      const name = norm(r[nameKey]);
-      if (name) set.set(name.toLowerCase(), { note: meta.note || null, tab });
+      const name = norm(r.Ingredient_Name || r[detectNameKey(Object.keys(r))]);
+      if (name && !isNumeric(name)) set.set(name.toLowerCase(), { tab, reason: norm(r.Reason || "") });
     }
   }
   return set;
+}
+
+// FSSR_Permitted enrichment: limit / conditions / synonyms by ingredient name.
+function buildPermittedEnrichment(tabs) {
+  const map = new Map(); // nameLower -> {limit, conditions, synonyms[]}
+  const m = ENRICH_MAP.permitted;
+  for (const [tab, meta] of Object.entries(TAB_ROLES)) {
+    if (!(meta.role === "enrichment" && meta.kind === "permitted")) continue;
+    for (const r of (tabs[tab]?.rows || [])) {
+      const name = norm(r[m.name]);
+      if (!name) continue;
+      map.set(name.toLowerCase(), {
+        limit: norm(r[m.limit]), conditions: norm(r[m.conditions]),
+        synonyms: splitList(r[m.synonyms]),
+      });
+    }
+  }
+  return map;
 }
 
 export function normalize(snapshot) {
   const { tabs } = snapshot;
   const synonymIndex = buildSynonymIndex(tabs);
   const prohibited = buildProhibited(tabs);
+  const permitted = buildPermittedEnrichment(tabs);
 
-  const entities = new Map(); // slug -> entity
+  const entities = new Map();
   const anomalies = [];
-  const tabColumns = {}; // governance: detected columns per tab
+  const tabColumns = {};
 
   for (const [tab, meta] of Object.entries(TAB_ROLES)) {
     const rows = tabs[tab]?.rows || [];
-    if (rows.length) tabColumns[tab] = { columns: Object.keys(rows[0]), role: meta.role, detectedNameKey: detectNameKey(Object.keys(rows[0])) };
+    if (rows.length) {
+      const keys = Object.keys(rows[0]);
+      tabColumns[tab] = { role: meta.role, nameKey: meta.role === "entity" ? nameKeyFor(tab, keys) : "—", columns: keys };
+    }
     if (meta.role !== "entity") continue;
 
+    const fmap = FIELD_MAP[tab] || {};
     const updatedAt = tabs[tab]?.updated_at || null;
+
     for (const r of rows) {
       const keys = Object.keys(r);
-      const nameKey = detectNameKey(keys);
+      const nameKey = nameKeyFor(tab, keys);
       const name = norm(r[nameKey]);
-      if (!name || name.length < QUALITY.minNameLen) {
-        anomalies.push({ tab, issue: "missing/short name", row: r });
-        continue;
-      }
+      if (!name || name.length < QUALITY.minNameLen) { anomalies.push({ tab, issue: "missing/short name" }); continue; }
+      if (QUALITY.rejectNumericNames && isNumeric(name)) { anomalies.push({ tab, issue: "numeric name (mis-mapped column?)", name }); continue; }
+
       const slug = slugify(name);
       if (!slug) { anomalies.push({ tab, issue: "empty slug", name }); continue; }
 
@@ -94,52 +122,65 @@ export function normalize(snapshot) {
       if (!e) {
         e = {
           slug, name, domain: "nutraceutical", category: meta.category,
-          identity: {}, synonyms: [],
-          summary: "", // intentionally empty in 2.0 — generated at render time in 2.1
+          identity: {}, synonyms: [], summary: "",
           status: [], related: [], faq: [],
           provenance: { source_tabs: [], db_updated_at: updatedAt },
         };
         entities.set(slug, e);
       } else if (e.category !== meta.category) {
-        // same name in two categories → flag, keep first, record both
         anomalies.push({ tab, issue: "category conflict", name, categories: [e.category, meta.category] });
       }
       if (!e.provenance.source_tabs.includes(tab)) e.provenance.source_tabs.push(tab);
 
-      // India FSSAI status (permitted, since it appears in a schedule/permitted tab)
-      if (!e.status.find((s) => s.framework === PRIMARY_FRAMEWORK)) {
-        e.status.push({
-          framework: PRIMARY_FRAMEWORK,
-          framework_label: FRAMEWORKS[PRIMARY_FRAMEWORK].label,
-          status: "permitted",
-          limit: norm(r.Max_Limit || r.Limit || r.Daily_Limit || r.Permitted_Limit || ""),
-          conditions: norm(r.Conditions || r.Form || r.Notes || ""),
+      // common name
+      if (fmap.common && r[fmap.common] && !e.identity.common_name) e.identity.common_name = norm(r[fmap.common]);
+
+      // primary-framework status
+      let st = e.status.find((s) => s.framework === PRIMARY_FRAMEWORK);
+      if (!st) {
+        st = {
+          framework: PRIMARY_FRAMEWORK, framework_label: FRAMEWORKS[PRIMARY_FRAMEWORK].label,
+          status: "permitted", limit: "", conditions: "",
           source_ref: FRAMEWORKS[PRIMARY_FRAMEWORK].source_default,
           last_reviewed: updatedAt ? updatedAt.slice(0, 10) : null,
           version: updatedAt ? `db-${updatedAt.slice(0, 10)}` : "db-unknown",
-        });
+        };
+        e.status.push(st);
       }
-      // attach synonyms
-      const syn = synonymIndex[name.toLowerCase()];
-      if (syn) for (const s of syn) if (!e.synonyms.includes(s)) e.synonyms.push(s);
+      if (fmap.limit && r[fmap.limit] && !st.limit) st.limit = norm(r[fmap.limit]);
+
+      // synonyms from mapped columns
+      for (const col of (fmap.synonyms || [])) {
+        for (const v of splitList(r[col])) if (v && !e.synonyms.includes(v)) e.synonyms.push(v);
+      }
     }
   }
 
-  // Apply prohibited overrides
+  // Cross-source enrichment: conversions/trade synonyms + FSSR_Permitted; prohibited overrides.
   for (const e of entities.values()) {
-    const p = prohibited.get(e.name.toLowerCase());
-    if (p) {
-      const fssai = e.status.find((s) => s.framework === PRIMARY_FRAMEWORK);
-      if (fssai) { fssai.status = "prohibited"; fssai.conditions = p.note || fssai.conditions; }
+    const key = e.name.toLowerCase();
+    const idx = synonymIndex[key];
+    if (idx) for (const s of idx) if (!e.synonyms.includes(s)) e.synonyms.push(s);
+
+    const pe = permitted.get(key);
+    if (pe) {
+      const st = e.status.find((s) => s.framework === PRIMARY_FRAMEWORK);
+      if (st) { if (!st.limit && pe.limit) st.limit = pe.limit; if (!st.conditions && pe.conditions) st.conditions = pe.conditions; }
+      for (const s of pe.synonyms) if (s && !e.synonyms.includes(s)) e.synonyms.push(s);
+    }
+
+    const pr = prohibited.get(key);
+    if (pr) {
+      const st = e.status.find((s) => s.framework === PRIMARY_FRAMEWORK);
+      if (st) { st.status = "prohibited"; if (pr.reason) st.conditions = pr.reason; }
     }
   }
 
   // Related: up to 6 siblings in the same category
   const byCat = {};
   for (const e of entities.values()) (byCat[e.category] ||= []).push(e.slug);
-  for (const e of entities.values()) {
+  for (const e of entities.values())
     e.related = (byCat[e.category] || []).filter((s) => s !== e.slug).slice(0, 6);
-  }
 
   return {
     entities: [...entities.values()].sort((a, b) => a.name.localeCompare(b.name)),
