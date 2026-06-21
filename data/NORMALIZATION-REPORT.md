@@ -1,6 +1,6 @@
 # Regulyze — Ingredient Normalization Report (Phase 2.0)
 
-_Generated: 2026-06-21T03:42:40.639Z · DB rows fetched: 2455_
+_Generated: 2026-06-21T04:04:37.252Z · DB rows fetched: 2455_
 
 > Review-only. **No ingredient pages have been generated.** Approve this dataset before Phase 2.1 rendering.
 
@@ -66,7 +66,10 @@ _Generated: 2026-06-21T03:42:40.639Z · DB rows fetched: 2455_
       "Schedule_III_B"
     ],
     "db_updated_at": "2026-06-20T11:59:01.459+00:00"
-  }
+  },
+  "categories": [
+    "botanical"
+  ]
 }
 ```
 
@@ -107,7 +110,10 @@ _Generated: 2026-06-21T03:42:40.639Z · DB rows fetched: 2455_
       "Schedule_II"
     ],
     "db_updated_at": "2026-06-20T11:39:52.317+00:00"
-  }
+  },
+  "categories": [
+    "botanical"
+  ]
 }
 ```
 
@@ -148,7 +154,10 @@ _Generated: 2026-06-21T03:42:40.639Z · DB rows fetched: 2455_
       "Schedule_II"
     ],
     "db_updated_at": "2026-06-20T11:39:52.317+00:00"
-  }
+  },
+  "categories": [
+    "botanical"
+  ]
 }
 ```
 
@@ -189,7 +198,10 @@ _Generated: 2026-06-21T03:42:40.639Z · DB rows fetched: 2455_
       "Schedule_II"
     ],
     "db_updated_at": "2026-06-20T11:39:52.317+00:00"
-  }
+  },
+  "categories": [
+    "botanical"
+  ]
 }
 ```
 
@@ -230,7 +242,10 @@ _Generated: 2026-06-21T03:42:40.639Z · DB rows fetched: 2455_
       "Schedule_II"
     ],
     "db_updated_at": "2026-06-20T11:39:52.317+00:00"
-  }
+  },
+  "categories": [
+    "botanical"
+  ]
 }
 ```
 
@@ -271,7 +286,10 @@ _Generated: 2026-06-21T03:42:40.639Z · DB rows fetched: 2455_
       "Schedule_II"
     ],
     "db_updated_at": "2026-06-20T11:39:52.317+00:00"
-  }
+  },
+  "categories": [
+    "botanical"
+  ]
 }
 ```
 
@@ -312,7 +330,10 @@ _Generated: 2026-06-21T03:42:40.639Z · DB rows fetched: 2455_
       "Schedule_II"
     ],
     "db_updated_at": "2026-06-20T11:39:52.317+00:00"
-  }
+  },
+  "categories": [
+    "botanical"
+  ]
 }
 ```
 
@@ -353,7 +374,10 @@ _Generated: 2026-06-21T03:42:40.639Z · DB rows fetched: 2455_
       "Schedule_II"
     ],
     "db_updated_at": "2026-06-20T11:39:52.317+00:00"
-  }
+  },
+  "categories": [
+    "botanical"
+  ]
 }
 ```
 
@@ -392,7 +416,10 @@ _Generated: 2026-06-21T03:42:40.639Z · DB rows fetched: 2455_
       "Additives_Tab_Cap_Syrup"
     ],
     "db_updated_at": "2026-06-20T11:40:01.453+00:00"
-  }
+  },
+  "categories": [
+    "additive"
+  ]
 }
 ```
 
@@ -404,7 +431,7 @@ _Generated: 2026-06-21T03:42:40.639Z · DB rows fetched: 2455_
   "category": "additive",
   "identity": {},
   "synonyms": [
-    "950"
+    "INS 950"
   ],
   "summary": "",
   "status": [
@@ -433,7 +460,10 @@ _Generated: 2026-06-21T03:42:40.639Z · DB rows fetched: 2455_
       "Additives_HS_Nutra_PrePro"
     ],
     "db_updated_at": "2026-06-20T11:39:59.72+00:00"
-  }
+  },
+  "categories": [
+    "additive"
+  ]
 }
 ```
 
@@ -466,13 +496,12 @@ _Generated: 2026-06-21T03:42:40.639Z · DB rows fetched: 2455_
 ## 5. Anomalies & gaps (first 40)
 | Tab | Issue | Detail |
 |---|---|---|
-| Sched_IV_Prebiotics | category conflict | Lactoferrin |
-| Sched_IV_Prebiotics | category conflict | Pectin |
-| Additives_Tab_Cap_Syrup | category conflict | Pectin |
-| GMP_Codex_Additives | category conflict | Papain |
-| GMP_FSSR_Additives | category conflict | Lecithins |
-| GMP_FSSR_Additives | category conflict | Papain |
-| GMP_FSSR_Additives | category conflict | Protease |
+| Sched_IV_Prebiotics | multi-category | Lactoferrin |
+| Sched_IV_Prebiotics | multi-category | Pectin |
+| Additives_Tab_Cap_Syrup | multi-category | Pectin |
+| GMP_Codex_Additives | multi-category | Papain |
+| GMP_FSSR_Additives | multi-category | Lecithins |
+| GMP_FSSR_Additives | multi-category | Protease |
 
 ## 6. Validation issues (first 30)
 - none
