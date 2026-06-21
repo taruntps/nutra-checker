@@ -81,6 +81,21 @@ function buildProhibited(tabs) {
   return set;
 }
 
+// RDA enrichment: ICMR-NIN 2020 reference intakes, keyed by RDA_Key/nutrient_key.
+function buildRdaIndex(tabs) {
+  const idx = {};
+  const G = [["Adult man", "sed_men_65kg"], ["Adult woman", "sed_women_55kg"],
+    ["Pregnant", "pregnant_65kg"], ["Lactating", "lactating_55kg"], ["Child (1–3 yr)", "child_1_3y_12.9kg"]];
+  for (const r of (tabs["RDA_2020"]?.rows || [])) {
+    const key = norm(r.nutrient_key);
+    if (!key) continue;
+    const groups = G.map(([label, col]) => ({ label, value: norm(r[col]) })).filter((g) => g.value);
+    if (!groups.length) continue;
+    idx[key.toLowerCase()] = { unit: norm(r.uom), source: norm(r.source) || "ICMR-NIN RDA 2020", groups };
+  }
+  return idx;
+}
+
 // FSSR_Permitted enrichment: limit / conditions / synonyms by ingredient name.
 function buildPermittedEnrichment(tabs) {
   const map = new Map(); // nameLower -> {limit, conditions, synonyms[]}
@@ -104,6 +119,7 @@ export function normalize(snapshot) {
   const synonymIndex = buildSynonymIndex(tabs);
   const prohibited = buildProhibited(tabs);
   const permitted = buildPermittedEnrichment(tabs);
+  const rdaIndex = buildRdaIndex(tabs);
 
   const entities = new Map();
   const anomalies = [];
@@ -145,6 +161,7 @@ export function normalize(snapshot) {
         anomalies.push({ tab, issue: "multi-category", name, categories: [...e._cats] });
       }
       if (!e.provenance.source_tabs.includes(tab)) e.provenance.source_tabs.push(tab);
+      if (fmap.rdaKey && r[fmap.rdaKey] && !e._rdaKey) e._rdaKey = norm(r[fmap.rdaKey]);
 
       // common name
       if (fmap.common && r[fmap.common] && !e.identity.common_name) e.identity.common_name = norm(r[fmap.common]);
@@ -188,6 +205,10 @@ export function normalize(snapshot) {
       const st = e.status.find((s) => s.framework === PRIMARY_FRAMEWORK);
       if (st) { st.status = "prohibited"; if (pr.reason) st.conditions = pr.reason; }
     }
+
+    const rk = (e._rdaKey || "").toLowerCase();
+    if (rk && rdaIndex[rk]) e.rda = rdaIndex[rk];
+    delete e._rdaKey;
   }
 
   // Resolve multi-category tagging → primary SEO category + categories[]

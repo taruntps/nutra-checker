@@ -43,7 +43,7 @@ export function genFAQ(e) {
   const f = fssaiOf(e);
   const cats = [CAT_PLURAL[e.category], ...((e.categories || []).filter((c) => c !== e.category).map((c) => CAT_PLURAL[c]))]
     .filter(Boolean).join(", ");
-  return [
+  const faq = [
     { q: `Is ${e.name} permitted in nutraceuticals under FSSAI (India)?`,
       a: `${e.name} is currently ${statusWord(f)} in health supplements and nutraceuticals under India's FSSAI framework, per ${esc((f && f.source_ref) || "the applicable regulation")}. Always verify against the current official regulation for your product and market.` },
     { q: `What is the permitted limit of ${e.name}?`,
@@ -51,6 +51,20 @@ export function genFAQ(e) {
         : `No single numeric limit is listed in the source for ${e.name}; permitted use is at GMP or as specified. Confirm against the current regulation.` },
     { q: `What product category does ${e.name} belong to?`, a: `${e.name} is classified under: ${esc(cats)}.` },
   ];
+  if (e.rda && e.rda.groups && e.rda.groups.length) {
+    const a = e.rda.groups.find((g) => /adult man/i.test(g.label)) || e.rda.groups[0];
+    const u = e.rda.unit ? ` ${e.rda.unit}` : "";
+    faq.push({ q: `What is the recommended daily allowance (RDA) of ${e.name} in India?`,
+      a: `Per ICMR-NIN (2020), the RDA of ${e.name} for ${a.label.toLowerCase()} is ${esc(a.value)}${esc(u)}. RDA is a dietary reference intake and is distinct from the maximum permitted supplement limit.` });
+  }
+  return faq;
+}
+function rdaSection(e) {
+  if (!e.rda || !e.rda.groups || !e.rda.groups.length) return "";
+  const rows = e.rda.groups.map((g) => `<tr><td>${esc(g.label)}</td><td>${esc(g.value)}${e.rda.unit ? ` ${esc(e.rda.unit)}` : ""}</td></tr>`).join("");
+  return `<div class="section"><h2>Recommended Dietary Allowance (ICMR-NIN 2020)</h2>
+    <table class="stbl"><thead><tr><th>Group</th><th>RDA</th></tr></thead><tbody>${rows}</tbody></table>
+    <p class="prov" style="border:0;margin-top:8px;padding-top:4px">Source: ${esc(e.rda.source || "ICMR-NIN RDA 2020")}. RDA is a reference dietary intake — distinct from the maximum permitted supplement limit.</p></div>`;
 }
 
 // ── Shared chrome ────────────────────────────────────────────────────────────
@@ -130,6 +144,7 @@ export function renderIngredient(e, { root = "/ingredients", preview = false } =
         <tbody>${statusRows}</tbody></table>
         <p class="prov" style="border:0;margin-top:10px;padding-top:6px">Coverage for the USA (FDA), EU (EFSA), UK, GCC and ASEAN is being added — this page updates automatically as frameworks are assessed.</p>
       </div>
+      ${rdaSection(e)}
       <div class="section"><h2>About ${esc(e.name)}</h2>
         <p>${esc(e.name)} is tracked in the Regulyze Ingredient Intelligence database as a ${esc(CAT_SINGULAR[e.category] || "ingredient")}${e.identity.common_name ? `, also referred to as ${esc(e.identity.common_name)}` : ""}. The regulatory details on this page are generated from Regulyze's structured regulatory dataset and are reviewed against the cited source.</p>
       </div>

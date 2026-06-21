@@ -57,8 +57,8 @@ export const TAB_ROLES = {
 // name: the ingredient-name column · limit: permitted-limit column ·
 // common: common-name column · synonyms: columns whose values become synonyms.
 export const FIELD_MAP = {
-  Sched_I_Vitamins:    { name: "Nutrient",            synonyms: ["Components_Salt_Forms"] },
-  Sched_I_Minerals:    { name: "Mineral",             synonyms: ["Chemical_Sources"] },
+  Sched_I_Vitamins:    { name: "Nutrient",            synonyms: ["Components_Salt_Forms"], rdaKey: "RDA_Key" },
+  Sched_I_Minerals:    { name: "Mineral",             synonyms: ["Chemical_Sources"], rdaKey: "RDA_Key" },
   Sched_I_AminoAcids:  { name: "Amino_Acid_Nutrient" },
   Sched_I_Nucleotides: { name: "Nucleotide" },
   Schedule_II:         { name: "Official_Common_Name", limit: "Permitted_Range_Adults_per_day", synonyms: ["Botanical_Name_Part_Used"] },
