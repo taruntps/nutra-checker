@@ -4,6 +4,11 @@ name: Ingredient Data Pipeline (Phase 2.0)
 # opens a REVIEW PR. It never renders pages and never deploys automatically.
 on:
   workflow_dispatch:
+    inputs:
+      publish:
+        description: "Comma-separated categories to render into /ingredients/"
+        required: false
+        default: "vitamin"
   # Optional future cadence (left off so nothing runs unattended):
   # schedule: [{ cron: "0 3 * * 1" }]
 
@@ -21,17 +26,18 @@ jobs:
         with:
           node-version: "22"
 
-      - name: Generate normalized ingredient dataset
+      - name: Generate dataset + render published categories
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+          PUBLISH: ${{ inputs.publish }}
         run: node build/generate.mjs
 
-      - name: Publish dataset to review branch
+      - name: Publish to review branch
         run: |
           git config user.name "regulyze-bot"
           git config user.email "bot@regulyze.in"
           git checkout -B data/ingredients-refresh
-          git add -f data/ingredients.json data/NORMALIZATION-REPORT.md
-          git commit -m "data: refresh normalized ingredient dataset (Phase 2.0)" || echo "no changes"
+          git add -f data/ingredients.json data/NORMALIZATION-REPORT.md sitemap.xml ingredients/
+          git commit -m "build: ingredient dataset + rendered pages (Phase 2.1)" || echo "no changes"
           git push -f origin data/ingredients-refresh

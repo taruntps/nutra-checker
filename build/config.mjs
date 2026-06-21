@@ -96,3 +96,7 @@ export const QUALITY = {
   // reject names that are purely numeric (catches mis-mapped serial columns)
   rejectNumericNames: true,
 };
+
+// Categories to render into the live /ingredients/ tree this run.
+// Vitamins only for the Phase 2.1 vertical slice; grows as categories are approved.
+export const PUBLISH_CATEGORIES = (process.env.PUBLISH || "vitamin").split(",").map((s) => s.trim()).filter(Boolean);
