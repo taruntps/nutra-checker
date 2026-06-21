@@ -119,6 +119,7 @@ ${jsonld ? `<script type="application/ld+json">${jeval(jsonld)}</script>` : ""}
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-5EV0X8LPMN"></script>
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-5EV0X8LPMN');</script>
 <script type="text/javascript">(function(c,l,a,r,i,t,y){c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);})(window,document,"clarity","script","xadtpvu8h4");</script>
+<script>(function(){function ev(n,p){if(typeof gtag==='function'){gtag('event',n,p||{});}}window.rgEvent=ev;document.addEventListener('click',function(e){var el=e.target.closest&&e.target.closest('a,button');if(!el)return;var href=el.getAttribute('href')||'',txt=(el.textContent||'').trim().slice(0,40);if(href.indexOf('auth=signup')>-1||/check a formulation/i.test(txt))ev('cta_signup_click',{label:txt,location:location.pathname});else if(href.indexOf('mailto:')>-1)ev(/bug/i.test(href)?'bug_report_click':'contact_click',{label:txt});},true);document.addEventListener('input',function(e){if(e.target&&(e.target.id==='q'||e.target.type==='search')){clearTimeout(window.__rgst);window.__rgst=setTimeout(function(){if((e.target.value||'').length>2)ev('ingredient_search',{q:String(e.target.value).slice(0,60)});},900);}},true);})();</script>
 </head><body>${preview ? '<div class="pvbar">PREVIEW · Ingredient-page template for approval · noindex (not the live tree)</div>' : ""}`;
 }
 function header(root) {
@@ -131,7 +132,7 @@ function header(root) {
 function footer(root = "/ingredients") {
   return `<footer class="ifoot"><div class="ifoot-in">
 <span>© 2026 TPS Xperts Group · regulyze.in · Indicative only — not a substitute for legal/regulatory advice.</span>
-<span><a href="${root}/">Ingredients</a> · <a href="${root}/all/">Directory</a> · <a href="${root}/search/">Search</a> · <a href="/terms/">Terms</a> · <a href="/privacy/">Privacy</a></span>
+<span><a href="${root}/">Ingredients</a> · <a href="${root}/all/">Directory</a> · <a href="${root}/search/">Search</a> · <a href="/terms/">Terms</a> · <a href="/privacy/">Privacy</a> · <a href="mailto:support@regulyze.in">Contact</a> · <a href="mailto:support@regulyze.in?subject=Bug%20Report%20-%20regulyze.in">Report a bug</a></span>
 </div></footer></body></html>`;
 }
 const crumb = (parts) => `<div class="wrap"><nav class="crumb">${parts.map((p, i) =>

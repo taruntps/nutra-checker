@@ -343,11 +343,19 @@ section{padding:92px 0;position:relative}
   <div class="foot-grid">
     <div class="foot-brand"><a class="brand" href="/" style="color:var(--cream)"><img class="brand-ico" src="design-system/assets/logo-white.png" alt="Regulyze"> Regulyze</a><p>FSSAI nutraceutical compliance engine by TPS Xperts Group. Analyze smarter. Comply faster.</p></div>
     <div class="foot-col"><h4>Product</h4><a href="#features">Features</a><a href="#how">How it works</a><a href="sample-report/">Sample report</a></div>
-    <div class="foot-col"><h4>Company</h4><a href="#customers">Customers</a><a href="#">About</a><a href="#">Contact</a></div>
+    <div class="foot-col"><h4>Company</h4><a href="#customers">Customers</a><a href="mailto:support@regulyze.in">Contact / Support</a><a href="mailto:support@regulyze.in?subject=Bug%20Report%20-%20regulyze.in">Report a bug</a></div>
     <div class="foot-col"><h4>Legal</h4><a href="/privacy/">Privacy</a><a href="/terms/">Terms</a><a href="/terms/#disclaimer">Disclaimer</a></div>
   </div>
   <div class="foot-bottom"><span>© 2026 TPS Xperts Group · regulyze.in</span><span>Indicative only — not a substitute for legal/regulatory advice.</span></div>
 </div></footer>
+<script>
+/* GA4 event tracking — delegated, non-invasive */
+(function(){function ev(n,p){if(typeof gtag==='function'){gtag('event',n,p||{});}}window.rgEvent=ev;
+document.addEventListener('click',function(e){var el=e.target.closest&&e.target.closest('a,button');if(!el)return;
+var href=el.getAttribute('href')||'',txt=(el.textContent||'').trim().slice(0,40);
+if(href.indexOf('auth=signup')>-1||/sign up|check a formulation|get started|try free/i.test(txt))ev('cta_signup_click',{label:txt,location:location.pathname});
+else if(href.indexOf('mailto:')>-1)ev(/bug/i.test(href)?'bug_report_click':'contact_click',{label:txt});},true);})();
+</script>
 <script>
 const io=new IntersectionObserver((es)=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}}),{threshold:.12});
 document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
