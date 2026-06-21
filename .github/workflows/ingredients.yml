@@ -1,0 +1,47 @@
+name: Ingredient Data Pipeline (Phase 2.0)
+
+# Manual only. Generates data/ingredients.json + the normalization report and
+# opens a REVIEW PR. It never renders pages and never deploys automatically.
+on:
+  workflow_dispatch:
+  # Optional future cadence (left off so nothing runs unattended):
+  # schedule: [{ cron: "0 3 * * 1" }]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Generate normalized ingredient dataset
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+        run: node build/generate.mjs
+
+      - name: Open review PR with the normalized dataset
+        uses: peter-evans/create-pull-request@v6
+        with:
+          branch: data/ingredients-refresh
+          base: main
+          title: "data: refresh normalized ingredient dataset (Phase 2.0)"
+          commit-message: "data: refresh normalized ingredient dataset (Phase 2.0)"
+          body: |
+            Automated **Phase 2.0** dataset refresh — review only, no pages rendered.
+
+            - `data/ingredients.json` — normalized entity model (source of truth)
+            - `data/NORMALIZATION-REPORT.md` — counts, samples, anomalies, validation
+
+            Please review the report before approving Phase 2.1 page rendering.
+          add-paths: |
+            data/ingredients.json
+            data/NORMALIZATION-REPORT.md
+          delete-branch: true

@@ -1,0 +1,11 @@
+{
+  "name": "regulyze-ingredient-pipeline",
+  "private": true,
+  "type": "module",
+  "version": "0.1.0",
+  "description": "Phase 2.0 — Regulyze Ingredient Intelligence build pipeline (data extraction + normalization + validation + governance). Generates data/ingredients.json. Does NOT render pages.",
+  "scripts": {
+    "generate": "node build/generate.mjs",
+    "report": "node build/generate.mjs"
+  }
+}
