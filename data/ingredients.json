@@ -1,12 +1,16 @@
 {
   "meta": {
-    "generatedAt": "2026-06-21T04:04:37.116Z",
+    "generatedAt": "2026-06-21T04:17:29.763Z",
     "dbRowCount": 2455,
     "entityCount": 1111,
     "publishEligible": 1111,
     "pipelineVersion": "2.1.0",
     "publishCategories": [
-      "vitamin"
+      "vitamin",
+      "mineral",
+      "amino-acid",
+      "probiotic",
+      "prebiotic"
     ]
   },
   "entities": [
@@ -5898,6 +5902,32 @@
         ],
         "db_updated_at": "2026-06-20T11:39:43.264+00:00"
       },
+      "rda": {
+        "unit": "mcg",
+        "source": "ICMR RDA 2020 Annexure IB",
+        "groups": [
+          {
+            "label": "Adult man",
+            "value": "40"
+          },
+          {
+            "label": "Adult woman",
+            "value": "40"
+          },
+          {
+            "label": "Pregnant",
+            "value": "40"
+          },
+          {
+            "label": "Lactating",
+            "value": "45"
+          },
+          {
+            "label": "Child (1–3 yr)",
+            "value": "20"
+          }
+        ]
+      },
       "categories": [
         "vitamin"
       ]
@@ -6568,6 +6598,32 @@
           "Sched_I_Minerals"
         ],
         "db_updated_at": "2026-06-20T11:39:46.034+00:00"
+      },
+      "rda": {
+        "unit": "mg",
+        "source": "ICMR RDA 2020 Annexure IA",
+        "groups": [
+          {
+            "label": "Adult man",
+            "value": "1000"
+          },
+          {
+            "label": "Adult woman",
+            "value": "1000"
+          },
+          {
+            "label": "Pregnant",
+            "value": "1000"
+          },
+          {
+            "label": "Lactating",
+            "value": "1200"
+          },
+          {
+            "label": "Child (1–3 yr)",
+            "value": "500"
+          }
+        ]
       },
       "categories": [
         "mineral"
@@ -9291,6 +9347,32 @@
         ],
         "db_updated_at": "2026-06-20T11:39:46.034+00:00"
       },
+      "rda": {
+        "unit": "mg",
+        "source": "ICMR RDA 2020 Annexure IB",
+        "groups": [
+          {
+            "label": "Adult man",
+            "value": "2300"
+          },
+          {
+            "label": "Adult woman",
+            "value": "2300"
+          },
+          {
+            "label": "Pregnant",
+            "value": "2300"
+          },
+          {
+            "label": "Lactating",
+            "value": "2300"
+          },
+          {
+            "label": "Child (1–3 yr)",
+            "value": "1500"
+          }
+        ]
+      },
       "categories": [
         "mineral"
       ]
@@ -9735,6 +9817,32 @@
           "Sched_I_Minerals"
         ],
         "db_updated_at": "2026-06-20T11:39:46.034+00:00"
+      },
+      "rda": {
+        "unit": "mcg",
+        "source": "ICMR RDA 2020 Annexure IB",
+        "groups": [
+          {
+            "label": "Adult man",
+            "value": "50"
+          },
+          {
+            "label": "Adult woman",
+            "value": "50"
+          },
+          {
+            "label": "Pregnant",
+            "value": "50"
+          },
+          {
+            "label": "Lactating",
+            "value": "50"
+          },
+          {
+            "label": "Child (1–3 yr)",
+            "value": "50"
+          }
+        ]
       },
       "categories": [
         "mineral"
@@ -10562,6 +10670,32 @@
           "Sched_I_Minerals"
         ],
         "db_updated_at": "2026-06-20T11:39:46.034+00:00"
+      },
+      "rda": {
+        "unit": "mg",
+        "source": "ICMR RDA 2020 Annexure IB",
+        "groups": [
+          {
+            "label": "Adult man",
+            "value": "1.7"
+          },
+          {
+            "label": "Adult woman",
+            "value": "1.7"
+          },
+          {
+            "label": "Pregnant",
+            "value": "1.7"
+          },
+          {
+            "label": "Lactating",
+            "value": "1.7"
+          },
+          {
+            "label": "Child (1–3 yr)",
+            "value": "1.7"
+          }
+        ]
       },
       "categories": [
         "mineral"
@@ -13589,6 +13723,32 @@
           "Sched_I_Vitamins"
         ],
         "db_updated_at": "2026-06-20T11:39:43.264+00:00"
+      },
+      "rda": {
+        "unit": "mcg",
+        "source": "Folic acid=Folate/1.7 DFE",
+        "groups": [
+          {
+            "label": "Adult man",
+            "value": "176.47058823529412"
+          },
+          {
+            "label": "Adult woman",
+            "value": "129.41176470588235"
+          },
+          {
+            "label": "Pregnant",
+            "value": "335.29411764705884"
+          },
+          {
+            "label": "Lactating",
+            "value": "194.11764705882354"
+          },
+          {
+            "label": "Child (1–3 yr)",
+            "value": "70.58823529411765"
+          }
+        ]
       },
       "categories": [
         "vitamin"
@@ -17431,6 +17591,32 @@
         ],
         "db_updated_at": "2026-06-20T11:39:46.034+00:00"
       },
+      "rda": {
+        "unit": "mcg",
+        "source": "ICMR RDA 2020 Annexure IA",
+        "groups": [
+          {
+            "label": "Adult man",
+            "value": "140"
+          },
+          {
+            "label": "Adult woman",
+            "value": "140"
+          },
+          {
+            "label": "Pregnant",
+            "value": "220"
+          },
+          {
+            "label": "Lactating",
+            "value": "280"
+          },
+          {
+            "label": "Child (1–3 yr)",
+            "value": "90"
+          }
+        ]
+      },
       "categories": [
         "mineral"
       ]
@@ -17488,6 +17674,32 @@
           "Sched_I_Minerals"
         ],
         "db_updated_at": "2026-06-20T11:39:46.034+00:00"
+      },
+      "rda": {
+        "unit": "mg",
+        "source": "ICMR RDA 2020 Annexure IA",
+        "groups": [
+          {
+            "label": "Adult man",
+            "value": "19"
+          },
+          {
+            "label": "Adult woman",
+            "value": "29"
+          },
+          {
+            "label": "Pregnant",
+            "value": "27"
+          },
+          {
+            "label": "Lactating",
+            "value": "23"
+          },
+          {
+            "label": "Child (1–3 yr)",
+            "value": "8"
+          }
+        ]
       },
       "categories": [
         "mineral"
@@ -25746,6 +25958,32 @@
         ],
         "db_updated_at": "2026-06-20T11:39:46.034+00:00"
       },
+      "rda": {
+        "unit": "mg",
+        "source": "ICMR RDA 2020 Annexure IA",
+        "groups": [
+          {
+            "label": "Adult man",
+            "value": "440"
+          },
+          {
+            "label": "Adult woman",
+            "value": "370"
+          },
+          {
+            "label": "Pregnant",
+            "value": "440"
+          },
+          {
+            "label": "Lactating",
+            "value": "400"
+          },
+          {
+            "label": "Child (1–3 yr)",
+            "value": "90"
+          }
+        ]
+      },
       "categories": [
         "mineral"
       ]
@@ -26904,6 +27142,32 @@
           "Sched_I_Minerals"
         ],
         "db_updated_at": "2026-06-20T11:39:46.034+00:00"
+      },
+      "rda": {
+        "unit": "mg",
+        "source": "ICMR RDA 2020 Annexure IB",
+        "groups": [
+          {
+            "label": "Adult man",
+            "value": "4"
+          },
+          {
+            "label": "Adult woman",
+            "value": "4"
+          },
+          {
+            "label": "Pregnant",
+            "value": "4"
+          },
+          {
+            "label": "Lactating",
+            "value": "4"
+          },
+          {
+            "label": "Child (1–3 yr)",
+            "value": "4"
+          }
+        ]
       },
       "categories": [
         "mineral"
@@ -28256,6 +28520,32 @@
           "Sched_I_Minerals"
         ],
         "db_updated_at": "2026-06-20T11:39:46.034+00:00"
+      },
+      "rda": {
+        "unit": "mcg",
+        "source": "ICMR RDA 2020 Annexure IB",
+        "groups": [
+          {
+            "label": "Adult man",
+            "value": "45"
+          },
+          {
+            "label": "Adult woman",
+            "value": "45"
+          },
+          {
+            "label": "Pregnant",
+            "value": "45"
+          },
+          {
+            "label": "Lactating",
+            "value": "45"
+          },
+          {
+            "label": "Child (1–3 yr)",
+            "value": "45"
+          }
+        ]
       },
       "categories": [
         "mineral"
@@ -30022,6 +30312,32 @@
         ],
         "db_updated_at": "2026-06-20T11:39:43.264+00:00"
       },
+      "rda": {
+        "unit": "mg",
+        "source": "ICMR RDA 2020 Annexure IA",
+        "groups": [
+          {
+            "label": "Adult man",
+            "value": "14"
+          },
+          {
+            "label": "Adult woman",
+            "value": "11"
+          },
+          {
+            "label": "Pregnant",
+            "value": "13"
+          },
+          {
+            "label": "Lactating",
+            "value": "16"
+          },
+          {
+            "label": "Child (1–3 yr)",
+            "value": "7"
+          }
+        ]
+      },
       "categories": [
         "vitamin"
       ]
@@ -31054,6 +31370,32 @@
           "Sched_I_Vitamins"
         ],
         "db_updated_at": "2026-06-20T11:39:43.264+00:00"
+      },
+      "rda": {
+        "unit": "mg",
+        "source": "ICMR RDA 2020 Annexure IB",
+        "groups": [
+          {
+            "label": "Adult man",
+            "value": "5"
+          },
+          {
+            "label": "Adult woman",
+            "value": "5"
+          },
+          {
+            "label": "Pregnant",
+            "value": "5"
+          },
+          {
+            "label": "Lactating",
+            "value": "7"
+          },
+          {
+            "label": "Child (1–3 yr)",
+            "value": "4"
+          }
+        ]
       },
       "categories": [
         "vitamin"
@@ -32209,6 +32551,32 @@
           "Sched_I_Minerals"
         ],
         "db_updated_at": "2026-06-20T11:39:46.034+00:00"
+      },
+      "rda": {
+        "unit": "mg",
+        "source": "ICMR RDA 2020 Annexure IB",
+        "groups": [
+          {
+            "label": "Adult man",
+            "value": "1000"
+          },
+          {
+            "label": "Adult woman",
+            "value": "1000"
+          },
+          {
+            "label": "Pregnant",
+            "value": "1000"
+          },
+          {
+            "label": "Lactating",
+            "value": "1000"
+          },
+          {
+            "label": "Child (1–3 yr)",
+            "value": "1000"
+          }
+        ]
       },
       "categories": [
         "mineral"
@@ -33444,6 +33812,32 @@
           "Sched_I_Minerals"
         ],
         "db_updated_at": "2026-06-20T11:39:46.034+00:00"
+      },
+      "rda": {
+        "unit": "mg",
+        "source": "ICMR RDA 2020 Annexure IB",
+        "groups": [
+          {
+            "label": "Adult man",
+            "value": "3500"
+          },
+          {
+            "label": "Adult woman",
+            "value": "3500"
+          },
+          {
+            "label": "Pregnant",
+            "value": "3500"
+          },
+          {
+            "label": "Lactating",
+            "value": "3500"
+          },
+          {
+            "label": "Child (1–3 yr)",
+            "value": "3500"
+          }
+        ]
       },
       "categories": [
         "mineral"
@@ -34887,6 +35281,32 @@
           "Sched_I_Vitamins"
         ],
         "db_updated_at": "2026-06-20T11:39:43.264+00:00"
+      },
+      "rda": {
+        "unit": "mcg",
+        "source": "ICMR RDA 2020 Annexure IA",
+        "groups": [
+          {
+            "label": "Adult man",
+            "value": "1000"
+          },
+          {
+            "label": "Adult woman",
+            "value": "840"
+          },
+          {
+            "label": "Pregnant",
+            "value": "900"
+          },
+          {
+            "label": "Lactating",
+            "value": "950"
+          },
+          {
+            "label": "Child (1–3 yr)",
+            "value": "390"
+          }
+        ]
       },
       "categories": [
         "vitamin"
@@ -37103,6 +37523,32 @@
         ],
         "db_updated_at": "2026-06-20T11:39:46.034+00:00"
       },
+      "rda": {
+        "unit": "mcg",
+        "source": "ICMR RDA 2020 Annexure IB",
+        "groups": [
+          {
+            "label": "Adult man",
+            "value": "40"
+          },
+          {
+            "label": "Adult woman",
+            "value": "40"
+          },
+          {
+            "label": "Pregnant",
+            "value": "40"
+          },
+          {
+            "label": "Lactating",
+            "value": "40"
+          },
+          {
+            "label": "Child (1–3 yr)",
+            "value": "40"
+          }
+        ]
+      },
       "categories": [
         "mineral"
       ]
@@ -38587,6 +39033,32 @@
           "Sched_I_Minerals"
         ],
         "db_updated_at": "2026-06-20T11:39:46.034+00:00"
+      },
+      "rda": {
+        "unit": "mg",
+        "source": "ICMR RDA 2020 Annexure IB",
+        "groups": [
+          {
+            "label": "Adult man",
+            "value": "2000"
+          },
+          {
+            "label": "Adult woman",
+            "value": "2000"
+          },
+          {
+            "label": "Pregnant",
+            "value": "2000"
+          },
+          {
+            "label": "Lactating",
+            "value": "2000"
+          },
+          {
+            "label": "Child (1–3 yr)",
+            "value": "2000"
+          }
+        ]
       },
       "categories": [
         "mineral"
@@ -44330,6 +44802,32 @@
         ],
         "db_updated_at": "2026-06-20T11:39:43.264+00:00"
       },
+      "rda": {
+        "unit": "mcg",
+        "source": "ICMR RDA 2020 Annexure IA",
+        "groups": [
+          {
+            "label": "Adult man",
+            "value": "1000"
+          },
+          {
+            "label": "Adult woman",
+            "value": "840"
+          },
+          {
+            "label": "Pregnant",
+            "value": "900"
+          },
+          {
+            "label": "Lactating",
+            "value": "950"
+          },
+          {
+            "label": "Child (1–3 yr)",
+            "value": "390"
+          }
+        ]
+      },
       "categories": [
         "vitamin"
       ]
@@ -44371,6 +44869,32 @@
           "Sched_I_Vitamins"
         ],
         "db_updated_at": "2026-06-20T11:39:43.264+00:00"
+      },
+      "rda": {
+        "unit": "mg",
+        "source": "ICMR RDA 2020 Annexure IA",
+        "groups": [
+          {
+            "label": "Adult man",
+            "value": "1.4"
+          },
+          {
+            "label": "Adult woman",
+            "value": "1.4"
+          },
+          {
+            "label": "Pregnant",
+            "value": "2"
+          },
+          {
+            "label": "Lactating",
+            "value": "2.1"
+          },
+          {
+            "label": "Child (1–3 yr)",
+            "value": "0.7"
+          }
+        ]
       },
       "categories": [
         "vitamin"
@@ -44415,6 +44939,32 @@
         ],
         "db_updated_at": "2026-06-20T11:39:43.264+00:00"
       },
+      "rda": {
+        "unit": "mcg",
+        "source": "ICMR RDA 2020 Annexure IA",
+        "groups": [
+          {
+            "label": "Adult man",
+            "value": "2.2"
+          },
+          {
+            "label": "Adult woman",
+            "value": "2.2"
+          },
+          {
+            "label": "Pregnant",
+            "value": "2.45"
+          },
+          {
+            "label": "Lactating",
+            "value": "3.2"
+          },
+          {
+            "label": "Child (1–3 yr)",
+            "value": "1.2"
+          }
+        ]
+      },
       "categories": [
         "vitamin"
       ]
@@ -44457,6 +45007,32 @@
         ],
         "db_updated_at": "2026-06-20T11:39:43.264+00:00"
       },
+      "rda": {
+        "unit": "mg",
+        "source": "ICMR RDA 2020 Annexure IA",
+        "groups": [
+          {
+            "label": "Adult man",
+            "value": "2"
+          },
+          {
+            "label": "Adult woman",
+            "value": "1.9"
+          },
+          {
+            "label": "Pregnant",
+            "value": "2.7"
+          },
+          {
+            "label": "Lactating",
+            "value": "3"
+          },
+          {
+            "label": "Child (1–3 yr)",
+            "value": "1.1"
+          }
+        ]
+      },
       "categories": [
         "vitamin"
       ]
@@ -44498,6 +45074,32 @@
           "Sched_I_Vitamins"
         ],
         "db_updated_at": "2026-06-20T11:39:43.264+00:00"
+      },
+      "rda": {
+        "unit": "mg",
+        "source": "ICMR RDA 2020 Annexure IA",
+        "groups": [
+          {
+            "label": "Adult man",
+            "value": "1.9"
+          },
+          {
+            "label": "Adult woman",
+            "value": "1.9"
+          },
+          {
+            "label": "Pregnant",
+            "value": "2.3"
+          },
+          {
+            "label": "Lactating",
+            "value": "2.47"
+          },
+          {
+            "label": "Child (1–3 yr)",
+            "value": "0.9"
+          }
+        ]
       },
       "categories": [
         "vitamin"
@@ -44545,6 +45147,32 @@
         ],
         "db_updated_at": "2026-06-20T11:39:43.264+00:00"
       },
+      "rda": {
+        "unit": "mg",
+        "source": "ICMR RDA 2020 Annexure IA",
+        "groups": [
+          {
+            "label": "Adult man",
+            "value": "80"
+          },
+          {
+            "label": "Adult woman",
+            "value": "65"
+          },
+          {
+            "label": "Pregnant",
+            "value": "80"
+          },
+          {
+            "label": "Lactating",
+            "value": "115"
+          },
+          {
+            "label": "Child (1–3 yr)",
+            "value": "30"
+          }
+        ]
+      },
       "categories": [
         "vitamin"
       ]
@@ -44588,6 +45216,32 @@
           "Sched_I_Vitamins"
         ],
         "db_updated_at": "2026-06-20T11:39:43.264+00:00"
+      },
+      "rda": {
+        "unit": "IU",
+        "source": "ICMR RDA 2020 Annexure IA",
+        "groups": [
+          {
+            "label": "Adult man",
+            "value": "600"
+          },
+          {
+            "label": "Adult woman",
+            "value": "600"
+          },
+          {
+            "label": "Pregnant",
+            "value": "600"
+          },
+          {
+            "label": "Lactating",
+            "value": "600"
+          },
+          {
+            "label": "Child (1–3 yr)",
+            "value": "600"
+          }
+        ]
       },
       "categories": [
         "vitamin"
@@ -44635,6 +45289,32 @@
         ],
         "db_updated_at": "2026-06-20T11:39:43.264+00:00"
       },
+      "rda": {
+        "unit": "mg",
+        "source": "ICMR RDA 2020 Annexure IB upper ref 10mg",
+        "groups": [
+          {
+            "label": "Adult man",
+            "value": "10"
+          },
+          {
+            "label": "Adult woman",
+            "value": "10"
+          },
+          {
+            "label": "Pregnant",
+            "value": "10"
+          },
+          {
+            "label": "Lactating",
+            "value": "10"
+          },
+          {
+            "label": "Child (1–3 yr)",
+            "value": "10"
+          }
+        ]
+      },
       "categories": [
         "vitamin"
       ]
@@ -44680,6 +45360,32 @@
         ],
         "db_updated_at": "2026-06-20T11:39:43.264+00:00"
       },
+      "rda": {
+        "unit": "mcg",
+        "source": "ICMR RDA 2020 Annexure IB",
+        "groups": [
+          {
+            "label": "Adult man",
+            "value": "55"
+          },
+          {
+            "label": "Adult woman",
+            "value": "55"
+          },
+          {
+            "label": "Pregnant",
+            "value": "55"
+          },
+          {
+            "label": "Lactating",
+            "value": "55"
+          },
+          {
+            "label": "Child (1–3 yr)",
+            "value": "55"
+          }
+        ]
+      },
       "categories": [
         "vitamin"
       ]
@@ -44721,6 +45427,32 @@
         ],
         "db_updated_at": "2026-06-20T11:39:43.264+00:00"
       },
+      "rda": {
+        "unit": "mcg",
+        "source": "ICMR RDA 2020 Annexure IB",
+        "groups": [
+          {
+            "label": "Adult man",
+            "value": "55"
+          },
+          {
+            "label": "Adult woman",
+            "value": "55"
+          },
+          {
+            "label": "Pregnant",
+            "value": "55"
+          },
+          {
+            "label": "Lactating",
+            "value": "55"
+          },
+          {
+            "label": "Child (1–3 yr)",
+            "value": "55"
+          }
+        ]
+      },
       "categories": [
         "vitamin"
       ]
@@ -44761,6 +45493,32 @@
           "Sched_I_Vitamins"
         ],
         "db_updated_at": "2026-06-20T11:39:43.264+00:00"
+      },
+      "rda": {
+        "unit": "mcg",
+        "source": "ICMR RDA 2020 Annexure IB",
+        "groups": [
+          {
+            "label": "Adult man",
+            "value": "55"
+          },
+          {
+            "label": "Adult woman",
+            "value": "55"
+          },
+          {
+            "label": "Pregnant",
+            "value": "55"
+          },
+          {
+            "label": "Lactating",
+            "value": "55"
+          },
+          {
+            "label": "Child (1–3 yr)",
+            "value": "55"
+          }
+        ]
       },
       "categories": [
         "vitamin"
@@ -45427,6 +46185,32 @@
           "Sched_I_Minerals"
         ],
         "db_updated_at": "2026-06-20T11:39:46.034+00:00"
+      },
+      "rda": {
+        "unit": "mg",
+        "source": "ICMR RDA 2020 Annexure IA",
+        "groups": [
+          {
+            "label": "Adult man",
+            "value": "17"
+          },
+          {
+            "label": "Adult woman",
+            "value": "13.2"
+          },
+          {
+            "label": "Pregnant",
+            "value": "14.5"
+          },
+          {
+            "label": "Lactating",
+            "value": "14.1"
+          },
+          {
+            "label": "Child (1–3 yr)",
+            "value": "3.3"
+          }
+        ]
       },
       "categories": [
         "mineral"
