@@ -13,7 +13,7 @@
       "prebiotic",
       "botanical"
     ],
-    "enrichedAt": "2026-06-21T05:31:13.219Z"
+    "enrichedAt": "2026-06-21T06:08:35.269Z"
   },
   "entities": [
     {
@@ -50886,55 +50886,6 @@
           "dose": "100-200 ml"
         }
       ]
-    },
-    {
-      "slug": "tarun-singh",
-      "name": "tarun singh",
-      "domain": "nutraceutical",
-      "category": "botanical",
-      "identity": {
-        "common_name": "abc"
-      },
-      "synonyms": [],
-      "summary": "",
-      "status": [
-        {
-          "framework": "india-fssai",
-          "framework_label": "India — FSSAI",
-          "status": "permitted",
-          "limit": "",
-          "conditions": "",
-          "source_ref": "FSS (Health Supplements, Nutraceuticals…) Regulations 2022",
-          "last_reviewed": "2026-06-20",
-          "version": "db-2026-06-20"
-        }
-      ],
-      "related": [
-        "albizia-lebbeck-extract",
-        "allium-sativum-bulbs-dried-standardized-powderextract",
-        "aloe-vera-juiceconcentratepowder-of-sapgel",
-        "alpha-amylase",
-        "alpha-mangostin",
-        "amaranthus-tricolor-leaf-powderextract"
-      ],
-      "faq": [],
-      "provenance": {
-        "source_tabs": [
-          "Schedule_III_B"
-        ],
-        "db_updated_at": "2026-06-20T11:59:01.459+00:00"
-      },
-      "categories": [
-        "botanical"
-      ],
-      "botanical": {
-        "scientificName": "",
-        "part": ""
-      },
-      "displayName": "abc",
-      "regulatoryName": "tarun singh",
-      "altNames": [],
-      "dosageForms": []
     },
     {
       "slug": "taurine",

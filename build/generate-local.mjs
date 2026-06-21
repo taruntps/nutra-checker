@@ -9,10 +9,17 @@ import { renderHub, renderCategory, renderIngredient, renderDirectory, renderSea
 import { buildSitemap } from "./lib/sitemap.mjs";
 import { PUBLISH_CATEGORIES } from "./config.mjs";
 
+// Slugs known to be test/erroneous records in the source database. Filtered
+// at build time so they never appear in published pages or sitemap, even if
+// the upstream Supabase row is not yet deleted.
+const EXCLUDED_SLUGS = new Set(["tarun-singh"]);
+
 async function main() {
   console.log("[1/5] Loading data/ingredients.json…");
   const raw = JSON.parse(await readFile("data/ingredients.json", "utf8"));
-  const entities = raw.entities;
+  const entities = raw.entities.filter((e) => !EXCLUDED_SLUGS.has(e.slug));
+  if (raw.entities.length !== entities.length)
+    console.log(`      Excluded ${raw.entities.length - entities.length} denylist entity/entities: ${[...EXCLUDED_SLUGS].join(", ")}`);
   console.log(`      ${entities.length} entities loaded`);
 
   console.log("[2/5] Applying botanical enrichment…");
