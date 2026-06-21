@@ -12,6 +12,18 @@ export function slugify(s) {
 const norm = (s) => String(s == null ? "" : s).trim();
 const isNumeric = (s) => /^[\d.]+$/.test(norm(s));
 
+// Primary-category priority: actives outrank additives when an ingredient
+// legitimately appears in multiple categories (multi-category tagging).
+const CATEGORY_PRIORITY = [
+  "vitamin", "mineral", "amino-acid", "nucleotide",
+  "botanical", "probiotic", "prebiotic", "additive", "other",
+];
+const pickPrimary = (cats) =>
+  [...cats].sort((a, b) => CATEGORY_PRIORITY.indexOf(a) - CATEGORY_PRIORITY.indexOf(b))[0];
+
+// INS food-additive numbers are bare numerics in source — present as "INS 950".
+const fmtSynonym = (v) => (/^\d{3,4}[a-z]?$/i.test(norm(v)) ? `INS ${norm(v)}` : norm(v));
+
 // Fallback name detection (only if a tab has no explicit FIELD_MAP entry).
 export function detectNameKey(keys) {
   const usable = keys.filter((k) => k && !SERIAL_PATTERNS.some((p) => p.test(k)));
@@ -121,14 +133,16 @@ export function normalize(snapshot) {
       let e = entities.get(slug);
       if (!e) {
         e = {
-          slug, name, domain: "nutraceutical", category: meta.category,
+          slug, name, domain: "nutraceutical",
+          category: meta.category, _cats: new Set([meta.category]),
           identity: {}, synonyms: [], summary: "",
           status: [], related: [], faq: [],
           provenance: { source_tabs: [], db_updated_at: updatedAt },
         };
         entities.set(slug, e);
-      } else if (e.category !== meta.category) {
-        anomalies.push({ tab, issue: "category conflict", name, categories: [e.category, meta.category] });
+      } else if (!e._cats.has(meta.category)) {
+        e._cats.add(meta.category); // multi-category tagging
+        anomalies.push({ tab, issue: "multi-category", name, categories: [...e._cats] });
       }
       if (!e.provenance.source_tabs.includes(tab)) e.provenance.source_tabs.push(tab);
 
@@ -149,9 +163,9 @@ export function normalize(snapshot) {
       }
       if (fmap.limit && r[fmap.limit] && !st.limit) st.limit = norm(r[fmap.limit]);
 
-      // synonyms from mapped columns
+      // synonyms from mapped columns (INS numbers formatted as "INS 950")
       for (const col of (fmap.synonyms || [])) {
-        for (const v of splitList(r[col])) if (v && !e.synonyms.includes(v)) e.synonyms.push(v);
+        for (const v of splitList(r[col])) { const s = fmtSynonym(v); if (s && !e.synonyms.includes(s)) e.synonyms.push(s); }
       }
     }
   }
@@ -176,7 +190,14 @@ export function normalize(snapshot) {
     }
   }
 
-  // Related: up to 6 siblings in the same category
+  // Resolve multi-category tagging → primary SEO category + categories[]
+  for (const e of entities.values()) {
+    e.categories = [...e._cats];
+    e.category = pickPrimary(e._cats);
+    delete e._cats;
+  }
+
+  // Related: up to 6 siblings in the same primary category
   const byCat = {};
   for (const e of entities.values()) (byCat[e.category] ||= []).push(e.slug);
   for (const e of entities.values())
