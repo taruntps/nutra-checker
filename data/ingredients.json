@@ -15,7 +15,7 @@
       "botanical",
       "nutraceutical"
     ],
-    "enrichedAt": "2026-06-22T09:08:16.442Z"
+    "enrichedAt": "2026-06-22T10:43:50.056Z"
   },
   "entities": [
     {
@@ -29198,7 +29198,7 @@
       "slug": "lactoferrin",
       "name": "Lactoferrin",
       "domain": "nutraceutical",
-      "category": "prebiotic",
+      "category": "nutraceutical",
       "identity": {
         "common_name": "Lactoferrin; LF; Lactotransferrin; bLF"
       },
@@ -29217,12 +29217,12 @@
         }
       ],
       "related": [
-        "fructo-oligosaccharides",
-        "galacto-oligosaccharides",
-        "gentio-oligosaccharides",
-        "gluco-oligosaccharides",
-        "inulin",
-        "isomalto-oligosaccharides"
+        "hydroxycitric-acid",
+        "albizia-lebbeck-extract",
+        "allium-sativum-bulbs-dried-standardized-powderextract",
+        "aloe-vera-juiceconcentratepowder-of-sapgel",
+        "alpha-amylase",
+        "alpha-mangostin"
       ],
       "faq": [],
       "provenance": {
@@ -29931,7 +29931,7 @@
       "slug": "lecithins",
       "name": "Lecithins",
       "domain": "nutraceutical",
-      "category": "additive",
+      "category": "nutraceutical",
       "identity": {
         "common_name": "Lecithins; Phosphatidylcholine; PC; Soy lecithin"
       },
@@ -29953,12 +29953,12 @@
         }
       ],
       "related": [
-        "acacia-gum",
-        "acesulfame-potassium",
-        "acetic-acid-glacial",
-        "acetic-and-fatty-acid-esters-of-glycerol",
-        "acetone",
-        "acetylated-distarch-adipate"
+        "hydroxycitric-acid",
+        "albizia-lebbeck-extract",
+        "allium-sativum-bulbs-dried-standardized-powderextract",
+        "aloe-vera-juiceconcentratepowder-of-sapgel",
+        "alpha-amylase",
+        "alpha-mangostin"
       ],
       "faq": [],
       "provenance": {
@@ -38135,7 +38135,7 @@
       "slug": "papain",
       "name": "Papain",
       "domain": "nutraceutical",
-      "category": "additive",
+      "category": "nutraceutical",
       "identity": {
         "common_name": "Papain; Papaya enzyme; Vegetal pepsin"
       },
@@ -38156,12 +38156,12 @@
         }
       ],
       "related": [
-        "acacia-gum",
-        "acesulfame-potassium",
-        "acetic-acid-glacial",
-        "acetic-and-fatty-acid-esters-of-glycerol",
-        "acetone",
-        "acetylated-distarch-adipate"
+        "hydroxycitric-acid",
+        "albizia-lebbeck-extract",
+        "allium-sativum-bulbs-dried-standardized-powderextract",
+        "aloe-vera-juiceconcentratepowder-of-sapgel",
+        "alpha-amylase",
+        "alpha-mangostin"
       ],
       "faq": [],
       "provenance": {
@@ -38772,7 +38772,7 @@
       "slug": "pectin",
       "name": "Pectin",
       "domain": "nutraceutical",
-      "category": "prebiotic",
+      "category": "nutraceutical",
       "identity": {
         "common_name": "Pectin; Apple pectin; Citrus pectin"
       },
@@ -38791,12 +38791,12 @@
         }
       ],
       "related": [
-        "fructo-oligosaccharides",
-        "galacto-oligosaccharides",
-        "gentio-oligosaccharides",
-        "gluco-oligosaccharides",
-        "inulin",
-        "isomalto-oligosaccharides"
+        "hydroxycitric-acid",
+        "albizia-lebbeck-extract",
+        "allium-sativum-bulbs-dried-standardized-powderextract",
+        "aloe-vera-juiceconcentratepowder-of-sapgel",
+        "alpha-amylase",
+        "alpha-mangostin"
       ],
       "faq": [],
       "provenance": {
@@ -42483,7 +42483,7 @@
       "slug": "protease",
       "name": "Protease",
       "domain": "nutraceutical",
-      "category": "additive",
+      "category": "nutraceutical",
       "identity": {
         "common_name": "Protease; Proteinase; Protein enzyme"
       },
@@ -42504,12 +42504,12 @@
         }
       ],
       "related": [
-        "acacia-gum",
-        "acesulfame-potassium",
-        "acetic-acid-glacial",
-        "acetic-and-fatty-acid-esters-of-glycerol",
-        "acetone",
-        "acetylated-distarch-adipate"
+        "hydroxycitric-acid",
+        "albizia-lebbeck-extract",
+        "allium-sativum-bulbs-dried-standardized-powderextract",
+        "aloe-vera-juiceconcentratepowder-of-sapgel",
+        "alpha-amylase",
+        "alpha-mangostin"
       ],
       "faq": [],
       "provenance": {

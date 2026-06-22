@@ -841,12 +841,6 @@
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://regulyze.in/ingredients/lactoferrin/</loc>
-    <lastmod>2026-06-22</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
     <loc>https://regulyze.in/ingredients/lactulose/</loc>
     <lastmod>2026-06-22</lastmod>
     <changefreq>monthly</changefreq>
@@ -854,12 +848,6 @@
   </url>
   <url>
     <loc>https://regulyze.in/ingredients/partially-hydrolyzed-guar-gum-guar-gum-derivative/</loc>
-    <lastmod>2026-06-22</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://regulyze.in/ingredients/pectin/</loc>
     <lastmod>2026-06-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -4255,6 +4243,12 @@
     <priority>0.6</priority>
   </url>
   <url>
+    <loc>https://regulyze.in/ingredients/lactoferrin/</loc>
+    <lastmod>2026-06-22</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://regulyze.in/ingredients/lactoperoxidase/</loc>
     <lastmod>2026-06-22</lastmod>
     <changefreq>monthly</changefreq>
@@ -4262,6 +4256,12 @@
   </url>
   <url>
     <loc>https://regulyze.in/ingredients/lagerstroemia-speciosa-leaf-extract/</loc>
+    <lastmod>2026-06-22</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://regulyze.in/ingredients/lecithins/</loc>
     <lastmod>2026-06-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -4489,7 +4489,19 @@
     <priority>0.6</priority>
   </url>
   <url>
+    <loc>https://regulyze.in/ingredients/papain/</loc>
+    <lastmod>2026-06-22</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://regulyze.in/ingredients/passiflora-foetida-extract/</loc>
+    <lastmod>2026-06-22</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://regulyze.in/ingredients/pectin/</loc>
     <lastmod>2026-06-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -4586,6 +4598,12 @@
   </url>
   <url>
     <loc>https://regulyze.in/ingredients/policosanol/</loc>
+    <lastmod>2026-06-22</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://regulyze.in/ingredients/protease/</loc>
     <lastmod>2026-06-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
