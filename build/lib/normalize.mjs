@@ -318,8 +318,9 @@ export function enrichBotanicals(list) {
 
     // 2. English/common display name (priority: curated → Official Common → name).
     //    Source name is always preserved in e.name + provenance.
-    const officialCommon = e.identity.common_name
-      ? String(e.identity.common_name).split(/[;,/]/)[0].trim() : "";
+    //    "—" is a placeholder value in the database meaning "no common name" — skip it.
+    const rawCommon = e.identity.common_name && e.identity.common_name !== "—" ? String(e.identity.common_name) : "";
+    const officialCommon = rawCommon ? rawCommon.split(/[;,/]/)[0].trim() : "";
     e.displayName = (canon && canon.english) || officialCommon || e.name;
     e.regulatoryName = e.name; // explicit: original FSSAI terminology, always kept
 

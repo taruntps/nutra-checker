@@ -622,6 +622,18 @@ export const BOTANICAL_CANON = {
     alsoCalled: ["Millet powder", "Whole grain millet"],
     related: [],
   },
+  "curcuminoids-soft-extractpowder-and-curcumin-complex": {
+    english: "Curcuminoids",
+    sci: "Curcuma longa", part: "Rhizome extract",
+    alsoCalled: ["Curcumin complex", "Curcumin extract"],
+    related: [],
+  },
+  "perna-canaliculus-green-lipped-musselmussel-oil": {
+    english: "Green-lipped Mussel Oil",
+    sci: "Perna canaliculus", part: "Oil",
+    alsoCalled: ["Green lipped mussel oil", "Mussel oil"],
+    related: [],
+  },
 };
 
 // Keys reserved/empty must be ignored
