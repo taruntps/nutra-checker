@@ -233,14 +233,27 @@ section{padding:92px 0;position:relative}
 .foot-col a{display:block;font-size:13.5px;margin-bottom:9px;color:#909C90}.foot-col a:hover{color:var(--teal-l)}
 .foot-bottom{border-top:1px solid rgba(255,255,255,.1);padding-top:22px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;font-size:12.5px;color:#73806F}
 .stats-section{padding:52px 0}
+/* Burger button (hidden on desktop, shown on mobile) */
+.burger{display:none;flex-direction:column;justify-content:center;gap:5px;width:38px;height:38px;background:none;border:1px solid var(--line);border-radius:8px;cursor:pointer;padding:8px;align-self:center}
+.burger span{display:block;height:2px;background:var(--ink-2);border-radius:2px;transition:transform .25s,opacity .25s}
+.burger.open span:nth-child(1){transform:translateY(7px) rotate(45deg)}
+.burger.open span:nth-child(2){opacity:0}
+.burger.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+/* Mobile nav drawer */
+.mob-nav{display:none;flex-direction:column;background:rgba(247,244,236,.97);backdrop-filter:blur(12px);border-bottom:1px solid var(--line);padding:12px 24px 18px}
+.mob-nav.open{display:flex}
+.mob-nav a{font-size:16px;font-weight:600;color:var(--ink-2);padding:13px 0;border-bottom:1px solid var(--line)}
+.mob-nav a:last-child{border-bottom:0}
+.mob-nav a:hover{color:var(--teal);text-decoration:none}
 @media (max-width:900px){
   .feat-grid{grid-template-columns:1fr}
   .stats-grid{grid-template-columns:1fr 1fr}
   .stat{border-right:0;border-bottom:1px solid var(--line)}
   .foot-grid{grid-template-columns:1fr 1fr}
   .nav-links{display:none}
-  /* Header: 2-col (brand | compact CTA), shrink to avoid the oversized button */
-  .head-inner{grid-template-columns:1fr auto;height:64px}
+  .burger{display:flex}
+  /* Header: 3-col (brand | burger | CTA) */
+  .head-inner{grid-template-columns:1fr auto auto;height:64px;gap:10px}
   .brand{font-size:20px;gap:9px}
   .brand-ico{width:34px;height:34px}
   .nav-cta{padding:9px 16px;font-size:13px}
@@ -276,9 +289,16 @@ section{padding:92px 0;position:relative}
   <div class="container"><div class="head-inner">
     <a class="brand" href="/"><img class="brand-ico" src="design-system/assets/logo-mark.png" alt="Regulyze"> Regulyze</a>
     <nav class="nav-links"><a href="#features">Features</a><a href="#how">How it works</a><a href="/explore-ingredients/">Ingredients</a><a href="#customers">Customers</a></nav>
+    <button class="burger" id="burger" aria-label="Menu" aria-expanded="false" onclick="(function(){var b=document.getElementById('burger'),d=document.getElementById('mob-nav'),o=!b.classList.contains('open');b.classList.toggle('open',o);d.classList.toggle('open',o);b.setAttribute('aria-expanded',o);})()"><span></span><span></span><span></span></button>
     <a href="app/?auth=signup" class="btn btn-dark nav-cta"><span class="cta-full">Start free / Sign in</span><span class="cta-short">Sign in</span></a>
   </div></div>
 </header>
+<nav class="mob-nav" id="mob-nav">
+  <a href="#features" onclick="document.getElementById('mob-nav').classList.remove('open');document.getElementById('burger').classList.remove('open')">Features</a>
+  <a href="#how" onclick="document.getElementById('mob-nav').classList.remove('open');document.getElementById('burger').classList.remove('open')">How it works</a>
+  <a href="/explore-ingredients/" onclick="document.getElementById('mob-nav').classList.remove('open');document.getElementById('burger').classList.remove('open')">Ingredients</a>
+  <a href="#customers" onclick="document.getElementById('mob-nav').classList.remove('open');document.getElementById('burger').classList.remove('open')">Customers</a>
+</nav>
 
 <section class="hero">
   <div class="hero-bg"><div class="grid-tex"></div><span class="glow g1"></span><span class="glow g2"></span><span class="glow g3"></span><span class="beam"></span></div>
