@@ -17,6 +17,19 @@ node build/generate-local.mjs
 
 CI runs via GitHub Actions (`.github/workflows/ingredients.yml`) — **manual trigger only**, never automatic. It always pushes results to the `data/ingredients-refresh` review branch; human approval is required before merging to `main`.
 
+> Note: `package.json` only wires `generate` (full pipeline). The offline build (`generate-local.mjs`) and previews (`build/preview.mjs`) are run directly with `node`, not via npm scripts.
+
+## Two layers in one repo
+
+This repo is both a **generated pipeline** and a **hand-maintained static front-end**, served together via GitHub Pages (custom domain in `CNAME`, `.nojekyll` present).
+
+| Layer | Owns | Edited by |
+|---|---|---|
+| **Generated** | `/ingredients/**` (817 pages), `sitemap.xml` | Never by hand — run `generate-local.mjs` and commit its output |
+| **Hand-maintained** | `index.html` (homepage), `app/index.html` (SaaS app), `explore-ingredients/`, `terms/`, `privacy/`, `sample-report/`, `admin/`, `404.html` | Edited directly as raw HTML |
+
+Both layers share `design-system/assets/` (CSS, logos). `index.html` carries its own inline `<style>`; the generated ingredient pages use `design-system/assets/ingredients.css`.
+
 ## Architecture
 
 The pipeline is a Node 22 ESM-only static site generator with no build tools or frameworks — vanilla HTML string templates throughout.
@@ -82,6 +95,14 @@ Enriched entities
 - **Cross-schedule deduplication**: when Schedule II and Schedule III entities share a display name, the Schedule III variant's `displayName` is qualified with its preparation form (Extract, Powder, Oil, etc.).
 - **`data/ingredients.json` is committed** and must be kept in sync with any offline rebuild — after running `generate-local.mjs`, commit the enriched JSON alongside the HTML pages.
 
+## Front-end & auth model
+
+- **`app/index.html`** — the entire SaaS app in one file: Supabase Auth (sign in / up / forgot password), dashboard, formulation checks, history. Supabase session lives in `localStorage` under `sb-afttrokqchfcpjcekuyh-auth-token`. Logged-in nav exposes an **Ingredients** tab linking to the live `/ingredients/` hub.
+- **Ingredient pages are fully public.** Hub, category, detail, search and directory pages have **no login gate** — this is deliberate, to preserve Google SEO. Do not re-add client-side auth guards to generated pages.
+- **`explore-ingredients/index.html`** is a hand-maintained **dummy preview** that mirrors the real hub but is `noindex` and routes *every* CTA to `/app/?auth=signin`. It is the homepage's anonymous-visitor entry point (header + footer "Ingredients" links point here, **not** to `/ingredients/`). It is intentionally outside `/ingredients/` so the generator never touches it and it stays out of `sitemap.xml`.
+- The homepage header collapses to a **hamburger drawer** below 900px (`.burger` / `.mob-nav` in `index.html`).
+- **Decoupling rule:** the ingredient site is read-only and fully independent of the operational compliance engine — never wire ingredient pages to Supabase writes or app state.
+
 ## Analytics
 
-GA4 (`G-5EV0X8LPMN`) and Microsoft Clarity (`xadtpvu8h4`) are injected in `render.mjs` `head()` and directly in the three static marketing pages (`index.html`, `terms/index.html`, `privacy/index.html`). Any new static page needs the snippets added manually.
+GA4 (`G-5EV0X8LPMN`) and Microsoft Clarity (`xadtpvu8h4`) are injected in `render.mjs` `head()` for generated pages, and inlined in every hand-maintained static page (`index.html`, `app/index.html`, `explore-ingredients/index.html`, `terms/`, `privacy/`). **Any new static page needs both snippets added manually.**
