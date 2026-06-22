@@ -683,7 +683,7 @@ select:focus{outline:none;border-color:var(--brand-500)}
 .db-greeting{display:flex;align-items:center;justify-content:space-between;margin-bottom:var(--s-6);flex-wrap:wrap;gap:var(--s-3)}
 .db-greeting-title{font-size:var(--fs-2xl);font-weight:700;color:var(--ink-900);line-height:1.2}
 .db-greeting-sub{font-size:var(--fs-sm);color:var(--text-muted);margin-top:4px}
-.db-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--s-4);margin-bottom:var(--s-5)}
+.db-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--s-4);margin-bottom:var(--s-5)}
 .db-stat-card{background:var(--surface);border:1px solid var(--border-light);border-radius:var(--r-lg);padding:var(--s-5);display:flex;flex-direction:column;gap:8px;box-shadow:var(--sh-sm);transition:box-shadow var(--dur);min-width:0}
 .db-stat-card:hover{box-shadow:var(--sh-md)}
 .db-stat-icon{width:42px;height:42px;border-radius:11px;display:grid;place-items:center;font-size:20px}
@@ -693,7 +693,7 @@ select:focus{outline:none;border-color:var(--brand-500)}
 .db-stat-icon--acc{background:var(--accent-100);color:var(--accent-600)}
 .db-stat-val{font-size:clamp(20px,3.2vw,24px);font-weight:700;color:var(--ink-900)}
 .db-stat-lbl{font-size:var(--fs-xs);color:var(--text-muted);font-weight:500}
-.db-grid{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(220px,1fr) minmax(220px,1fr);gap:var(--s-4);align-items:start}
+.db-grid{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(220px,1fr);gap:var(--s-4);align-items:start}
 .db-card{background:var(--surface);border:1px solid var(--border-light);border-radius:var(--r-lg);padding:var(--s-5);box-shadow:var(--sh-sm)}
 .db-card-hdr{display:flex;align-items:center;justify-content:space-between;font-size:var(--fs-md);font-weight:600;margin-bottom:var(--s-4);color:var(--ink-900)}
 .db-card-hdr i{color:var(--brand-600);margin-right:5px}
@@ -711,7 +711,6 @@ select:focus{outline:none;border-color:var(--brand-500)}
 .db-action-btn{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--brand-50);border:1px solid var(--border-light);border-radius:var(--r-md);color:var(--ink-900);font-size:var(--fs-sm);font-weight:500;transition:all .15s;cursor:pointer;text-align:left;width:100%;font-family:inherit;text-decoration:none}
 .db-action-btn:hover{background:var(--brand-100);border-color:var(--brand-200);color:var(--brand-700)}
 .db-action-btn i{color:var(--brand-700);font-size:16px;flex-shrink:0}
-@media(max-width:1100px){.db-grid{grid-template-columns:1fr 1fr}}
 @media(max-width:900px){.db-grid{grid-template-columns:1fr}}
 @media(max-width:768px){.db-stats{grid-template-columns:repeat(2,1fr)}.db-wrap{padding:var(--s-4) var(--s-3)}}
 
@@ -1251,19 +1250,22 @@ select:focus{outline:none;border-color:var(--brand-500)}
         <div class="db-stat-val" id="db-stat-month">—</div>
         <div class="db-stat-lbl">This Month</div>
       </div>
-      <div class="db-stat-card">
-        <div class="db-stat-icon db-stat-icon--ok"><i class="ti ti-circle-check"></i></div>
-        <div class="db-stat-val" id="db-stat-rem">—</div>
-        <div class="db-stat-lbl">Checks Remaining</div>
-      </div>
-      <div class="db-stat-card">
-        <div class="db-stat-icon db-stat-icon--acc"><i class="ti ti-crown"></i></div>
-        <div class="db-stat-val" id="db-stat-plan">—</div>
-        <div class="db-stat-lbl">Current Plan</div>
+      <!-- Merged: Current Plan + Usage + Remaining -->
+      <div class="db-stat-card" style="gap:6px">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
+          <div class="db-stat-icon db-stat-icon--acc" style="flex-shrink:0"><i class="ti ti-crown"></i></div>
+          <button onclick="showPlanGate()" style="font-size:11px;font-weight:600;padding:4px 10px;background:var(--brand-700);color:#fff;border:none;border-radius:var(--r-md);cursor:pointer;font-family:inherit;white-space:nowrap;transition:background var(--dur)" onmouseover="this.style.background='var(--brand-500)'" onmouseout="this.style.background='var(--brand-700)'"><i class="ti ti-arrow-up" style="font-size:11px"></i> Upgrade</button>
+        </div>
+        <div class="db-stat-val" id="db-stat-plan" style="font-size:clamp(16px,2.4vw,22px)">—</div>
+        <div class="db-stat-lbl" style="margin-top:-2px">Current Plan</div>
+        <div style="margin-top:2px">
+          <div class="db-usage-bar-wrap" style="margin:0 0 3px"><div class="db-usage-bar" id="db-kpi-bar" style="width:0%"></div></div>
+          <div style="font-size:10px;color:var(--text-muted)" id="db-kpi-info">—</div>
+        </div>
       </div>
     </div>
 
-    <!-- Grid: Recent Formulations + Plan Usage + Quick Actions -->
+    <!-- Grid: Recent Formulations + Quick Actions -->
     <div class="db-grid">
       <!-- Recent Formulations (wide column) -->
       <div class="db-card">
@@ -1271,20 +1273,9 @@ select:focus{outline:none;border-color:var(--brand-500)}
           <span><i class="ti ti-history"></i>Recent Formulations</span>
           <a href="#" onclick="goTab(3);renderHistTab();return false">View all →</a>
         </div>
-        <div id="db-recent-table">
+        <div id="db-recent-table" style="overflow-x:auto">
           <div class="db-empty"><i class="ti ti-file-off" style="font-size:26px;display:block;margin-bottom:8px;color:var(--brand-200)"></i>No formulations checked yet</div>
         </div>
-      </div>
-
-      <!-- Plan Usage -->
-      <div class="db-card">
-        <div class="db-card-hdr"><span><i class="ti ti-chart-bar"></i>Plan Usage</span></div>
-        <div id="db-plan-usage">
-          <div style="font-size:11px;color:var(--text-muted)">Loading...</div>
-        </div>
-        <button class="btn btn-primary" style="width:100%;margin-top:14px;font-size:12px" onclick="showPlanGate()">
-          <i class="ti ti-arrow-up" style="font-size:13px"></i> Upgrade Plan
-        </button>
       </div>
 
       <!-- Quick Actions -->
@@ -5277,8 +5268,15 @@ async function renderDashboard() {
 
   const setStat = (id, val) => { const el=document.getElementById(id); if(el) el.textContent=val; };
   setStat('db-stat-total', used);
-  setStat('db-stat-rem', rem);
   setStat('db-stat-plan', planLbl);
+
+  // Merged plan KPI bar
+  const pct = isUnlim ? Math.min(100, Math.round(used / 50 * 100)) : Math.min(100, Math.round(used / Math.max(1, allowed) * 100));
+  const barClass = pct >= 90 ? 'danger' : pct >= 70 ? 'warn' : '';
+  const barEl = document.getElementById('db-kpi-bar');
+  if (barEl) { barEl.style.width = pct + '%'; barEl.className = 'db-usage-bar' + (barClass ? ' ' + barClass : ''); }
+  const infoEl = document.getElementById('db-kpi-info');
+  if (infoEl) infoEl.textContent = isUnlim ? '∞ unlimited checks' : used + ' / ' + allowed + ' used · ' + rem + ' remaining';
 
   // History
   const hist = await getHist(email);
@@ -5293,23 +5291,6 @@ async function renderDashboard() {
     } catch(e) {}
   });
   setStat('db-stat-month', monthCount || (hist.length ? hist.length : 0));
-
-  // Plan usage bar
-  const planUsageEl = document.getElementById('db-plan-usage');
-  if (planUsageEl) {
-    const pct = isUnlim ? Math.min(100, Math.round(used / 50 * 100)) : Math.min(100, Math.round(used / Math.max(1, allowed) * 100));
-    const barClass = pct >= 90 ? 'danger' : pct >= 70 ? 'warn' : '';
-    planUsageEl.innerHTML = `
-      <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text-muted);margin-bottom:2px">
-        <span style="font-weight:600;color:var(--ink-700)">${planLbl} Plan</span>
-        <span>${isUnlim ? '∞ unlimited' : used + ' / ' + allowed + ' used'}</span>
-      </div>
-      <div class="db-usage-bar-wrap">
-        <div class="db-usage-bar ${barClass}" style="width:${pct}%"></div>
-      </div>
-      <div style="font-size:10px;color:var(--text-muted);margin-top:4px">${isUnlim ? 'Unlimited checks available' : rem + ' check' + (rem===1?'':'s') + ' remaining'}</div>
-    `;
-  }
 
   // Recent formulations table
   const recentEl = document.getElementById('db-recent-table');
