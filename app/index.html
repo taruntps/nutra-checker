@@ -747,6 +747,7 @@ select:focus{outline:none;border-color:var(--brand-500)}
     </a>
     <a class="nav-item" href="#" data-tab="5" onclick="goTab(5);renderDashboard();return false" id="nav-dashboard-btn" style="display:none"><i class="ti ti-layout-dashboard"></i> Dashboard</a>
     <a class="nav-item active" href="#" data-tab="0" onclick="goTab(0);return false"><i class="ti ti-list-check"></i> Compliance Tracker</a>
+    <a class="nav-item" href="/ingredients/" id="nav-ingredients-btn" style="display:none"><i class="ti ti-flask"></i> Ingredients</a>
     <a class="nav-item" href="#" data-tab="1" onclick="goTab(1);return false"><i class="ti ti-file-text"></i> Reports</a>
     <a class="nav-item" href="#" data-tab="2" onclick="goTab(2);return false"><i class="ti ti-checklist"></i> Label Checklist</a>
     <a class="nav-item" href="#" data-tab="3" onclick="goTab(3);renderHistTab();return false"><i class="ti ti-history"></i> My History</a>
@@ -5151,6 +5152,8 @@ function _onLoginSuccess(){
   if(dbBtn) dbBtn.style.display='';
   const accBtn=document.getElementById('nav-account-btn');
   if(accBtn) accBtn.style.display='';
+  const ingBtn=document.getElementById('nav-ingredients-btn');
+  if(ingBtn) ingBtn.style.display='';
   goTab(5);
   setTimeout(renderDashboard, 100);
 }
@@ -6709,6 +6712,7 @@ document.addEventListener('keydown',function(e){
     currentUser=null;
     try{var a=document.getElementById('nav-dashboard-btn'); if(a)a.style.display='none';}catch(e){}
     try{var b=document.getElementById('nav-account-btn'); if(b)b.style.display='none';}catch(e){}
+    try{var c=document.getElementById('nav-ingredients-btn'); if(c)c.style.display='none';}catch(e){}
     try{updCheckBar();}catch(e){} try{updWB();}catch(e){}
   }
 

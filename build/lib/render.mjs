@@ -2,6 +2,18 @@
 // Pure functions: entity data in → static HTML out. No runtime dependencies.
 
 const SITE = "https://regulyze.in";
+
+// Auth gate — Supabase session lives under this key in localStorage (shared across regulyze.in).
+// The hub page loads this helper so clicks on Search / Browse go to login when the user is logged out.
+const SUPA_REF = "afttrokqchfcpjcekuyh";
+const AUTH_GATE_SCRIPT = `<script>(function(){
+  function _rgHas(){try{var r=localStorage.getItem('sb-${SUPA_REF}-auth-token');if(!r)return false;var s=JSON.parse(r);var t=s&&(s.access_token||(Array.isArray(s)&&s[0]&&s[0].access_token));var e=s&&(s.expires_at||(Array.isArray(s)&&s[0]&&s[0].expires_at));return !!(t&&(!e||Math.floor(Date.now()/1000)<e));}catch(e){return false;}}
+  window.rgCheckAuth=function(dest){if(_rgHas()){window.location.href=dest;}else{window.location.href='/app/?auth=signin';}};
+})()</script>`;
+
+// Page-level redirect guard — placed immediately after <body> on gated pages.
+const AUTH_GUARD_REDIRECT = `<script>(function(){try{var r=localStorage.getItem('sb-${SUPA_REF}-auth-token');var ok=false;if(r){var s=JSON.parse(r);var t=s&&(s.access_token||(Array.isArray(s)&&s[0]&&s[0].access_token));var e=s&&(s.expires_at||(Array.isArray(s)&&s[0]&&s[0].expires_at));ok=!!(t&&(!e||Math.floor(Date.now()/1000)<e));}if(!ok){window.location.replace('/app/?auth=signin');}}catch(e){window.location.replace('/app/?auth=signin');}})()</script>`;
+
 export const CAT_PLURAL = {
   vitamin: "Vitamins", mineral: "Minerals", "amino-acid": "Amino Acids",
   nucleotide: "Nucleotides", botanical: "Botanicals", nutraceutical: "Nutraceuticals",
@@ -267,12 +279,12 @@ export function renderHub(categoryCounts, { root = "/ingredients", preview = fal
       { "@type": "ListItem", position: 2, name: "Ingredients", item: url } ] } ] };
   const title = "Ingredient Intelligence Database — regulatory status & compliance | Regulyze";
   const desc = `Regulatory status, permitted limits and compliance for ${total}+ nutraceutical and supplement ingredients — India (FSSAI) today, with FDA, EFSA, UK, GCC and ASEAN expanding.`;
-  return head({ title, desc, canonical: url, jsonld, preview }) + header(root) +
+  return head({ title, desc, canonical: url, jsonld, preview }) + AUTH_GATE_SCRIPT + header(root) +
     crumb([{ label: "Home", href: "/" }, { label: "Ingredients" }]) +
   `<main class="wrap"><span class="eyebrow">Regulatory intelligence</span>
    <h1 class="page-h1">Ingredient Intelligence Database</h1>
    <p class="answer">Regulatory status, permitted limits, synonyms and compliance for <strong>${total}+</strong> nutraceutical &amp; supplement ingredients — starting with India (FSSAI) and expanding to FDA, EFSA, UK, GCC and ASEAN.</p>
-   <div class="util-links"><a class="ibtn" href="${root}/search/">🔍 Search ingredients</a><a class="ibtn" style="background:var(--cream-2);color:var(--teal-d)" href="${root}/all/">Browse A–Z directory</a></div>
+   <div class="util-links"><a class="ibtn" href="${root}/search/" onclick="if(!event.ctrlKey&&!event.metaKey&&!event.shiftKey){event.preventDefault();window.rgCheckAuth('${root}/search/');}">🔍 Search ingredients</a><a class="ibtn" style="background:var(--cream-2);color:var(--teal-d)" href="${root}/all/" onclick="if(!event.ctrlKey&&!event.metaKey&&!event.shiftKey){event.preventDefault();window.rgCheckAuth('${root}/all/');}">Browse A–Z directory</a></div>
    <div class="grid">
    ${cats.map((c) => `<a class="gcard" href="${root}/category/${c}/"><span class="gname">${esc(CAT_PLURAL[c])}</span><div class="gmeta"><span class="gcount">${categoryCounts[c]}</span> ingredients</div></a>`).join("")}
    </div></main>` + footer(root);
@@ -301,7 +313,7 @@ export function renderDirectory(entities, { root = "/ingredients", preview = fal
       { "@type": "ListItem", position: 3, name: "Directory", item: url } ] } ] };
   const title = "Ingredient Directory (A–Z) — regulatory status & compliance | Regulyze";
   const desc = `Browse all ${list.length} ingredients in the Regulyze Ingredient Intelligence database alphabetically — regulatory status, limits and compliance.`;
-  return head({ title, desc, canonical: url, jsonld, preview }) + header(root) +
+  return head({ title, desc, canonical: url, jsonld, preview }) + AUTH_GUARD_REDIRECT + header(root) +
     crumb([{ label: "Home", href: "/" }, { label: "Ingredients", href: `${root}/` }, { label: "Directory" }]) +
   `<main class="wrap"><span class="eyebrow">Ingredient intelligence</span>
    <h1 class="page-h1">Ingredient Directory</h1>
@@ -320,7 +332,7 @@ export function renderSearch({ root = "/ingredients", preview = false } = {}) {
       { "@type": "ListItem", position: 3, name: "Search", item: url } ] } ] };
   const title = "Search Ingredients — regulatory status & compliance | Regulyze";
   const desc = "Search the Regulyze Ingredient Intelligence database by name or synonym for regulatory status, limits and compliance.";
-  return head({ title, desc, canonical: url, jsonld, preview }) + header(root) +
+  return head({ title, desc, canonical: url, jsonld, preview }) + AUTH_GUARD_REDIRECT + header(root) +
     crumb([{ label: "Home", href: "/" }, { label: "Ingredients", href: `${root}/` }, { label: "Search" }]) +
   `<main class="wrap"><span class="eyebrow">Ingredient intelligence</span>
    <h1 class="page-h1">Search ingredients</h1>
