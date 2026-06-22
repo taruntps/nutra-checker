@@ -150,6 +150,8 @@ function footer(root = "/ingredients") {
 const crumb = (parts) => `<div class="wrap"><nav class="crumb">${parts.map((p, i) =>
   p.href ? `<a href="${p.href}">${esc(p.label)}</a>` : `<span>${esc(p.label)}</span>`)
   .join(" › ")}</nav></div>`;
+// Visible back button (in addition to the breadcrumb) — addresses "no way back" navigation.
+const backBtn = (href, label) => `<a class="backlink" href="${href}"><span aria-hidden="true">←</span> ${esc(label)}</a>`;
 
 // ── Ingredient page ──────────────────────────────────────────────────────────
 export function renderIngredient(e, { root = "/ingredients", preview = false, nameOf = null } = {}) {
@@ -203,7 +205,7 @@ export function renderIngredient(e, { root = "/ingredients", preview = false, na
   return head({ title, desc, canonical: url, jsonld, preview }) + header(root) +
     crumb([{ label: "Home", href: "/" }, { label: "Ingredients", href: `${root}/` },
       { label: catLabel, href: `${root}/category/${e.category}/` }, { label: name }]) +
-  `<main class="wrap"><span class="eyebrow">Ingredient intelligence</span>
+  `<main class="wrap">${backBtn(`${root}/category/${e.category}/`, `Back to ${catLabel}`)}<span class="eyebrow">Ingredient intelligence</span>
    <h1 class="page-h1">${esc(name)}</h1>
    ${sci ? `<p class="sci-sub"><em>${esc(sci)}</em>${part ? ` · ${esc(part)}` : ""}</p>` : ""}
    <p class="answer">${summary}</p>
@@ -257,11 +259,11 @@ export function renderCategory(category, entities, { root = "/ingredients", prev
   const desc = `Browse ${list.length} ${label.toLowerCase()} tracked in the Regulyze Ingredient Intelligence database — regulatory status, permitted limits and compliance, starting with India (FSSAI).`;
   return head({ title, desc, canonical: url, jsonld, preview }) + header(root) +
     crumb([{ label: "Home", href: "/" }, { label: "Ingredients", href: `${root}/` }, { label }]) +
-  `<main class="wrap"><span class="eyebrow">Ingredient intelligence</span>
+  `<main class="wrap">${backBtn(`${root}/`, "Back to Ingredients")}<span class="eyebrow">Ingredient intelligence</span>
    <h1 class="page-h1">${esc(label)}</h1>
    <p class="answer">${list.length} ${esc(label.toLowerCase())} tracked for nutraceutical &amp; supplement compliance — each with regulatory status, permitted limits and synonyms, starting with India (FSSAI) and expanding to other frameworks.</p>
    <div class="grid ilist">
-   ${list.map((e) => { const f = fssaiOf(e); const sci = sciName(e); return `<a class="gcard" href="${root}/${e.slug}/"><span><span class="gname" style="font-size:16px">${esc(dispName(e))}</span><span class="gmeta">${sci ? `<em>${esc(sci)}</em> · ` : ""}${esc(f && f.limit ? f.limit : "As specified / GMP")}</span></span>${badge(f && f.status)}</a>`; }).join("")}
+   ${list.map((e) => { const f = fssaiOf(e); return `<a class="gcard" href="${root}/${e.slug}/"><span class="gname">${esc(dispName(e))}</span>${badge(f && f.status)}</a>`; }).join("")}
    </div></main>` + footer(root);
 }
 
@@ -315,7 +317,7 @@ export function renderDirectory(entities, { root = "/ingredients", preview = fal
   const desc = `Browse all ${list.length} ingredients in the Regulyze Ingredient Intelligence database alphabetically — regulatory status, limits and compliance.`;
   return head({ title, desc, canonical: url, jsonld, preview }) + AUTH_GUARD_REDIRECT + header(root) +
     crumb([{ label: "Home", href: "/" }, { label: "Ingredients", href: `${root}/` }, { label: "Directory" }]) +
-  `<main class="wrap"><span class="eyebrow">Ingredient intelligence</span>
+  `<main class="wrap">${backBtn(`${root}/`, "Back to Ingredients")}<span class="eyebrow">Ingredient intelligence</span>
    <h1 class="page-h1">Ingredient Directory</h1>
    <p class="answer">All ${list.length} ingredients tracked across the live categories — alphabetical. Use <a href="${root}/search/">search</a> to find one fast.</p>
    <div class="dir-nav">${nav}</div>${sections}</main>` + footer(root);
@@ -334,7 +336,7 @@ export function renderSearch({ root = "/ingredients", preview = false } = {}) {
   const desc = "Search the Regulyze Ingredient Intelligence database by name or synonym for regulatory status, limits and compliance.";
   return head({ title, desc, canonical: url, jsonld, preview }) + AUTH_GUARD_REDIRECT + header(root) +
     crumb([{ label: "Home", href: "/" }, { label: "Ingredients", href: `${root}/` }, { label: "Search" }]) +
-  `<main class="wrap"><span class="eyebrow">Ingredient intelligence</span>
+  `<main class="wrap">${backBtn(`${root}/`, "Back to Ingredients")}<span class="eyebrow">Ingredient intelligence</span>
    <h1 class="page-h1">Search ingredients</h1>
    <input id="q" class="search-box" type="search" placeholder="Search by name or synonym — e.g. ascorbic acid, calcium, ashwagandha" autocomplete="off" autofocus>
    <div class="search-meta" id="meta">Loading index…</div>
