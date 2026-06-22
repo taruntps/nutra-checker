@@ -197,7 +197,7 @@ h1,h2,h3,h4{font-family:var(--font-display);line-height:var(--lh-tight);letter-s
 .nav-item:hover{background:rgba(255,255,255,.08);color:#fff}
 .nav-item.active{background:var(--brand-600);color:#fff;font-weight:600}
 .nav-sep{height:1px;background:rgba(255,255,255,.12);margin:var(--s-3) var(--s-2)}
-.sidebar .foot{margin-top:auto;font-size:var(--fs-xs);color:rgba(255,255,255,.55);padding-top:var(--s-4)}
+.sidebar .foot{font-size:var(--fs-xs);color:rgba(255,255,255,.55);padding-top:var(--s-3);text-align:center}
 .main{display:flex;flex-direction:column;min-width:0}
 .topbar{height:var(--header-h);background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:var(--s-4);padding:0 var(--s-6);position:sticky;top:0;z-index:50}
 .topbar .search{flex:1;max-width:420px;position:relative}
@@ -347,21 +347,24 @@ tbody tr:hover td{background:#f8fbff}
 .ticker-wrap{background:var(--brand-700);overflow:hidden;white-space:nowrap;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.12)}
 .ticker-move{display:inline-block;animation:ticker 35s linear infinite}
 .ticker-move span{color:rgba(255,255,255,.9);font-size:11px;font-weight:500;padding:0 50px;letter-spacing:.04em}
-@keyframes ticker{0%{transform:translateX(100vw)}100%{transform:translateX(-100%)}}
+@keyframes ticker{0%{transform:translateX(100%)}100%{transform:translateX(-100%)}}
 
 #preview-banner{display:none!important}
 
 /* Auth overlay */
 .overlay{position:fixed;inset:0;background:rgba(15,23,42,.6);backdrop-filter:blur(8px);z-index:500;display:flex;align-items:center;justify-content:center;padding:20px}
-.auth-card{background:#fff;border:1px solid var(--border);border-radius:var(--r-xl);padding:32px 28px;width:100%;max-width:420px;max-height:90vh;overflow-y:auto;box-shadow:var(--sh-lg)}
+.auth-card{background:#fff;border:1px solid var(--border);border-radius:var(--r-xl);padding:32px;width:100%;max-width:420px;box-shadow:var(--sh-lg)}
+@media(max-height:750px){.auth-card{max-height:92vh;overflow-y:auto}}
 .auth-logo{text-align:center;margin-bottom:16px}
 .auth-title{font-size:var(--fs-lg);font-weight:700;color:var(--brand-700);text-align:center;margin-bottom:4px}
 .auth-sub{font-size:var(--fs-xs);color:var(--text-muted);text-align:center;margin-bottom:18px}
 .auth-tabs{display:flex;background:var(--brand-100);border-radius:var(--r-md);padding:3px;margin-bottom:16px;gap:2px}
 .auth-tab{flex:1;padding:6px;text-align:center;font-size:var(--fs-sm);font-weight:600;border-radius:var(--r-sm);cursor:pointer;color:var(--brand-700);transition:all var(--dur)}
+.auth-tab:hover:not(.active){background:var(--brand-200);color:var(--brand-800)}
+.auth-tab:focus-visible{outline:2px solid var(--brand-500);outline-offset:2px}
 .auth-tab.active{background:var(--brand-700);color:#fff}
 .auth-fld{margin-bottom:12px}
-.auth-fld label{display:block;font-size:10px;font-weight:700;color:var(--brand-700);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px}
+.auth-fld label{display:block;font-size:11.5px;font-weight:700;color:var(--brand-700);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px}
 .auth-fld input{width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:var(--r-md);font-size:var(--fs-md);font-family:inherit;color:var(--text);background:var(--brand-50);transition:border-color var(--dur)}
 .auth-fld input:focus{outline:none;border-color:var(--brand-500);box-shadow:var(--sh-focus)}
 .auth-btn{width:100%;padding:11px;background:var(--brand-700);color:#fff;border:none;border-radius:var(--r-md);font-size:var(--fs-md);font-weight:600;cursor:pointer;font-family:inherit;transition:background var(--dur);margin-top:4px;display:flex;align-items:center;justify-content:center;gap:6px}
@@ -681,16 +684,16 @@ select:focus{outline:none;border-color:var(--brand-500)}
 .db-greeting-title{font-size:var(--fs-2xl);font-weight:700;color:var(--ink-900);line-height:1.2}
 .db-greeting-sub{font-size:var(--fs-sm);color:var(--text-muted);margin-top:4px}
 .db-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--s-4);margin-bottom:var(--s-5)}
-.db-stat-card{background:var(--surface);border:1px solid var(--border-light);border-radius:var(--r-lg);padding:var(--s-5);display:flex;flex-direction:column;gap:8px;box-shadow:var(--sh-sm);transition:box-shadow var(--dur)}
+.db-stat-card{background:var(--surface);border:1px solid var(--border-light);border-radius:var(--r-lg);padding:var(--s-5);display:flex;flex-direction:column;gap:8px;box-shadow:var(--sh-sm);transition:box-shadow var(--dur);min-width:0}
 .db-stat-card:hover{box-shadow:var(--sh-md)}
 .db-stat-icon{width:42px;height:42px;border-radius:11px;display:grid;place-items:center;font-size:20px}
 .db-stat-icon--brand{background:var(--brand-100);color:var(--brand-700)}
 .db-stat-icon--blue{background:#DBEAFE;color:#1E40AF}
 .db-stat-icon--ok{background:var(--ok-100);color:var(--ok-700)}
 .db-stat-icon--acc{background:var(--accent-100);color:var(--accent-600)}
-.db-stat-val{font-size:var(--fs-2xl);font-weight:700;color:var(--ink-900)}
+.db-stat-val{font-size:clamp(20px,3.2vw,24px);font-weight:700;color:var(--ink-900)}
 .db-stat-lbl{font-size:var(--fs-xs);color:var(--text-muted);font-weight:500}
-.db-grid{display:grid;grid-template-columns:1fr 280px 280px;gap:var(--s-4);align-items:start}
+.db-grid{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(220px,1fr) minmax(220px,1fr);gap:var(--s-4);align-items:start}
 .db-card{background:var(--surface);border:1px solid var(--border-light);border-radius:var(--r-lg);padding:var(--s-5);box-shadow:var(--sh-sm)}
 .db-card-hdr{display:flex;align-items:center;justify-content:space-between;font-size:var(--fs-md);font-weight:600;margin-bottom:var(--s-4);color:var(--ink-900)}
 .db-card-hdr i{color:var(--brand-600);margin-right:5px}
@@ -751,6 +754,10 @@ select:focus{outline:none;border-color:var(--brand-500)}
     <a class="nav-item" href="#" data-tab="4" onclick="goTab(4);rdcInit();return false"><i class="ti ti-gauge"></i> RDA Checker</a>
     <div class="nav-sep"></div>
     <a class="nav-item" href="#" onclick="showProfile();return false" id="nav-account-btn" style="display:none"><i class="ti ti-user-cog"></i> Account</a>
+    <div style="margin-top:auto;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:var(--r-md);padding:12px 10px;text-align:center">
+      <div style="font-size:11px;font-weight:600;color:rgba(255,255,255,.9);margin-bottom:4px"><i class="ti ti-help-circle" style="font-size:14px;vertical-align:middle;margin-right:3px"></i>Need Help?</div>
+      <div style="font-size:10px;color:rgba(255,255,255,.6);line-height:1.5">WhatsApp +91 9115551545<br><a href="mailto:support@tpsxpert.com" style="color:rgba(255,255,255,.7);text-decoration:underline">support@tpsxpert.com</a></div>
+    </div>
     <div class="foot" id="sidebar-foot">v3.5 · FSS (Nutra) 2022<br>© TPS Xperts Group</div>
   </aside>
   <div class="main">
@@ -770,7 +777,7 @@ select:focus{outline:none;border-color:var(--brand-500)}
     <!-- preview-banner removed -->
 
 <div class="overlay" id="auth-overlay" style="display:none">
-  <div class="auth-card" style="max-width:420px;max-height:90vh;overflow-y:auto;position:relative">
+  <div class="auth-card" style="max-width:420px;position:relative">
     <a href="/" title="Back to home" style="position:absolute;top:14px;right:14px;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:#f1f5f9;color:#64748b;text-decoration:none;font-size:16px;transition:background .15s" onmouseover="this.style.background='#e2e8f0'" onmouseout="this.style.background='#f1f5f9'"><i class="ti ti-x"></i></a>
     <a href="/" title="Back to home" class="auth-logo" style="display:block;cursor:pointer"><img src="../design-system/assets/logo.png" alt="Regulyze" style="height:90px;width:auto;display:block;margin:0 auto"></a>
     <div class="auth-title">Nutraceutical &amp; Health Supplement<br>Compliance Checker</div>
@@ -788,7 +795,7 @@ select:focus{outline:none;border-color:var(--brand-500)}
       <div class="auth-err" id="login-err"></div>
       <div style="margin:10px 0;display:flex;align-items:center;gap:8px"><div style="flex:1;height:1px;background:#e2e8f0"></div><span style="font-size:9px;color:#94a3b8">OR</span><div style="flex:1;height:1px;background:#e2e8f0"></div></div>
       <div id="google-signin-btn" style="display:flex;justify-content:center;margin-bottom:8px"></div>
-      <div style="font-size:10px;color:#64748b;text-align:center;margin-top:6px;line-height:1.7">
+      <div style="border-top:1px solid var(--border);margin-top:14px;padding-top:12px;font-size:10.5px;color:#64748b;text-align:center;line-height:1.7">
         New user? Click <strong style="color:#0F7A6A;cursor:pointer" onclick="swAuthTab('signup',document.getElementById('tab-signup'))">Sign Up</strong> for 5 free checks<br>
         Help: WhatsApp +91 9115551545
       </div>
@@ -799,8 +806,11 @@ select:focus{outline:none;border-color:var(--brand-500)}
 
     <!-- FORGOT PASSWORD -->
     <div id="forgot-form" style="display:none">
-      <div style="font-size:12px;color:#0F5C4A;font-weight:600;margin-bottom:8px">Reset Password</div>
-      <div style="font-size:10px;color:#64748b;margin-bottom:10px">Enter your registered email. We will send an OTP to reset your password.</div>
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+        <button onclick="swAuthTab('signin',document.getElementById('tab-signin'))" title="Back to Sign In" style="background:var(--brand-50);border:1px solid var(--border);border-radius:var(--r-md);width:32px;height:32px;display:grid;place-items:center;cursor:pointer;color:var(--brand-700);flex-shrink:0"><i class="ti ti-arrow-left" style="font-size:16px"></i></button>
+        <h3 style="font-size:13px;color:#0F5C4A;font-weight:700;margin:0">Reset Password</h3>
+      </div>
+      <div style="font-size:11px;color:#64748b;margin-bottom:10px">Enter your registered email. We will send an OTP to reset your password.</div>
       <div class="auth-fld"><label>Email</label><input type="email" id="fp-email" placeholder="your@email.com"></div>
       <div id="fp-otp-section" style="display:none">
         <div class="auth-fld"><label>Verification Code</label><input type="text" id="fp-otp" placeholder="Enter code from email or SMS" maxlength="10" autocomplete="one-time-code" inputmode="numeric"></div>
@@ -809,9 +819,6 @@ select:focus{outline:none;border-color:var(--brand-500)}
       </div>
       <button class="auth-btn" id="fp-btn" onclick="doForgotPassword()"><i class="ti ti-mail"></i> Send OTP</button>
       <div class="auth-err" id="fp-err"></div>
-      <div style="text-align:center;margin-top:8px">
-        <span style="font-size:10px;color:#0F7A6A;cursor:pointer;text-decoration:underline" onclick="swAuthTab('signin',document.getElementById('tab-signin'))">Back to Sign In</span>
-      </div>
     </div>
 
     <!-- SIGN UP -->
@@ -835,7 +842,7 @@ select:focus{outline:none;border-color:var(--brand-500)}
 
 <!-- PROFILE / ACCOUNT MODAL -->
 <div class="overlay" id="profile-overlay" style="display:none">
-  <div class="auth-card" style="max-width:440px;max-height:90vh;overflow-y:auto">
+  <div class="auth-card" style="max-width:440px">
     <div class="auth-logo"><img src="../design-system/assets/logo.png" alt="Regulyze" style="height:80px;width:auto;display:block;margin:0 auto"></div>
     <div class="auth-title" style="margin-bottom:2px">My Account</div>
     <div class="auth-sub" id="pf-plan" style="margin-bottom:18px">Free Plan</div>
@@ -5240,7 +5247,7 @@ async function renderHistTab(){
     h+=`<tr><td style="font-size:9px;color:#64748b;white-space:nowrap">${escHtml(item.date)}</td>
       <td style="font-size:10px;font-family:monospace;white-space:pre-wrap">${escHtml(item.formula)}</td>
       <td style="font-size:10px;color:#0F7A6A">${escHtml(item.sum)}</td>
-      <td><button onclick="reloadHist(${i})" style="font-size:9px;padding:3px 6px;background:#DEF5EC;color:#0F7A6A;border:1px solid #BCEFDD;border-radius:5px;cursor:pointer;font-family:inherit">Re-check</button></td>
+      <td><button onclick="reloadHist(${i})" style="font-size:11px;padding:5px 10px;min-height:30px;background:#DEF5EC;color:#0F7A6A;border:1px solid #BCEFDD;border-radius:5px;cursor:pointer;font-family:inherit;white-space:nowrap;font-weight:500">Re-check</button></td>
     </tr>`;
   });
   h+='</tbody></table>';
@@ -5321,7 +5328,7 @@ async function renderDashboard() {
           <td style="white-space:nowrap;color:var(--text-muted);font-size:10px">${item.date||''}</td>
           <td style="font-family:var(--font-mono);font-size:10px;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${(item.formula||'').replace(/"/g,'')}">${firstLine}</td>
           <td><span style="background:var(--brand-100);color:var(--brand-700);padding:2px 8px;border-radius:999px;font-size:10px;font-weight:500;white-space:nowrap">${category}</span></td>
-          <td><button onclick="reloadHist(${i})" style="font-size:10px;padding:3px 8px;background:var(--surface);border:1px solid var(--border-light);border-radius:6px;cursor:pointer;font-family:inherit;color:var(--brand-700);transition:background .15s" onmouseover="this.style.background='var(--brand-50)'" onmouseout="this.style.background='var(--surface)'">Re-check</button></td>
+          <td><button onclick="reloadHist(${i})" style="font-size:11px;padding:5px 10px;min-height:30px;background:var(--surface);border:1px solid var(--border-light);border-radius:6px;cursor:pointer;font-family:inherit;color:var(--brand-700);transition:background .15s;white-space:nowrap;font-weight:500" onmouseover="this.style.background='var(--brand-50)'" onmouseout="this.style.background='var(--surface)'">Re-check</button></td>
         </tr>`;
       }).join('');
       recentEl.innerHTML = `<table class="db-recent-tbl"><thead><tr><th>Date/Time</th><th>Formulation</th><th>Category</th><th></th></tr></thead><tbody>${rows}</tbody></table>`;
