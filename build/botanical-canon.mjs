@@ -576,6 +576,52 @@ export const BOTANICAL_CANON = {
     alsoCalled: ["Sat Pudina", "Pudina"],
     related: ["putina-pudina", "tulasi-surasa"],
   },
+
+  // ── Nutraceutical actives (Schedule III-A / III-B) — sci name overrides ──────
+  // Auto-extraction produces garbage for "X from Source" names; these entries
+  // set the correct source organism or clear the field for multi-source compounds.
+  "astaxanthin-from-haematococcus-pluvialis": {
+    english: "Astaxanthin",
+    sci: "Haematococcus pluvialis", part: "Biomass",
+    alsoCalled: ["Natural Astaxanthin", "Haematococcus astaxanthin"],
+    related: ["lutein", "zeaxanthin", "lycopene", "beta-carotene-standardized-soft-concentrateemulsified-concentratepowder"],
+  },
+  "phycocyanin-from-spirulina-platensis-dried-powder": {
+    english: "Phycocyanin (Spirulina)",
+    sci: "Arthrospira platensis", part: "Biomass",
+    alsoCalled: ["C-Phycocyanin", "Spirulina Phycocyanin", "C-PC"],
+    related: ["spirulina-spirulina-platensisarthrospira-platensis", "chlorella-vulgaris-dried-powder"],
+  },
+  "quercetin-from-citrus-fruitsvegetablesplants": {
+    english: "Quercetin",
+    sci: "", part: "",
+    alsoCalled: ["Quercetin dihydrate", "Bioflavonoid"],
+    related: ["resveratrol", "rutin-from-fruit-peels", "anthocyanin", "alpha-mangostin"],
+  },
+  "rutin-from-fruit-peels": {
+    english: "Rutin",
+    sci: "", part: "",
+    alsoCalled: ["Vitamin P", "Quercetin-3-rutinoside", "Rutoside"],
+    related: ["quercetin-from-citrus-fruitsvegetablesplants", "anthocyanin"],
+  },
+  "casein-and-caseinates": {
+    english: "Casein",
+    sci: "", part: "",
+    alsoCalled: ["Milk casein", "Caseinates"],
+    related: ["collagen-and-its-hydrolysed-peptides-and-chelates", "undenatured-type-ii-collagen"],
+  },
+  "collagen-and-its-hydrolysed-peptides-and-chelates": {
+    english: "Collagen peptides",
+    sci: "", part: "",
+    alsoCalled: ["Hydrolysed collagen", "Collagen hydrolysate", "Collagen chelates"],
+    related: ["undenatured-type-ii-collagen", "casein-and-caseinates", "glucosamine-hydrochloride", "chondroitin-sulphate"],
+  },
+  "millets-and-their-powder": {
+    english: "Millets",
+    sci: "", part: "",
+    alsoCalled: ["Millet powder", "Whole grain millet"],
+    related: [],
+  },
 };
 
 // Keys reserved/empty must be ignored

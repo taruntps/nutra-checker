@@ -294,7 +294,7 @@ export function normalize(snapshot) {
 // Also computes the related-ingredient lists for every entity.
 export function enrichBotanicals(list) {
   for (const e of list) {
-    if (e.category !== "botanical") continue;
+    if (e.category !== "botanical" && e.category !== "nutraceutical") continue;
     const canon = BOTANICAL_CANON[e.slug] || null;
 
     // 1. scientific name + plant part — try synonyms first, then the name.
@@ -304,7 +304,7 @@ export function enrichBotanicals(list) {
       const sp = splitSciPart(s);
       if (sp) { sci = sp.sci; part = sp.part; break; }
     }
-    if (canon && canon.sci) sci = canon.sci;
+    if (canon && canon.sci !== undefined) sci = canon.sci;
     if (canon && canon.part != null) part = canon.part;
     if (sci) {
       e.botanical = { scientificName: sci, part };

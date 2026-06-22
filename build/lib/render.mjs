@@ -4,13 +4,13 @@
 const SITE = "https://regulyze.in";
 export const CAT_PLURAL = {
   vitamin: "Vitamins", mineral: "Minerals", "amino-acid": "Amino Acids",
-  nucleotide: "Nucleotides", botanical: "Botanicals", probiotic: "Probiotics",
-  prebiotic: "Prebiotics", additive: "Additives", other: "Other Ingredients",
+  nucleotide: "Nucleotides", botanical: "Botanicals", nutraceutical: "Nutraceuticals",
+  probiotic: "Probiotics", prebiotic: "Prebiotics", additive: "Additives", other: "Other Ingredients",
 };
 const CAT_SINGULAR = {
   vitamin: "vitamin", mineral: "mineral", "amino-acid": "amino acid",
-  nucleotide: "nucleotide", botanical: "botanical", probiotic: "probiotic strain",
-  prebiotic: "prebiotic", additive: "food additive", other: "ingredient",
+  nucleotide: "nucleotide", botanical: "botanical", nutraceutical: "nutraceutical",
+  probiotic: "probiotic strain", prebiotic: "prebiotic", additive: "food additive", other: "ingredient",
 };
 const esc = (s) => String(s == null ? "" : s)
   .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");

@@ -28,8 +28,8 @@ export const TAB_ROLES = {
   Sched_I_AminoAcids:      { role: "entity", category: "amino-acid" },
   Sched_I_Nucleotides:     { role: "entity", category: "nucleotide" },
   Schedule_II:             { role: "entity", category: "botanical" },
-  Schedule_III_A:          { role: "entity", category: "botanical" },
-  Schedule_III_B:          { role: "entity", category: "botanical" },
+  Schedule_III_A:          { role: "entity", category: "nutraceutical" },
+  Schedule_III_B:          { role: "entity", category: "nutraceutical" },
   Sched_IV_Prebiotics:     { role: "entity", category: "prebiotic" },
   Sched_IV_Probiotics:     { role: "entity", category: "probiotic" },
 
@@ -101,5 +101,5 @@ export const QUALITY = {
 // full set — so any new ingredient added to a mapped Supabase tab in one of these
 // categories appears automatically (and the hub + sitemap stay complete) with no
 // code/template/manual changes. Add a category here only after its rollout is approved.
-const LIVE_CATEGORIES = "vitamin,mineral,amino-acid,probiotic,prebiotic,botanical"; // additive: gated
+const LIVE_CATEGORIES = "vitamin,mineral,amino-acid,nucleotide,probiotic,prebiotic,botanical,nutraceutical"; // additive: gated
 export const PUBLISH_CATEGORIES = (process.env.PUBLISH || LIVE_CATEGORIES).split(",").map((s) => s.trim()).filter(Boolean);

@@ -7,7 +7,7 @@ import { enrichBotanicals } from "./lib/normalize.mjs";
 import { validate } from "./lib/validate.mjs";
 import { renderHub, renderCategory, renderIngredient, renderDirectory, renderSearch, displayLabel, searchTerms, CAT_PLURAL } from "./lib/render.mjs";
 import { buildSitemap } from "./lib/sitemap.mjs";
-import { PUBLISH_CATEGORIES } from "./config.mjs";
+import { PUBLISH_CATEGORIES, TAB_ROLES } from "./config.mjs";
 
 // Slugs known to be test/erroneous records in the source database. Filtered
 // at build time so they never appear in published pages or sitemap, even if
@@ -22,10 +22,27 @@ async function main() {
     console.log(`      Excluded ${raw.entities.length - entities.length} denylist entity/entities: ${[...EXCLUDED_SLUGS].join(", ")}`);
   console.log(`      ${entities.length} entities loaded`);
 
-  console.log("[2/5] Applying botanical enrichment…");
+  // Re-apply category from TAB_ROLES so config changes are reflected without a
+  // full Supabase fetch. Each entity's provenance.source_tabs drives lookup.
+  let reCatCount = 0;
+  for (const e of entities) {
+    const tabs = (e.provenance && e.provenance.source_tabs) || [];
+    for (const t of tabs) {
+      const role = TAB_ROLES[t];
+      if (role && role.category && role.category !== e.category) {
+        e.category = role.category;
+        reCatCount++;
+        break;
+      }
+    }
+  }
+  if (reCatCount) console.log(`      Re-categorized ${reCatCount} entities from TAB_ROLES config`);
+
+  console.log("[2/5] Applying enrichment…");
   enrichBotanicals(entities);
   const botCount = entities.filter((e) => e.category === "botanical").length;
-  console.log(`      ${botCount} botanical entities enriched`);
+  const nutraCount = entities.filter((e) => e.category === "nutraceutical").length;
+  console.log(`      ${botCount} botanical + ${nutraCount} nutraceutical entities enriched`);
 
   // Disambiguate cross-schedule duplicates: when two entities share the same display
   // name, qualify the Schedule_III_B (no-limit) variant's displayName so every page
