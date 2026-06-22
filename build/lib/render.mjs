@@ -257,7 +257,7 @@ export function renderCategory(category, entities, { root = "/ingredients", prev
 export function renderHub(categoryCounts, { root = "/ingredients", preview = false } = {}) {
   const url = `${SITE}${root}/`;
   const total = Object.values(categoryCounts).reduce((a, b) => a + b, 0);
-  const order = ["botanical", "additive", "amino-acid", "probiotic", "vitamin", "mineral", "prebiotic", "nucleotide"];
+  const order = ["botanical", "nutraceutical", "additive", "amino-acid", "probiotic", "vitamin", "mineral", "prebiotic", "nucleotide"];
   const cats = order.filter((c) => categoryCounts[c]);
   const jsonld = { "@context": "https://schema.org", "@graph": [
     { "@type": "DefinedTermSet", "@id": url + "#set", name: "Regulyze Ingredient Intelligence Database", url,
