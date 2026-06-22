@@ -131,7 +131,7 @@ section{padding:92px 0;position:relative}
 @keyframes beam{0%{left:-40%}55%{left:130%}100%{left:130%}}
 .hero-inner{position:relative;z-index:1;text-align:center;padding:84px 0 58px;max-width:940px;margin:0 auto}
 .hero .chip{display:inline-flex;align-items:center;gap:7px;font-size:13px;font-weight:600;color:var(--emerald);background:rgba(63,216,163,.1);border:1px solid rgba(63,216,163,.25);padding:7px 15px;border-radius:var(--r-pill);margin-bottom:24px}
-.hero h1{font-size:clamp(36px,5vw,62px);font-weight:600;margin-bottom:22px}
+.hero h1{font-size:clamp(36px,5vw,62px);font-weight:600;margin:0 auto 22px;max-width:860px}
 .hero h1 em{font-style:italic;background:linear-gradient(100deg,var(--teal-l),var(--emerald) 55%,var(--gold));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;text-shadow:0 0 50px rgba(63,216,163,.3)}
 .hero .lead{font-size:18px;color:rgba(247,244,236,.78);max-width:620px;margin:0 auto 30px}
 .hero-actions{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-bottom:30px}
@@ -166,14 +166,14 @@ section{padding:92px 0;position:relative}
 .cmq-item i{font-size:23px;color:var(--teal-l)}
 .cmq-item:hover{color:var(--cream)}
 /* ===== CREAM BODY ===== */
-.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:0;border:1px solid var(--line);border-radius:var(--r-lg);overflow:hidden;background:#fff}
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:0;border:1px solid var(--line);border-radius:var(--r-lg);overflow:hidden;background:#fff;max-width:900px;margin:0 auto}
 .stat{text-align:center;padding:34px 16px;border-right:1px solid var(--line)}
 .stat:last-child{border-right:0}
 .stat .n{font-family:'Fraunces';font-size:38px;font-weight:600;color:var(--teal-d)}
 .stat .l{font-size:13px;color:var(--muted);margin-top:4px}
 .feat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
-.feat-card{padding:0;transition:.3s;background:#fff}
-.feat-card:hover{transform:translateY(-5px)}
+.feat-card{padding:0;transition:.25s;background:#fff;border:1px solid var(--line);border-radius:var(--r-lg)}
+.feat-card:hover{transform:translateY(-3px);box-shadow:0 8px 28px rgba(15,122,106,.10)}
 .feat-num{font-family:'Fraunces';font-style:italic;font-size:21px;color:var(--gold);display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
 .feat-num i{font-size:25px;color:var(--teal);font-style:normal}
 .feat-card h3{font-size:21px;margin-bottom:9px}.feat-card p{font-size:14.5px;color:var(--muted)}
@@ -196,7 +196,7 @@ section{padding:92px 0;position:relative}
 .price-desc{font-size:14px;color:var(--muted);padding-bottom:18px;margin-bottom:18px;border-bottom:1px solid var(--line)}
 .price-ul{display:flex;flex-direction:column;gap:11px;flex:1;margin-bottom:24px}
 .price-li{display:flex;gap:10px;font-size:14px;align-items:flex-start}.price-li i{color:var(--teal);margin-top:2px}
-.cta-band{border-radius:22px;padding:84px 48px;text-align:center;background:var(--night);color:var(--cream);position:relative;overflow:hidden}
+.cta-band{border-radius:22px;padding:84px 0;text-align:center;background:var(--night);color:var(--cream);position:relative;overflow:hidden}
 .cta-band .beam{animation:beam 6s ease-in-out infinite}
 .cta-band h2{font-size:clamp(36px,5vw,58px);margin-bottom:16px;color:var(--cream);font-style:italic;font-weight:500;position:relative}
 .cta-band p{color:rgba(247,244,236,.82);font-size:18px;max-width:520px;margin:0 auto 30px;position:relative}
@@ -230,7 +230,32 @@ section{padding:92px 0;position:relative}
 .foot-col h4{color:var(--cream);font-size:14px;margin-bottom:14px;font-family:'Fraunces';font-weight:600}
 .foot-col a{display:block;font-size:13.5px;margin-bottom:9px;color:#909C90}.foot-col a:hover{color:var(--teal-l)}
 .foot-bottom{border-top:1px solid rgba(255,255,255,.1);padding-top:22px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;font-size:12.5px;color:#73806F}
-@media (max-width:900px){.feat-grid{grid-template-columns:1fr}.stats-grid{grid-template-columns:1fr 1fr}.stat{border-right:0;border-bottom:1px solid var(--line)}.foot-grid{grid-template-columns:1fr 1fr}.nav-links{display:none}.hero h1{font-size:36px}.tstep{grid-template-columns:1fr;gap:18px}.timeline::before,.tdot{display:none}.tstep:nth-child(even) .t-txt{order:0}.tstep:nth-child(even) .t-vis{order:0}}
+.stats-section{padding:52px 0}
+@media (max-width:900px){
+  .feat-grid{grid-template-columns:1fr}
+  .stats-grid{grid-template-columns:1fr 1fr}
+  .stat{border-right:0;border-bottom:1px solid var(--line)}
+  .foot-grid{grid-template-columns:1fr 1fr}
+  .nav-links{display:none}
+  .hero h1{font-size:clamp(28px,7vw,42px);max-width:100%}
+  .hero .lead{font-size:16px}
+  .tstep{grid-template-columns:1fr;gap:18px}
+  .timeline::before,.tdot{display:none}
+  .tstep:nth-child(even) .t-txt{order:0}
+  .tstep:nth-child(even) .t-vis{order:0}
+  .sec-head.center{text-align:center;margin-left:auto;margin-right:auto}
+  .price-grid{grid-template-columns:1fr}
+  .price-card{border-right:0;border-bottom:1px solid var(--line)}
+  .price-card:last-child{border-bottom:0}
+  .cta-band{border-radius:14px;padding:54px 0}
+  .cta-band h2{font-size:clamp(26px,7vw,40px)}
+  .hero-actions{flex-direction:column;align-items:center}
+  .hero-actions .btn{width:100%;max-width:340px;justify-content:center}
+  .badges{gap:8px}
+  .badge{font-size:11.5px;padding:7px 11px}
+  .foot-grid{grid-template-columns:1fr}
+  .foot-bottom{flex-direction:column;gap:6px}
+}
 </style>
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-5EV0X8LPMN"></script>
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-5EV0X8LPMN');</script>
@@ -290,7 +315,7 @@ section{padding:92px 0;position:relative}
   </div>
 </section>
 
-<section class="reveal"><div class="container">
+<section class="stats-section reveal"><div class="container">
   <div class="stats-grid">
     <div class="stat"><div class="n" data-count="12000" data-suffix="+">0</div><div class="l">Formulations checked</div></div>
     <div class="stat"><div class="n" data-count="1400" data-suffix="+">0</div><div class="l">Ingredients mapped</div></div>
@@ -300,7 +325,7 @@ section{padding:92px 0;position:relative}
 </div></section>
 
 <section id="features" class="reveal" style="padding-top:30px"><div class="container">
-  <div class="sec-head"><span class="eyebrow">Platform capabilities</span><h2>A complete regulatory check.</h2></div>
+  <div class="sec-head center"><span class="eyebrow">Platform capabilities</span><h2>A complete regulatory check.</h2></div>
   <div class="feat-grid">
     <div class="feat-card glowborder"><div style="padding:28px"><div class="feat-num">01 <i class="ti ti-shield-check"></i></div><h3>FSSR Schedule Validation</h3><p>Automatic cross-referencing against Schedule I (Vitamins/Minerals), Schedule II (Amino Acids), and more.</p></div></div>
     <div class="feat-card glowborder"><div style="padding:28px"><div class="feat-num">02 <i class="ti ti-alert-triangle"></i></div><h3>Banned Substance Detection</h3><p>Instant alerts for ingredients flagged under Schedule IV or latest FSSAI gazette notifications.</p></div></div>
@@ -336,7 +361,7 @@ section{padding:92px 0;position:relative}
 </section>
 
 <section class="reveal"><div class="container">
-  <div class="cta-band"><span class="beam"></span><h2>Check your first formulation today.</h2><p>Join the teams shipping compliant nutraceuticals faster. Five free checks, no credit card required.</p><a href="app/?auth=signup" class="btn btn-glow btn-lg"><i class="ti ti-bolt"></i> Get started free</a></div>
+  <div class="cta-band"><div class="container" style="position:relative"><span class="beam"></span><h2>Check your first formulation today.</h2><p>Join the teams shipping compliant nutraceuticals faster. Five free checks, no credit card required.</p><a href="app/?auth=signup" class="btn btn-glow btn-lg"><i class="ti ti-bolt"></i> Get started free</a></div></div>
 </div></section>
 
 <footer class="site-foot"><div class="container">
