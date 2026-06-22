@@ -113,6 +113,8 @@ section{padding:92px 0;position:relative}
 .head-inner .brand{justify-self:start}
 .head-inner .nav-links{justify-self:center}
 .head-inner .btn{justify-self:end}
+.nav-cta{padding:11px 22px;font-size:14px;white-space:nowrap}
+.cta-short{display:none}
 .brand{display:flex;align-items:center;gap:12px;font-family:'Fraunces';font-weight:600;font-size:27px;color:var(--ink)}
 .brand-ico{width:44px;height:44px;object-fit:contain}
 .nav-links{display:flex;gap:40px}
@@ -237,6 +239,13 @@ section{padding:92px 0;position:relative}
   .stat{border-right:0;border-bottom:1px solid var(--line)}
   .foot-grid{grid-template-columns:1fr 1fr}
   .nav-links{display:none}
+  /* Header: 2-col (brand | compact CTA), shrink to avoid the oversized button */
+  .head-inner{grid-template-columns:1fr auto;height:64px}
+  .brand{font-size:20px;gap:9px}
+  .brand-ico{width:34px;height:34px}
+  .nav-cta{padding:9px 16px;font-size:13px}
+  .cta-full{display:none}
+  .cta-short{display:inline}
   .hero h1{font-size:clamp(28px,7vw,42px);max-width:100%}
   .hero .lead{font-size:16px}
   .tstep{grid-template-columns:1fr;gap:18px}
@@ -267,7 +276,7 @@ section{padding:92px 0;position:relative}
   <div class="container"><div class="head-inner">
     <a class="brand" href="/"><img class="brand-ico" src="design-system/assets/logo-mark.png" alt="Regulyze"> Regulyze</a>
     <nav class="nav-links"><a href="#features">Features</a><a href="#how">How it works</a><a href="/ingredients/">Ingredients</a><a href="#customers">Customers</a></nav>
-    <a href="app/?auth=signup" class="btn btn-dark" style="padding:11px 22px;font-size:14px">Start free / Sign in</a>
+    <a href="app/?auth=signup" class="btn btn-dark nav-cta"><span class="cta-full">Start free / Sign in</span><span class="cta-short">Sign in</span></a>
   </div></div>
 </header>
 
